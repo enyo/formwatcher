@@ -1,39 +1,40 @@
 /**
- ** Formwatcher
- **  programming by Matthias Loitsch
- **  design by Tjandra Mayerhold
- **
- ** More infos at http://www.formwatcher.org
- **
- ** Formwatcher by Matthias Loitsch & Tjandra Mayerhold is licensed under a
- ** Creative Commons Attribution-Noncommercial-Share Alike 3.0 United States License. 
- ** http://creativecommons.org/licenses/by-nc-sa/3.0/us/
- **/
+ * Formwatcher
+ *  programming by Matthias Loitsch
+ *  design by Tjandra Mayerhold
+ *
+ * More infos at http://www.formwatcher.org
+ *
+ * Formwatcher by Matthias Loitsch & Tjandra Mayerhold is licensed under a
+ * Creative Commons Attribution-Noncommercial-Share Alike 3.0 United States License. 
+ * http://creativecommons.org/licenses/by-nc-sa/3.0/us/
+ */
 
 
 
 /**
- ** Changelog
- **
- ** 0.0 - 0.1
- ** - The basics are done... a form is watched, and the decorators are loaded when needed.
- ** - You can observe events now, by either passing it with the options object, or calling observe() afterwards.
- ** 
- ** 0.1 - 0.2
- ** - Names are not removed anymore after submitting a form (Saving was only possible the first time).
- ** - The ColorPicker gets only loaded on dom:loaded so IE6 won't crash anymore.
- ** - Form actions aren't set to javascript:undefined anymore, but a valid javascript function that submits the AJAX form (so form.submit() will work again)
- **
- ** 0.2 - 0.3
- ** - The wrap function really gets an input now, and has to return the elements wrapper.
- ** - Checkboxes are now supported.
- ** - Labels for inputs are watched as well now. ('changed' and 'focus' classes are added).
- **
- ** 0.3 - 0.4
- ** - Corrected the bug that after submitting the AJAX form, the labels and all other elements get 'unchanged'
- ** - License change
- ** - Added the changeOnSubmit option. (When the form is set to AJAX, the form is submitted everytime an input is changed)
- **/
+ * Changelog
+ *
+ * 0.0 - 0.1
+ * - The basics are done... a form is watched, and the decorators are loaded when needed.
+ * - You can observe events now, by either passing it with the options object, or calling observe() afterwards.
+ * 
+ * 0.1 - 0.2
+ * - Names are not removed anymore after submitting a form (Saving was only possible the first time).
+ * - The ColorPicker gets only loaded on dom:loaded so IE6 won't crash anymore.
+ * - Form actions aren't set to javascript:undefined anymore, but a valid javascript function that submits the AJAX form (so form.submit() will work again)
+ *
+ * 0.2 - 0.3
+ * - The wrap function really gets an input now, and has to return the elements wrapper.
+ * - Checkboxes are now supported.
+ * - Labels for inputs are watched as well now. ('changed' and 'focus' classes are added).
+ *
+ * 0.3 - 0.4
+ * - Corrected the bug that after submitting the AJAX form, the labels and all other elements get 'unchanged'
+ * - License change
+ * - Added the changeOnSubmit option. (When the form is set to AJAX, the form is submitted everytime an input is changed)
+ * - The wrap() function is now decorate()
+ */
 
 
 
@@ -65,11 +66,9 @@ Element.addMethods({
   }
 });
 
-if (!Object.isFunction(Element.makeFixed))
-{
+if (!Object.isFunction(Element.makeFixed)) {
   Element.addMethods({
-    fixate: function(element)
-    {
+    fixate: function(element) {
       element = $(element);
       // Make sure that the element's "offset parent" is the document itself;
       // i.e., that it has no non-statically-positioned parents
@@ -84,7 +83,7 @@ if (!Object.isFunction(Element.makeFixed))
 
 
 var Formwatcher = {
-  Version: '0.3.4',
+  Version: '0.4.0',
   REQUIRED_PROTOTYPE_VERSION: '1.6.0',
   REQUIRED_SCRIPTACULOUS_VERSION: '1.8.0',
   require: function(libraryName) {
@@ -102,7 +101,8 @@ var Formwatcher = {
     }).each(function(s) {
         var path = s.src.replace(/formwatcher\.js(\?.*)?$/, '');
         var includes = s.src.match(/\?.*load=([a-zA-Z,]*)/);
-        (includes ? includes[1] : 'FontSelect,ColorPicker,ImagePicker,SimpleDatePicker').split(',').each(function(include) {
+//        (includes ? includes[1] : 'FontSelect,ColorPicker,ImagePicker,SimpleDatePicker').split(',').each(function(include) {
+        (includes ? includes[1] : 'FontSelect').split(',').each(function(include) {
           Formwatcher.require(path+'formwatcher.'+include+'.js'); });
       }
     );
@@ -163,23 +163,72 @@ var Formwatcher = {
   decorators: [],
   decorate: function(watcher, input) {
     var decorator = Formwatcher.decorators.find(function(decorator) { if (decorator.accepts(input)) return true; });
-    if (decorator) { return decorator.wrap(watcher, input); } 
+    if (decorator) { return decorator.decorate(watcher, input); } 
     else return $H({input: input});
   },
-  Decorator: Class.create({
-    accepts: function(input) { return false; },
-    // This function wraps the input field in a hash. 'input' and 'label' are reserved, and contain the input containing the value and it's label respectively.
-    // All other elements will be modified so they all share the classes .focus and .changed
-    // If your decorator creates elements, this is the place to do it.
-    wrap: function(watcher, input) { new this.Class(watcher, input); return $H({input: input}); }
-  }),
   currentWatcherId: 0,
   watchers: [],
   add: function(watcher) { this.watchers[watcher.id] = watcher; },
   get: function(id) { return this.watchers[id]; },
   getAll: function() { return $A(this.watchers); }
 };
+
+
+
+/**
+ * This is the base class for decorators and validators.
+ */
+Formwatcher._ElementWatcher = Class.create({
+  name: 'No name',
+  description: 'No description',
+  nodeName: null, // eg: SELECT
+  classNames: [], // eg: ['font']'
+
+  /**
+   * Overwrite this function if your logic to which elements your decorator applies
+   * is more complicated than a simple nodeName/className comparison.
+   */
+  accepts: function(input) {
+    return (input.nodeName == this.nodeName && this.classNames.all(function(className) { return input.hasClassName(className); }));
+  }
+});
+
+
+/**
+ * The actual decorator class. Implement it to create a new decorator.
+ */
+Formwatcher.Decorator = Class.create(Formwatcher._ElementWatcher, {
+  /**
+   * This function does all the magic.
+   * It creates additional elements if necessary, and then actually creates
+   * the object (or calls the function) that is going to handle the input.
+   * 
+   * This function has to return a hash of all fields that you want to get updated with .focus and .changed classes.
+   * 'input' has to be the actual form element to transmit the data.
+   * 'label' is reserved for the actual label.
+   */
+  decorate: function(watcher, input) {
+    if (this.Class != null) { new this.Class(watcher, input); }
+    this.activate(watcher, input);
+    return $H({input: input});
+  },
+  /**
+   * If you don't need a class, simply define the activate function
+   */
+  Class: null,
+  /**
+   * This actually activates the decorator.
+   * If you have a Class you probably don't need activate.
+   */
+  activate: function(watcher, input) { }
+});
+
+
 Formwatcher.load();
+
+
+
+
 
 
 var Watcher = Class.create({
