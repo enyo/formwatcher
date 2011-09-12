@@ -1,8 +1,8 @@
 /*  © Matthias Loitsch   */
-Formwatcher.decorators.push(new (Class.create(Formwatcher.Decorator, {
-  name: 'FontSelector',
-  description: 'Updates every option of a select element to display the font of its value.',
-  nodeNames: ['SELECT'],
+Formwatcher.validators.push(new (Class.create(Formwatcher.Validator, {
+  name: 'Integer',
+  description: 'Makes sure a value is an integer',
+  nodeNames: ['SELECT', 'INPUT'],
   classNames: ['font'],
   activate: function(watcher, input) {
     this.updateInputFont(input);

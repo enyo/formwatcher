@@ -166,6 +166,7 @@ var Formwatcher = {
     if (decorator) { return decorator.decorate(watcher, input); } 
     else return $H({input: input});
   },
+  validators: [],
   currentWatcherId: 0,
   watchers: [],
   add: function(watcher) { this.watchers[watcher.id] = watcher; },
@@ -181,7 +182,7 @@ var Formwatcher = {
 Formwatcher._ElementWatcher = Class.create({
   name: 'No name',
   description: 'No description',
-  nodeName: null, // eg: SELECT
+  nodeNames: null, // eg: SELECT
   classNames: [], // eg: ['font']'
 
   /**
@@ -189,7 +190,7 @@ Formwatcher._ElementWatcher = Class.create({
    * is more complicated than a simple nodeName/className comparison.
    */
   accepts: function(input) {
-    return (input.nodeName == this.nodeName && this.classNames.all(function(className) { return input.hasClassName(className); }));
+    return (this.nodeNames.any(function(nodeName) { return input.nodeName == nodeName; }) && this.classNames.all(function(className) { return input.hasClassName(className); }));
   }
 });
 
@@ -222,6 +223,21 @@ Formwatcher.Decorator = Class.create(Formwatcher._ElementWatcher, {
    */
   activate: function(watcher, input) { }
 });
+
+
+
+/**
+ * The validator class.
+ */
+Formwatcher.Validator = Class.create(Formwatcher._ElementWatcher, {
+  /**
+   * Return true if the validation passed, or an error message if not.
+   */
+  validate: function(watcher, input) {
+    return true;
+  }
+});
+
 
 
 Formwatcher.load();
