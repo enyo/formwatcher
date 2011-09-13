@@ -118,7 +118,7 @@ var Formwatcher = {
       var path = s.src.replace(/formwatcher\.js(\?.*)?$/, '');
       var includes = s.src.match(/\?.*load=([a-zA-Z,]*)/);
       //        (includes ? includes[1] : 'validators,FontSelect,ColorPicker,ImagePicker,SimpleDatePicker').split(',').each(function(include) {
-      (includes ? includes[1] : 'validators,FontSelect,ImagePicker').split(',').each(function(include) {
+      (includes ? includes[1] : 'validators,FontSelect,ImagePicker,DropDown').split(',').each(function(include) {
         Formwatcher.require(path+'formwatcher.'+include+'.js');
       });
     }
