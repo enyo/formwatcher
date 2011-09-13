@@ -1,11 +1,11 @@
 /**
  * Formwatcher
- *  programming by Matthias Loitsch
+ *  programming by Matias Meno
  *  design by Tjandra Mayerhold
  *
  * More infos at http://www.formwatcher.org
  *
- * Formwatcher by Matthias Loitsch & Tjandra Mayerhold is licensed under a
+ * Formwatcher by Matias Meno & Tjandra Mayerhold is licensed under a
  * Creative Commons Attribution-Noncommercial-Share Alike 3.0 United States License. 
  * http://creativecommons.org/licenses/by-nc-sa/3.0/us/
  */
@@ -34,6 +34,7 @@
  * - License change
  * - Added the changeOnSubmit option. (When the form is set to AJAX, the form is submitted everytime an input is changed)
  * - The wrap() function is now decorate()
+ * - Added validators.
  */
 
 
@@ -375,7 +376,9 @@ var Watcher = Class.create({
           // The input has changed, since the decorator can convert it to a hidden field
           // and actually show a completely different UI
           // Make sure the classNames stay intact for further inspection
-          input.classNames().each(function(className) { elements.get('input').addClassName(className) });
+          input.classNames().each(function(className) {
+            elements.get('input').addClassName(className)
+          });
           input = $(elements.get('input'));
 
         }
@@ -425,6 +428,8 @@ var Watcher = Class.create({
         var onchangeFunction = Formwatcher.onchange.bind(this, elements, this);
         elements.invokeValue('observe', 'change', onchangeFunction);
         elements.invokeValue('observe', 'blur', onchangeFunction);
+        
+        elements.invokeValue('observe', 'keyup', this.validateElements.bind(this, elements, true));
       }
     }, this);
   },
@@ -480,27 +485,35 @@ var Watcher = Class.create({
     return validated;
   },
 
-  validateElements: function(elements) {
+  validateElements: function(elements, updateErrorsOnlyOnSuccess) {
     var input = Formwatcher.getInput(elements);
-    input._formwatcher.validationErrors = [];
-    elements.get('errors').update().hide();
-    var validated = input._formwatcher.validators.all(function(validator) {
-      var validationOutput = validator.validate(input);
-      if (validationOutput !== true) {
-        input._formwatcher.validationErrors.push(validationOutput);
-        return false;
+    
+    if (input._formwatcher.validators.size()) {
+      input._formwatcher.validationErrors = [];
+
+      var validated = input._formwatcher.validators.all(function(validator) {
+        var validationOutput = validator.validate(input);
+        if (validationOutput !== true) {
+          input._formwatcher.validationErrors.push(validationOutput);
+          return false;
+        }
+        return true;
+      });
+
+      if (input._formwatcher.validationErrors.size() > 0) {
+        if (!updateErrorsOnlyOnSuccess) {
+          elements.get('errors').update(input._formwatcher.validationErrors.join('<br />')).show();
+          elements.invokeValue('addClassName', 'error')
+          elements.invokeValue('removeClassName', 'validated');
+        }
       }
-      return true;
-    });
-    
-    if (input._formwatcher.validationErrors.size() > 0) {
-      elements.get('errors').update(input._formwatcher.validationErrors.join('<br />')).show();
-      elements.invokeValue('addClassName', 'error');
+      else {
+        elements.get('errors').update().hide();
+        elements.invokeValue('removeClassName', 'error');
+        elements.invokeValue('addClassName', 'validated');
+      }
     }
-    else {
-      elements.invokeValue('removeClassName', 'error');
-    }
-    
+
     return validated;
   },
 
