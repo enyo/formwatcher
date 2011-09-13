@@ -3,7 +3,7 @@ var ImagePicker = Class.create({
   thumbnailSize: 100,
   images: [],
   noImageURL: 'http://www.zella-loshausen.de/zsl/DesktopModules/ColderSoftNews/Media/noimage_36x36.gif',
-  imagesPath: '../Imports/',
+  imagesPath: './',
   initialize: function(watcher, elements, allowEmpty)
   {
     this.watcher = watcher;
@@ -35,7 +35,7 @@ var ImagePicker = Class.create({
     if (!image || image.type == 'remove') { image = { src: '', name: '' }; }
     this.elements.get('input').value   = image.src;
     this.elements.get('display').value = image.name;
-    Formwatcher.onchange(this.elements, this.watcher.options);
+    Formwatcher.onchange(this.elements, this.watcher);
     this.hide();
   },
   createElements: function()
@@ -123,15 +123,16 @@ var ImagePicker = Class.create({
 
 ImagePicker.supportedTypes = [ 'picture', 'pattern', 'gradient' ];
 
-var decorator = Class.create(Formwatcher.Decorator,
-{
-  accepts: function(input) { return (input.nodeName == 'SELECT' && input.hasClassName('image')); },
-  wrap: function(watcher, input)
-  {
+var decorator = Class.create(Formwatcher.Decorator, {
+  name: 'ImagePicker',
+  description: 'Converts a select of images into a nice image picker.',
+  nodeNames: ['SELECT'],
+  classNames: ['image'],
+
+  decorate: function(watcher, input) {
     var images = [];
     var allowEmpty = false;
-    $A(input.options).each(function(option)
-    {
+    $A(input.options).each(function(option) {
       if (option.value.empty()) allowEmpty = true;
       else
       {
