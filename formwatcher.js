@@ -134,9 +134,30 @@ var Formwatcher = {
   getInput: function(elements)   {
     return Object.isHash(elements) ? elements.get('input') : elements;
   },
-  getErrorsElement: function(elements)   {
-    // TODO: actually return something here.
-    return null;
+  /**
+   * Tries to find an existing errors element, and creates one if there isn't.
+   */
+  getErrorsElement: function(elements, createIfNotFound)   {
+    var input = Formwatcher.getInput(elements);
+    // First try to see if there is a NAME-errors element, then if there is an ID-errors.
+    var errorsElement;
+    if (input.name) {
+      errorsElement = $(input.name + '-errors');
+    }
+    if (!errorsElement && input.id) {
+      errorsElement = $(input.id + '-errors');
+    }
+    if (!errorsElement) {
+      errorsElement = new Element('div');
+      if (input.name) {
+        errorsElement.id = input.name + '-errors';
+      }
+      input.insert({
+        after: errorsElement
+      });
+    }
+    errorsElement.hide().addClassName('errors');
+    return errorsElement;
   },
   getLabel: function(elements)   {
     var input = Formwatcher.getInput(elements);
@@ -366,17 +387,7 @@ var Watcher = Class.create({
         }
 
         if (!elements.get('errors')) {
-          var errorsElement = Formwatcher.getErrorsElement(elements);
-          if (!errorsElement) {
-            errorsElement = new Element('div', {
-              className: 'errors'
-            });
-            errorsElement.hide();
-            input.insert({
-              after: errorsElement
-            });
-          //            errorsElement.insert();
-          }
+          var errorsElement = Formwatcher.getErrorsElement(elements, true);
           elements.set('errors', errorsElement);
         }
 
