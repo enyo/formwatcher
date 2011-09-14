@@ -13,6 +13,15 @@ var DropDown = Class.create({
       link.observe('click', this.selectedOption.bind(this, link._optionIdx));
     }, this);
     
+//    var optionIdx;
+//    this.options.find(function(option, i) {
+//      if (option.value == elements.get('input').getValue()) {
+//        optionIdx = i;
+//        return true;
+//      }
+//    });
+//    if (optionIdx !== null) this.selectedOption(optionIdx);
+    
   },
   toggleList: function() {
     this.elements.get('list').toggle();
@@ -47,23 +56,26 @@ Formwatcher.decorators.push(new (Class.create(Formwatcher.Decorator, {
     listElement.appendChild(ulElement);
 
     var options = [];
+    var buttonText = '';
     var i = 0;
-    $A(input.options).each(function(option) { 
-      var liElement = new Element('li', { });
-      
-      var linkElement = new Element('a', {
-        href: 'javascript:undefined;'
-      }).update(option.innerHTML);
-      linkElement._value = option.value;
-      linkElement._optionIdx = i;
-      
-      liElement.appendChild(linkElement);
-      ulElement.appendChild(liElement);
-      
+    $A(input.options).each(function(option) {
+      if (!input.hasClassName('required') || option.value != '') {
+        var liElement = new Element('li', { });
+
+        var linkElement = new Element('a', {
+          href: 'javascript:undefined;'
+        }).update(option.innerHTML);
+        linkElement._value = option.value;
+        linkElement._optionIdx = i;
+
+        liElement.appendChild(linkElement);
+        ulElement.appendChild(liElement);
+      }
       options[i] = {
         value: option.value, 
         name: option.innerHTML
       };
+      if (option.value == input.getValue()) buttonText = option.innerHTML;
       i ++;
     });
 
@@ -71,7 +83,7 @@ Formwatcher.decorators.push(new (Class.create(Formwatcher.Decorator, {
     var buttonElement = new Element('button', {
       type: 'button'
     });
-    buttonElement.update(input.getValue());
+    buttonElement.update(buttonText);
 
 
     var elementsContainer = new Element('div', {

@@ -1,5 +1,7 @@
 
-
+.drop-down button {
+  min-width: 200px;
+}
 .drop-down .list {
   
   position: absolute;
@@ -19,7 +21,7 @@
 }
 .drop-down .list ul li {
   margin: 0;
-  padding: 5px 20px;
+  padding: 0;
   border-bottom: 1px solid #f0f0f0;
 }
 .drop-down .list ul li:last-child {
@@ -27,6 +29,8 @@
 }
 
 .drop-down .list ul li a {
+  display: block;
+  padding: 5px 20px;
   text-decoration: none;
   color: black;
 }
