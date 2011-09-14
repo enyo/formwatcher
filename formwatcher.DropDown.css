@@ -1,0 +1,32 @@
+
+
+.drop-down .list {
+  
+  position: absolute;
+  max-height: 200px;
+  overflow: auto;
+  border: 1px solid #f0f0f0;
+  background: white;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 0 8px #eee;
+  
+}
+
+.drop-down .list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.drop-down .list ul li {
+  margin: 0;
+  padding: 5px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.drop-down .list ul li:last-child {
+  border-bottom: none;
+}
+
+.drop-down .list ul li a {
+  text-decoration: none;
+  color: black;
+}

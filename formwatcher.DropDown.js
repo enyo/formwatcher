@@ -1,19 +1,28 @@
 /*  © Matthias Loitsch   */
 
 var DropDown = Class.create({
-  initialize: function(watcher, elements) {
+  initialize: function(watcher, elements, options) {
     this.watcher = watcher;
     this.elements = elements;
-    elements.get('button').observe('click', function() { elements.get('list').toggle(); });
+    this.options = options;
+    elements.get('button').observe('click', function() {
+      this.toggleList();
+    }.bind(this));
     
     elements.get('list').select('a').each(function(link) {
-      link.observe('click', this.selectedOption.bind(this, link._value, link.innerHTML));
+      link.observe('click', this.selectedOption.bind(this, link._optionIdx));
     }, this);
     
   },
-  selectedOption: function(value, name) {
-    this.elements.get('button').update(name);
+  toggleList: function() {
+    this.elements.get('list').toggle();
+  },
+  selectedOption: function(optionIdx) {
+    var option = this.options[optionIdx];
+    this.elements.get('button').update(option.name);
     this.elements.get('list').hide();
+    this.elements.get('input').setValue(option.value);
+    Formwatcher.changed(this.elements, this.watcher);
   }
 });
 
@@ -24,41 +33,67 @@ Formwatcher.decorators.push(new (Class.create(Formwatcher.Decorator, {
   classNames: ['drop-down'],
   decorate: function(watcher, input) {
     
-    var valueInput = new Element('input', { name: input.name, value: input.getValue(), type: 'hidden' });
+    var valueInput = new Element('input', {
+      name: input.name, 
+      value: input.getValue(), 
+      type: 'hidden'
+    });
 
+    var listElement = new Element('div', {
+      className: 'list'
+    });
+    listElement.hide();
     var ulElement = new Element('ul');
-    ulElement.hide();
+    listElement.appendChild(ulElement);
 
-//    var options = [];
+    var options = [];
+    var i = 0;
     $A(input.options).each(function(option) { 
       var liElement = new Element('li', { });
       
-      var linkElement = new Element('a', { href: 'javascript:undefined;' }).update(option.innerHTML);
+      var linkElement = new Element('a', {
+        href: 'javascript:undefined;'
+      }).update(option.innerHTML);
       linkElement._value = option.value;
+      linkElement._optionIdx = i;
       
       liElement.appendChild(linkElement);
       ulElement.appendChild(liElement);
       
-//      options.push({ value: option.value, name: option.innerHTML});
+      options[i] = {
+        value: option.value, 
+        name: option.innerHTML
+      };
+      i ++;
     });
 
 
-    var buttonElement = new Element('button', { type: 'button' });
+    var buttonElement = new Element('button', {
+      type: 'button'
+    });
     buttonElement.update(input.getValue());
 
 
-    var elementsContainer = new Element('div');
+    var elementsContainer = new Element('div', {
+      className: 'drop-down'
+    });
     
-    elementsContainer.appendChild(valueInput);
     elementsContainer.appendChild(buttonElement);
-    elementsContainer.appendChild(ulElement);
+    elementsContainer.appendChild(listElement);
+    elementsContainer.appendChild(valueInput);
     
-    input.insert({ after: elementsContainer });
+    input.insert({
+      after: elementsContainer
+    });
     Element.remove(input);
 
-    var elements = $H({ input: valueInput, button: buttonElement, list: ulElement });
+    var elements = $H({
+      input: valueInput, 
+      button: buttonElement, 
+      list: listElement
+    });
 
-    new this.Class(watcher, elements);
+    new this.Class(watcher, elements, options);
 
     return elements;
   },

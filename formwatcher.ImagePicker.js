@@ -35,7 +35,7 @@ var ImagePicker = Class.create({
     if (!image || image.type == 'remove') { image = { src: '', name: '' }; }
     this.elements.get('input').value   = image.src;
     this.elements.get('display').value = image.name;
-    Formwatcher.onchange(this.elements, this.watcher);
+    Formwatcher.changed(this.elements, this.watcher);
     this.hide();
   },
   createElements: function()

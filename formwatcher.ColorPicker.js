@@ -13,7 +13,7 @@ if((typeof Control !== 'undefined') || (typeof Control.ColorPicker !== 'undefine
       var input = Formwatcher.getInput(elements);
       // waiting til dom is loaded, so IE6 won't crash.
       document.observe('dom:loaded', function() {
-        new Control.ColorPicker(input, { swatch: elements.get('swatch'), 'IMAGE_BASE': "Pictures/colorPicker/", onUpdate: function() { Formwatcher.onchange(input, watcher.options) } });
+        new Control.ColorPicker(input, { swatch: elements.get('swatch'), 'IMAGE_BASE': "Pictures/colorPicker/", onUpdate: function() { Formwatcher.changed(input, watcher.options) } });
       });
     }
   });

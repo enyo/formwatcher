@@ -21,7 +21,7 @@ if ((typeof tinyMCE !== 'undefined'))
     console.dir(inst);
 //     console.debug(element);
     element.value = 'tes';
-    Formwatcher.onchange(element, {
+    Formwatcher.changed(element, {
       submitUnchanged: false,
       ajax: true });
 

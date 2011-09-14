@@ -16,7 +16,7 @@ var SimpleDatePicker = Class.create(Formwatcher.Decorator,
       date.setFullYear(year.getValue());
       date.setHours(12);*/
       input.value = Math.round(date.getTime()/1000);
-      Formwatcher.onchange(elements, watcher.options)
+      Formwatcher.changed(elements, watcher.options)
     };
 
     [ year, month, day ].each(function(e) { e.observe('change', changeFunction); }, this);

@@ -165,7 +165,7 @@ var Formwatcher = {
     if (input.id) return $$('label[for='+input.id+']').first();
     return null;
   },
-  onchange: function(elements, watcher) {
+  changed: function(elements, watcher) {
     var input = Formwatcher.getInput(elements);
     if (input._formwatcher) {
       if (((input.type === 'checkbox') && (input._formwatcher.originalyChecked != input.checked)) ||
@@ -425,7 +425,7 @@ var Watcher = Class.create({
           elements.invokeValue('removeClassName', 'focus');
         });
 
-        var onchangeFunction = Formwatcher.onchange.bind(this, elements, this);
+        var onchangeFunction = Formwatcher.changed.bind(this, elements, this);
         elements.invokeValue('observe', 'change', onchangeFunction);
         elements.invokeValue('observe', 'blur', onchangeFunction);
         
