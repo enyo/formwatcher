@@ -315,6 +315,14 @@ Formwatcher.Validator = Class.create(Formwatcher._ElementWatcher, {
    */
   validate: function(watcher, input) {
     return true;
+  },
+  /**
+   * If your value can be sanitized (eg: integers should not have leading or trailing spaces)
+   * this function should return the sanitized value.
+   * When the user leaves the input field, the value will be updated in the field.
+   */
+  sanitize: function(value) {
+    return value;
   }
 });
 
@@ -485,32 +493,51 @@ var Watcher = Class.create({
     return validated;
   },
 
-  validateElements: function(elements, updateErrorsOnlyOnSuccess) {
+  /**
+   * inlineValidating: whether the user is still in the element, typing.
+   */
+  validateElements: function(elements, inlineValidating) {
     var input = Formwatcher.getInput(elements);
     
     if (input._formwatcher.validators.size()) {
-      input._formwatcher.validationErrors = [];
+      var validated = true;
 
-      var validated = input._formwatcher.validators.all(function(validator) {
-        var validationOutput = validator.validate(input);
-        if (validationOutput !== true) {
-          input._formwatcher.validationErrors.push(validationOutput);
-          return false;
-        }
-        return true;
-      });
+      if (!inlineValidating || !input._formwatcher.lastValidatedValue || input._formwatcher.lastValidatedValue != input.getValue()) {
+        // Only revalidated if the value has changed
+        input._formwatcher.lastValidatedValue = input.getValue();
+        Formwatcher.debug('Validating input ' + input.name);
+       
+        input._formwatcher.validationErrors = [];
 
-      if (input._formwatcher.validationErrors.size() > 0) {
-        if (!updateErrorsOnlyOnSuccess) {
-          elements.get('errors').update(input._formwatcher.validationErrors.join('<br />')).show();
-          elements.invokeValue('addClassName', 'error')
+        var validated = input._formwatcher.validators.all(function(validator) {
+          var validationOutput = validator.validate(validator.sanitize(input.getValue()));
+          if (validationOutput !== true) {
+            validated = false;
+            input._formwatcher.validationErrors.push(validationOutput);
+            return false;
+          }
+          return true;
+        });
+
+        if (!validated) {
           elements.invokeValue('removeClassName', 'validated');
+          if (!inlineValidating) {
+            elements.get('errors').update(input._formwatcher.validationErrors.join('<br />')).show();
+            elements.invokeValue('addClassName', 'error')
+          }
+        }
+        else {
+          elements.get('errors').update().hide();
+          elements.invokeValue('removeClassName', 'error');
+          elements.invokeValue('addClassName', 'validated');
         }
       }
-      else {
-        elements.get('errors').update().hide();
-        elements.invokeValue('removeClassName', 'error');
-        elements.invokeValue('addClassName', 'validated');
+      if (!inlineValidating && validated) {
+        var sanitizedValue = input._formwatcher.lastValidatedValue;
+        var validated = input._formwatcher.validators.each(function(validator) {
+          sanitizedValue = validator.sanitize(sanitizedValue);
+        });
+        input.value = sanitizedValue;
       }
     }
 
