@@ -50,20 +50,22 @@
 
 
   // Returns and stores attributes only for formwatcher.
-  $.fn.fwAttr = function(attr, value) {
-    if (!this.attr('_formwatcher')) this.attr('_formwatcher', {});
+  // Be careful when you get data because it does return the actual object, not
+  // a copy of it. So if you manipulate an array, you don't have to store ita again.
+  $.fn.fwData = function(name, value) {
+    if (!this.data('_formwatcher')) this.data('_formwatcher', {});
     
-    if (attr === undefined) return this;
+    if (name === undefined) return this;
     
-    var formwatcherAttributes = this.attr('_formwatcher');
+    var formwatcherAttributes = this.data('_formwatcher');
     if (value === undefined) {
       // Get the attribute
-      return formwatcherAttributes.attr;
+      return formwatcherAttributes[name];
     }
     else {
       // Set attribute
-      formwatcherAttributes.attr = value;
-      this.attr('_formwatcher', formwatcherAttributes);
+      formwatcherAttributes[name] = value;
+      this.data('_formwatcher', formwatcherAttributes);
       return this;
     }
   };
@@ -135,8 +137,8 @@
     changed: function(elements, watcher) {
       var input = elements.input;
 
-      if (((input.attr('type') === 'checkbox') && (input.fwAttr('originalyChecked') != input.is(':checked'))) ||
-        ((input.attr('type') !== 'checkbox') && (input.fwAttr('originalValue') != input.val()))) {
+      if (((input.attr('type') === 'checkbox') && (input.fwData('originalyChecked') != input.is(':checked'))) ||
+        ((input.attr('type') !== 'checkbox') && (input.fwData('originalValue') != input.val()))) {
         Formwatcher.setChanged(elements, watcher);
       }
       else {
@@ -148,13 +150,13 @@
     setChanged: function(elements, watcher) {
       var input = elements.input;
 
-      if (input.fwAttr('changed')) return;
+      if (input.fwData('changed')) return;
       
       $.each(elements, function(index, element) {
         element.addClass('changed');
       });
 
-      input.fwAttr('changed', true);
+      input.fwData('changed', true);
 
       if (!watcher.options.submitUnchanged) Formwatcher.restoreName(elements);
 
@@ -163,34 +165,34 @@
     unsetChanged: function(elements, watcher) {
       var input = elements.input;
 
-      if (!input.fwAttr('changed')) return;
+      if (!input.fwData('changed')) return;
 
       $.each(elements, function(index, element) {
         element.removeClass('changed');
       });
 
-      input.fwAttr('changed', false);
+      input.fwData('changed', false);
 
       if (!watcher.options.submitUnchanged) Formwatcher.removeName(input);
     },
     setOriginalValue: function(elements) {
       var input = elements.input;
-      if (input.attr('type') === 'checkbox') input.fwAttr('originalyChecked', input.is(':checked'));
-      else input.fwAttr('originalyChecked', input.val());
+      if (input.attr('type') === 'checkbox') input.fwData('originalyChecked', input.is(':checked'));
+      else input.fwData('originalValue', input.val());
     },
     removeName: function(elements) {
       var input = elements.input;
       if (input.attr('type') === 'checkbox') return;
 
-      if (!input.fwAttr('name')) {
-        input.fwAttr('name', input.attr('name') || '');
+      if (!input.fwData('name')) {
+        input.fwData('name', input.attr('name') || '');
       }
       input.attr('name', '');
     },
     restoreName: function(elements) {
       var input = elements.input;
       if (input.attr('type') === 'checkbox') return;
-      input.attr('name', input.fwAttr('name'));
+      input.attr('name', input.fwData('name'));
     },
 
     decorators: [],
@@ -244,10 +246,10 @@
      * is more complicated than a simple nodeName/className comparison.
      */
     accepts: function(input) {
-      return (this.nodeNames.any(function(nodeName) {
-        return input.nodeName == nodeName;
-      }) && this.classNames.all(function(className) {
-        return input.hasClassName(className);
+      return (_.any(this.nodeNames, function(nodeName) {
+        return input.get(0).nodeName == nodeName;
+      }) && _.all(this.classNames, function(className) {
+        return input.hasClass(className);
       }));
     }
   });
@@ -341,11 +343,11 @@
       }
 
       // Putting the watcher object in the form element.
-      this.form.fwAttr('watcher', this);
+      this.form.fwData('watcher', this);
 
       // Making sure the form always goes through the formwatcher on submit.
       this.form
-      .fwAttr('originalAction', this.form.attr('action'))
+      .fwData('originalAction', this.form.attr('action'))
       .attr('action', 'javascript:Formwatcher.get('+this.id+').submitForm();');
 
 
@@ -374,7 +376,7 @@
 
       $.each($(':input', this.form), function(i, input) {
         var input = $(input);
-        if (!input.fwAttr('initialized') && input.attr('type') != 'hidden') {
+        if (!input.fwData('initialized') && input.attr('type') != 'hidden') {
           var elements = Formwatcher.decorate(self, input);
 
           if (elements.input.get() !== input.get()) {
@@ -397,13 +399,13 @@
 
           self.allElements.push(elements);
 
-          input.fwAttr('validators', []);
+          input.fwData('validators', []);
 
           // Check which validators apply
-          $.each(Formwatcher.validators, function(validator) {
+          _.each(Formwatcher.validators, function(validator) {
             if (validator.accepts(input)) {
               Formwatcher.debug('Validator "' + validator.name + '" found for input field "' + input.name + '".');
-              input.fwAttr('validators').push(validator);
+              input.fwData('validators').push(validator);
             }
           });
 
@@ -439,7 +441,7 @@
     },
 
     callObservers: function(eventName) {
-      var args = arguments;
+      var args = _.toArray(arguments);
       args.shift();
       var self = this;
       _.each(this.observers[eventName], function(observer) {
@@ -459,9 +461,15 @@
       });
       return this;
     },
+    enableForm: function() {
+      
+    },
+    disableForm: function() {
+      $(':input', this.form).prop('disabled', true);
+    },
     submitForm: function() {
       if (this.validateForm()) {
-        this.form.disable();
+        this.disableForm();
         this.callObservers('submit');
 
         // Do submit
@@ -469,19 +477,19 @@
           this.submitAjax();
         }
         else {
-          this.form.action = this.form._formwatcher.originalAction;
-          this.form.submit.bind(this.form).defer();
+          this.form.attr('action', this.form.fwData('originalAction'));
+          _.defer(_.bind(this.form.submit, this.form));
           return false;
         }
       }
       else {
     // Abort
-      }
+    }
     },
     validateForm: function() {
       var validated = true;
-      this.allElements.each(function(elements) {
-        // Not using .all() here, because I want every element to be inspected, even
+      _.each(this.allElements, function(elements) {
+        // Not using _.detect() here, because I want every element to be inspected, even
         // if the first one fails.
         if (!this.validateElements(elements)) validated = false;
       }, this);
@@ -492,10 +500,62 @@
      * inlineValidating: whether the user is still in the element, typing.
      */
     validateElements: function(elements, inlineValidating) {
+      var input = elements.input;
+
+      var validated = true;
+
+      if (input.fwData('validators').length) {
+
+        // Only revalidated if the value has changed
+        if (!inlineValidating || !input.fwData('lastValidatedValue') || input.fwData('lastValidatedValue') != input.val()) {
+          input.fwData('lastValidatedValue', input.val());
+          Formwatcher.debug('Validating input ' + input.attr('name'));
+
+          input.fwData('validationErrors', []);
+
+          validated = _.all(input.fwData('validators'), function(validator) {
+            var validationOutput = validator.validate(validator.sanitize(input.val()));
+            if (validationOutput !== true) {
+              validated = false;
+              input.fwData('validationErrors').push(validationOutput);
+              return false;
+            }
+            return true;
+          });
+
+          if (!validated) {
+            _.each(elements, function(element) {
+              element.removeClass('validated');
+            });
+            if (!inlineValidating) {
+              elements.errors.html(input.fwData('validationErrors').join('<br />')).show();
+              _.each(elements, function(element) {
+                element.addClass('error');
+              });
+            }
+          }
+          else {
+            elements.errors.html("").hide();
+            _.each(elements, function(element) {
+              element.addClass('validated');
+              element.removeClass('error');
+            });
+          }
+        }
+        if (!inlineValidating && validated) {
+          var sanitizedValue = input.fwData("lastValidatedValue");
+          _.each(input.fwData('validators'), function(validator) {
+            sanitizedValue = validator.sanitize(sanitizedValue);
+          });
+          input.val(sanitizedValue);
+        }
+      }
+
+      return validated;
     },
 
     submitAjax: function() {
-
+      console.debug('submitting ajax');
     }
   });
 
