@@ -95,7 +95,7 @@
         var path = this.src.replace(/formwatcher\.js(\?.*)?$/, '');
         var includes = this.src.match(/\?.*load=([a-zA-Z,]*)/);
         //        (includes ? includes[1] : 'validators,FontSelect,ColorPicker,ImagePicker,SimpleDatePicker').split(',').each(function(include) {
-        $.each((includes ? includes[1] : 'validators').split(','), function(index, include) {
+        $.each((includes ? includes[1] : 'validators,FontSelect').split(','), function(index, include) {
           Formwatcher.require(path+'formwatcher.'+include+'.js');
         });
       }
@@ -273,9 +273,7 @@
         new this.Class(watcher, input);
       }
       this.activate(watcher, input);
-      return $H({
-        input: input
-      });
+      return { input: input };
     },
     /**
      * If you don't need a class, simply define the activate function

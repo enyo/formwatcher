@@ -1,21 +1,25 @@
 /*  © Matthias Loitsch   */
-Formwatcher.decorators.push(new (Class.create(Formwatcher.Decorator, {
-  name: 'FontSelector',
-  description: 'Updates every option of a select element to display the font of its value.',
-  nodeNames: ['SELECT'],
-  classNames: ['font'],
-  activate: function(watcher, input) {
-    this.updateInputFont(input);
+(function( $ ){
 
-    $A(input.options).each(function(option) {
-      $(option).setStyle({ fontFamily: option.value });
-    });
+  Formwatcher.decorators.push(new (Formwatcher.Decorator.extend({
+    name: 'FontSelector',
+    description: 'Updates every option of a select element to display the font of its value.',
+    nodeNames: ['SELECT'],
+    classNames: ['font'],
+    activate: function(watcher, input) {
+      this.updateInputFont(input);
 
-    input.observe('change', this.updateInputFont.bind(this, input));
-  },
-  updateInputFont: function(input) {
-    if (input.getValue()) {
-      input.setStyle({fontFamily: input.getValue() });
+      $('option', input).each(function() {
+        $(this).css('fontFamily', $(this).val());
+      });
+
+      input.change(_.bind(this.updateInputFont, this, input));
+    },
+    updateInputFont: function(input) {
+      if (input.val()) {
+        input.css('fontFamily', input.val());
+      }
     }
-  }
-})));
+  })));
+  
+})( jQuery );
