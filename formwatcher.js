@@ -40,6 +40,10 @@
 
 (function( $ ){
 
+  $.el = function(nodeName) {
+    return $(document.createElement(nodeName));
+  }
+
   $.fn.center = function() {
     this.css("position","absolute");
     this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");

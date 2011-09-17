@@ -1,139 +1,136 @@
-/*  © Matthias Loitsch   */
+/*  © Matias Meno   */
+(function( $ ){
 
-var DropDown = Class.create({
-  initialize: function(watcher, elements, options, selectedOptionIdx) {
-    this.watcher = watcher;
-    this.elements = elements;
-    this.options = options;
-    this.selectedOptionIdx = selectedOptionIdx;
 
-    elements.get('button').observe('click', function() {
-      this.toggleList();
-    }.bind(this));
-    
-    elements.get('list').select('a').each(function(link) {
-      link.observe('click', this.selectedOption.bind(this, link._optionIdx));
-    }, this);
+  var DropDown = Class.extend({
+    init: function(watcher, elements, options, selectedOptionIdx) {
+      this.watcher = watcher;
+      this.elements = elements;
+      this.options = options;
+      this.selectedOptionIdx = selectedOptionIdx;
 
-    this.updateState();
-  },
-  toggleList: function() {
-    this.elements.get('list').toggle();
-  },
-  selectedOption: function(optionIdx) {
-    this.selectedOptionIdx = optionIdx;
-    var option = this.getSelectedOption();
-    this.elements.get('button').update(option.name);
-    this.elements.get('list').hide();
-    this.elements.get('input').setValue(option.value);
-    this.updateState();
-    Formwatcher.changed(this.elements, this.watcher);
-  },
-  updateState: function() {
-    var option = this.getSelectedOption();
-    if (option) {
-      this.elements.get('button').update(option.name);
-      this.elements.get('list').select('li.selected').invoke('removeClassName', 'selected');
-      this.elements.get('list').select('li').any(function(liElement) {
-        if (liElement.down('a')._optionIdx == this.selectedOptionIdx) {
-          liElement.addClassName('selected');
-          return true;
-        }
-      }, this);
+      elements.button.click(_.bind(this.toggleList, this));
+
+      var self = this;
+
+      $('a', elements.list).click(function() {
+        self.selectedOption($(this).fwData('optionIdx'));
+      });
+      
+      this.updateState();
+    },
+    toggleList: function() {
+      this.elements.list.toggle();
+    },
+    selectedOption: function(optionIdx) {
+      this.selectedOptionIdx = optionIdx;
+      var option = this.getSelectedOption();
+      this.elements.button.html(option.name);
+      this.elements.list.hide();
+      this.elements.input.val(option.value);
+      this.updateState();
+      Formwatcher.changed(this.elements, this.watcher);
+    },
+    updateState: function() {
+      var option = this.getSelectedOption();
+      if (option) {
+        this.elements.button.html(option.name);
+        $('li.selected', this.elements.list).removeClass('selected');
+
+        _.any($('li', this.elements.list), function(liElement) {
+          liElement = $(liElement);
+          if ($('a', liElement).fwData('optionIdx') == this.selectedOptionIdx) {
+            liElement.addClass('selected');
+            return true;
+          }
+          return false;
+        }, this);
+      }
+    },
+    getSelectedOption: function() {
+      if (this.selectedOptionIdx === null) return null;
+      return this.options[this.selectedOptionIdx];
     }
-  },
-  getSelectedOption: function() {
-    if (this.selectedOptionIdx === null) return null;
-    return this.options[this.selectedOptionIdx];
-  }
-});
+  });
 
 
 
-Formwatcher.decorators.push(new (Class.create(Formwatcher.Decorator, {
-  name: 'DropDown',
-  description: 'Converts a select into a button, which shows a div of all available options when clicked. This is ment to facilitate designing drop downs.',
-  nodeNames: ['SELECT'],
-  classNames: ['drop-down'],
-  decorate: function(watcher, input) {
-    
-    var valueInput = new Element('input', {
-      name: input.name, 
-      value: input.getValue(), 
-      type: 'hidden'
-    });
+  Formwatcher.decorators.push(new (Formwatcher.Decorator.extend({
+    name: 'DropDown',
+    description: 'Converts a select into a button, which shows a div of all available options when clicked. This is ment to facilitate designing drop downs.',
+    nodeNames: ['SELECT'],
+    classNames: ['drop-down'],
+    decorate: function(watcher, select) {
+
+      // First create a hidden input field that will be used to post the data.
+      var valueInput = $.el('input')
+        .attr('name', select.attr('name'))
+        .attr('type', 'hidden')
+        .val(select.val());
 
 
-    var options = [];
-    var buttonText = '';
-    var selectedOptionIdx;
+      var options = [];
+      var buttonText = '';
+      var selectedOptionIdx;
 
-    $A(input.options).each(function(option, i) {
-      options[i] = {
-        value: option.value, 
-        name: option.innerHTML
+      $('option', select).each(function(i) {
+        var option = $(this);
+
+        options[i] = {
+          value: option.val(), 
+          name: option.html()
+        };
+        if (option.val() == select.val()) {
+          selectedOptionIdx = i;
+          buttonText = option.html();
+        }
+      });
+
+      var buttonElement = this.createButtonElement(buttonText);
+      var listElement = this.createListElement(options);
+
+      var elementsContainer = $.el('div')
+        .addClass('drop-down')
+        .append(buttonElement)
+        .append(listElement)
+        .append(valueInput)
+        .insertAfter(select);
+
+      select.remove();
+
+      elements = {
+        input: valueInput, 
+        button: buttonElement, 
+        list: listElement
       };
-      if (option.value == input.getValue()) {
-        selectedOptionIdx = i;
-        buttonText = option.innerHTML;
-      }
-    });
 
-    var buttonElement = this.createButtonElement(buttonText);
-    var listElement = this.createListElement(options);
+      new this.Class(watcher, elements, options, selectedOptionIdx);
 
-    var elementsContainer = new Element('div', {
-      className: 'drop-down'
-    });
-    
-    elementsContainer.appendChild(buttonElement);
-    elementsContainer.appendChild(listElement);
-    elementsContainer.appendChild(valueInput);
-    
-    input.insert({
-      after: elementsContainer
-    });
-    Element.remove(input);
+      return elements;
+    },
+    createButtonElement: function(text) {
+      return $.el('button').attr('type', 'button').html(text);
+    },
+    createListElement: function(options, allowEmpty) {
+      var listElement = $.el('div').addClass('list').hide();
 
-    var elements = $H({
-      input: valueInput, 
-      button: buttonElement, 
-      list: listElement
-    });
+      var ulElement = $.el('ul').appendTo(listElement);
 
-    new this.Class(watcher, elements, options, selectedOptionIdx);
 
-    return elements;
-  },
-  createButtonElement: function(text) {
-    return new Element('button', {
-      type: 'button'
-    }).update(text);
-  },
-  createListElement: function(options, allowEmpty) {
-    var listElement = new Element('div', {
-      className: 'list'
-    });
-    listElement.hide();
-    var ulElement = new Element('ul');
-    listElement.appendChild(ulElement);
+      _.each(options, function(option, i) {
+        if (allowEmpty || option.value != '') {
+          var liElement = $.el('li');
 
-    options.each(function(option, i) {
-      if (allowEmpty || option.value != '') {
-        var liElement = new Element('li', { });
+          var linkElement = $.el('a').attr('href', 'javascript:undefined;').html(option.name).fwData('value', option.value).fwData('optionIdx', i).appendTo(liElement);
 
-        var linkElement = new Element('a', {
-          href: 'javascript:undefined;'
-        }).update(option.name);
-        linkElement._value = option.value;
-        linkElement._optionIdx = i;
+          ulElement.append(liElement);
+        }
+      });
 
-        liElement.appendChild(linkElement);
-        ulElement.appendChild(liElement);
-      }
-    });
-    
-    return listElement;
-  },
-  Class: DropDown
-})));
+      return listElement;
+    },
+    Class: DropDown
+  })));
+
+
+})( jQuery );
