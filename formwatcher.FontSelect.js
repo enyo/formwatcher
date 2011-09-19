@@ -1,4 +1,4 @@
-/*  © Matthias Loitsch   */
+/*  © Matias Meno   */
 (function( $ ){
 
   Formwatcher.decorators.push(new (Formwatcher.Decorator.extend({

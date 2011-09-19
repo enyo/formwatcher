@@ -1,4 +1,4 @@
-/*  © Matthias Loitsch   */
+/*  © Matias Meno   */
 var SimpleDatePicker = Class.create(Formwatcher.Decorator,
 {
   initialize: function(watcher, elements)

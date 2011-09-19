@@ -1,13 +1,26 @@
 /**
- * Formwatcher
- *  programming by Matias Meno
- *  design by Tjandra Mayerhold
- *
  * More infos at http://www.formwatcher.org
  *
- * Formwatcher by Matias Meno & Tjandra Mayerhold is licensed under a
- * Creative Commons Attribution-Noncommercial-Share Alike 3.0 United States License. 
- * http://creativecommons.org/licenses/by-nc-sa/3.0/us/
+ * Copyright (c) 2009, Matias Meno
+ * Graphics by Tjandra Mayerhold
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 
@@ -35,6 +48,9 @@
  * - Added the changeOnSubmit option. (When the form is set to AJAX, the form is submitted everytime an input is changed)
  * - The wrap() function is now decorate()
  * - Added validators.
+ * 
+ * 0.4 - 1.0
+ * - Changed the whole library to jQuery.
  */
 
 
@@ -77,7 +93,7 @@
 
   this.Formwatcher = {
     Version: '0.5.0',
-    REQUIRED_JQUERY_VERSION: '1.6.3',
+    REQUIRED_JQUERY_VERSION: '1.6.0',
     debugging: false,
     require: function(libraryName) {
       // inserting via DOM fails in Safari 2.0, so brute force approach
@@ -567,4 +583,4 @@
 
 
 
-})( jQuery );
+})(jQuery);
