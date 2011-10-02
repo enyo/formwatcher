@@ -5,7 +5,8 @@
   <title>Formwatcher tests</title>
   
   
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.js"></script>
+<!--  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.js"></script>-->
+  <script type="text/javascript" src="jquery-1.6.1.js"></script>
   <script type="text/javascript" src="underscore.js"></script>
   <script type="text/javascript" src="formwatcher.Class.js"></script>
   <script type="text/javascript" src="formwatcher.js"></script>
@@ -71,7 +72,7 @@
 <body>
   
   
-  <form id="test" action="jquerytest.html">
+  <form id="test" action="jquerytest.html" data-fw='{ "ajax": true, "validate": false, "submitUnchanged": false }'>
     
     integer: <input name="some-number" type="text" class="validate-integer not-zero" />
 
@@ -135,12 +136,6 @@
     
   </form>
   
-  
-  <script type="text/javascript">
-    
-    Formwatcher.watch('#test', { ajax: false });
-    
-  </script>
   
 </body>
 </html>

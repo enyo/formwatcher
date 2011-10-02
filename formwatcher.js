@@ -71,7 +71,7 @@
 
   // Returns and stores attributes only for formwatcher.
   // Be careful when you get data because it does return the actual object, not
-  // a copy of it. So if you manipulate an array, you don't have to store ita again.
+  // a copy of it. So if you manipulate an array, you don't have to store it again.
   $.fn.fwData = function(name, value) {
     if (!this.data('_formwatcher')) this.data('_formwatcher', {});
     
@@ -293,7 +293,9 @@
         new this.Class(watcher, input);
       }
       this.activate(watcher, input);
-      return { input: input };
+      return {
+        input: input
+      };
     },
     /**
      * If you don't need a class, simply define the activate function
@@ -375,14 +377,15 @@
         submitUnchanged: true, // Remember: checkboxes are ALWAYS submitted if checked, and never if unchecked.
         ajax: true,
         submitOnChange: false, // Submit the form as soon as one input field has been changed. (Works only if ajax == true)
-        responseCheck: function(transport) {
-          return transport.responseText.empty()
+        responseCheck: function(data) {
+          return !data; // If it's empty, it's OK.
         }, // Checks the ajax transport if everything was ok. Returns true or false
-        onSubmit:  function()          { }, // This function gets called before submitting the form
-        onSuccess: function(transport) { },  // If the responseCheck function returns true, this function gets called.
-        onError:   function(transport) {
-          alert(transport.responseText);
-        } // If responseCheck returns false -> onError
+        onSubmit:  function()     { }, // This function gets called before submitting the form
+        onSuccess: function(data) { },  // If the responseCheck function returns true, this function gets called.
+        onError:   function(data) {
+          alert(data);
+        }, // If responseCheck returns false -> onError
+        validate: true // Whether or not the form should validate on submission.
       }, options || {} );
 
       this.observe('submit',  this.options.onSubmit);
@@ -393,7 +396,7 @@
       var self = this;
 
       $.each($(':input', this.form), function(i, input) {
-        var input = $(input);
+        input = $(input);
         if (!input.fwData('initialized') && input.attr('type') != 'hidden') {
           var elements = Formwatcher.decorate(self, input);
 
@@ -480,13 +483,13 @@
       return this;
     },
     enableForm: function() {
-      
+      $(':input', this.form).prop('disabled', false);
     },
     disableForm: function() {
       $(':input', this.form).prop('disabled', true);
     },
     submitForm: function() {
-      if (this.validateForm()) {
+      if (!this.options.validate || this.validateForm()) {
         this.disableForm();
         this.callObservers('submit');
 
@@ -500,9 +503,7 @@
           return false;
         }
       }
-      else {
-    // Abort
-    }
+      else { /* Abort */ }
     },
     validateForm: function() {
       var validated = true;
@@ -573,12 +574,64 @@
     },
 
     submitAjax: function() {
-      console.debug('submitting ajax');
+      Formwatcher.debug('Submitting form via AJAX.');
+
+      var fields = {};
+      var i = 0;
+      var self = this;
+
+      $.each($(':input', this.form), function(i, input) {
+        input = $(input);
+        if (input.attr('type') === 'hidden' || input.attr('type') === 'checkbox' || input.fwData('changed') || self.options.submitUnchanged) {
+          if (input.attr('type') !== 'checkbox' || input.is(':checked')) {
+            fields[input.attr('name') ? input.attr('name') : 'unnamedInput_' + (i ++)] = input.val();
+          }
+        }
+      });
+
+      $.ajax({
+        url: this.form.fwData('originalAction'),
+        type: 'POST',
+        data: fields,
+        context: this,
+        success: function(data) {
+          this.enableForm();
+          if (!this.options.responseCheck(data)) {
+            // If the response check returns false, there has been an error
+            this.callObservers('error', data);
+          }
+          else {
+            this.callObservers('success', data);
+            _.each(this.allElements, function(elements) {
+              Formwatcher.unsetChanged(elements, this);
+              Formwatcher.setOriginalValue(elements);
+
+              var isEmpty = (elements.input.val() === null || !elements.input.val());
+
+              $.each(elements, function() {
+                if (isEmpty) this.addClass('empty');
+                else this.removeClass('empty');
+              });
+
+            });
+          }
+        }
+      });
+
+      return undefined;
     }
   });
 
 
 
+
+  // Handle all forms that have the data-fw tag
+  $(document).ready(function() {
+    $('form[data-fw]').each(function() {
+      var form = $(this);
+      new Watcher(form, form.data('fw'));
+    });
+  });
 
 
 
