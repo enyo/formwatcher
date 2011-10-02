@@ -193,7 +193,7 @@
 
       input.fwData('changed', false);
 
-      if (!watcher.options.submitUnchanged) Formwatcher.removeName(input);
+      if (!watcher.options.submitUnchanged) Formwatcher.removeName(elements);
     },
     setOriginalValue: function(elements) {
       var input = elements.input;
@@ -281,31 +281,21 @@
   this.Formwatcher.Decorator = this.Formwatcher._ElementWatcher.extend({
     /**
      * This function does all the magic.
-     * It creates additional elements if necessary, and then actually creates
-     * the object (or calls the function) that is going to handle the input.
+     * It creates additional elements if necessary, and could instantiate an object
+     * that will be in charge of handling this input.
      * 
-     * This function has to return a hash of all fields that you want to get updated with .focus and .changed classes.
+     * This function has to return a hash of all fields that you want to get updated
+     * with .focus and .changed classes. Typically this is just { input: THE_INPUT }
+     * 
      * 'input' has to be the actual form element to transmit the data.
      * 'label' is reserved for the actual label.
      */
     decorate: function(watcher, input) {
-      if (this.Class != null) {
-        new this.Class(watcher, input);
-      }
-      this.activate(watcher, input);
+      // Overwrite this function, and do all your magic here.
       return {
         input: input
       };
-    },
-    /**
-     * If you don't need a class, simply define the activate function
-     */
-    Class: null,
-    /**
-     * This actually activates the decorator.
-     * If you have a Class you probably don't need activate.
-     */
-    activate: function(watcher, input) { }
+    }
   });
 
 
@@ -341,13 +331,59 @@
 
 
 
+  /**
+   * Those are the default options a new watcher uses if nothing is provided.
+   * Overwrite any of these when instantiating a watcher (or put it in data-fw=''
+   */
+  this.Formwatcher.defaultOptions = {
+    // Whether to convert the form to an AJAX form.
+    ajax: true,
+    // Whether or not the form should validate on submission. This will invoke
+    // every validator attached to your input fields.
+    validate: true,
+    // If ajax and submitOnChange are true, then the form will be submitted every
+    // time an input field is changed. This removes the need of a submit button.
+    submitOnChange: false,
+    // If the form is submitted via AJAX, the formwatcher uses changed values.
+    // Otherwise formwatcher removes the name parameter of the input fields so they
+    // are not submitted.
+    // Remember: checkboxes are ALWAYS submitted if checked, and never if unchecked.
+    submitUnchanged: true, 
+    // If you have `submitUnchanged = false` and the user did not change anything and
+    // hit submit, there would not actually be anything submitted to the server.
+    // To avoid that, formwatcher does not actually send the request. But if you want
+    // that behaviour you can set this to true.
+    submitFormIfAllUnchanged: false,
+    // Checks the ajax transport if everything was ok. If this function returns
+    // false formwatcher assumes that the form submission resulted in an error.
+    // So, if this function returns true `onSuccess` will be called. If false,
+    // `onError` is called.
+    responseCheck: function(data) {
+      // The default implementation is quite forward: if there is no result, it's fine
+      return !data;
+    },
+    // This function gets called before submitting the form. You could hide the form
+    // or show a spinner here.
+    onSubmit:  function()     { },
+    // If the responseCheck function returns true, this function gets called.
+    onSuccess: function(data) { },
+    // If the responseCheck function returns false, this function gets called.
+    onError:   function(data) {
+      // The default implementation just alerts the error message returned.
+      alert(data);
+    }
+  };
 
 
-
-
-
-
-
+  /**
+   * This is a map of options for your different forms. You can simply overwrite it
+   * to specify your form configurations, if it is too complex to be put in the
+   * form data-fw='' field.
+   * CAREFUL: When you set options here, they will be overwritten by the DOM options.
+   * Example:
+   * Formwatcher.options.myFormId = { ajax: true };
+   */
+  this.Formwatcher.options = {};
 
 
 
@@ -370,23 +406,8 @@
       .fwData('originalAction', this.form.attr('action'))
       .attr('action', 'javascript:Formwatcher.get('+this.id+').submitForm();');
 
-
-      // Those are the default options.
-      // Overwrite any of them by passing an options with the same parameters to the Watcher constructor.
-      this.options = $.extend({
-        submitUnchanged: true, // Remember: checkboxes are ALWAYS submitted if checked, and never if unchecked.
-        ajax: true,
-        submitOnChange: false, // Submit the form as soon as one input field has been changed. (Works only if ajax == true)
-        responseCheck: function(data) {
-          return !data; // If it's empty, it's OK.
-        }, // Checks the ajax transport if everything was ok. Returns true or false
-        onSubmit:  function()     { }, // This function gets called before submitting the form
-        onSuccess: function(data) { },  // If the responseCheck function returns true, this function gets called.
-        onError:   function(data) {
-          alert(data);
-        }, // If responseCheck returns false -> onError
-        validate: true // Whether or not the form should validate on submission.
-      }, options || {} );
+      // Now merging the provided options with the default options.
+      this.options = $.extend(_.clone(Formwatcher.defaultOptions), options || {} );
 
       this.observe('submit',  this.options.onSubmit);
       this.observe('success', this.options.onSuccess);
@@ -397,65 +418,71 @@
 
       $.each($(':input', this.form), function(i, input) {
         input = $(input);
-        if (!input.fwData('initialized') && input.attr('type') != 'hidden') {
-          var elements = Formwatcher.decorate(self, input);
-
-          if (elements.input.get() !== input.get()) {
-            // The input has changed, since the decorator can convert it to a hidden field
-            // and actually show a completely different UI
-            // Make sure the classNames stay intact for further inspection
-            elements.input.attr('class', input.attr('class'));
-            input = elements.input;
+        if (!input.fwData('initialized')) {
+          if (input.attr('type') === 'hidden') {
+            // Hidden input fields should always be submitted since they probably contain entity IDs and such.
+            input.fwData('forceSubmission', true);
           }
+          else {
+            var elements = Formwatcher.decorate(self, input);
 
-          if (!elements.label) {
-            var label = Formwatcher.getLabel(elements);
-            if (label) elements.label = label;
-          }
-
-          if (!elements.errors) {
-            var errorsElement = Formwatcher.getErrorsElement(elements, true);
-            elements.errors = errorsElement;
-          }
-
-          self.allElements.push(elements);
-
-          input.fwData('validators', []);
-
-          // Check which validators apply
-          _.each(Formwatcher.validators, function(validator) {
-            if (validator.accepts(input)) {
-              Formwatcher.debug('Validator "' + validator.name + '" found for input field "' + input.name + '".');
-              input.fwData('validators').push(validator);
+            if (elements.input.get() !== input.get()) {
+              // The input has changed, since the decorator can convert it to a hidden field
+              // and actually show a completely different UI
+              // Make sure the classNames stay intact for further inspection
+              elements.input.attr('class', input.attr('class'));
+              input = elements.input;
             }
-          });
 
-          Formwatcher.setOriginalValue(elements);
+            if (!elements.label) {
+              var label = Formwatcher.getLabel(elements);
+              if (label) elements.label = label;
+            }
 
-          if (input.val() === null || !input.val()) {
+            if (!elements.errors) {
+              var errorsElement = Formwatcher.getErrorsElement(elements, true);
+              elements.errors = errorsElement;
+            }
+
+            self.allElements.push(elements);
+
+            input.fwData('validators', []);
+
+            // Check which validators apply
+            _.each(Formwatcher.validators, function(validator) {
+              if (validator.accepts(input)) {
+                Formwatcher.debug('Validator "' + validator.name + '" found for input field "' + input.name + '".');
+                input.fwData('validators').push(validator);
+              }
+            });
+
+            Formwatcher.setOriginalValue(elements);
+
+            if (input.val() === null || !input.val()) {
+              $.each(elements, function() {
+                this.addClass('empty');
+              });
+            }
+
+            if (!self.options.submitUnchanged) {
+              Formwatcher.removeName(elements);
+            }
+
+            var onchangeFunction = _.bind(Formwatcher.changed, Formwatcher, elements, self);
+            var validateElementsFunction = _.bind(self.validateElements, self, elements, true);
+
             $.each(elements, function() {
-              this.addClass('empty');
+              this.focus(_.bind(function() {
+                this.addClass('focus');
+              }, this));
+              this.blur(_.bind(function() {
+                this.removeClass('focus');
+              }, this));
+              this.change(onchangeFunction);
+              this.blur(onchangeFunction);
+              this.keyup(validateElementsFunction);
             });
           }
-
-          if (!self.options.submitUnchanged) {
-            Formwatcher.removeName(elements);
-          }
-
-          var onchangeFunction = _.bind(Formwatcher.changed, Formwatcher, elements, self);
-          var validateElementsFunction = _.bind(self.validateElements, self, elements, true);
-
-          $.each(elements, function() {
-            this.focus(_.bind(function() {
-              this.addClass('focus');
-            }, this));
-            this.blur(_.bind(function() {
-              this.removeClass('focus');
-            }, this));
-            this.change(onchangeFunction);
-            this.blur(onchangeFunction);
-            this.keyup(validateElementsFunction);
-          });
         }
 
       });
@@ -582,43 +609,59 @@
 
       $.each($(':input', this.form), function(i, input) {
         input = $(input);
-        if (input.attr('type') === 'hidden' || input.attr('type') === 'checkbox' || input.fwData('changed') || self.options.submitUnchanged) {
+        // In previous versions I checked if the input field was hidden, and forced the submission
+        // then. But if a decorator transforms any input field in a hidden field, and puts
+        // a JS selector on top of it, the actual input field will always be hidden, thus submitted.
+        // So now the check if the field is hidden and should be submitted takes place
+        // in the constructor, and sets `forceSubmission` on the input field.
+        if (input.fwData('forceSubmission') || input.attr('type') === 'checkbox' || input.fwData('changed') || self.options.submitUnchanged) {
           if (input.attr('type') !== 'checkbox' || input.is(':checked')) {
             fields[input.attr('name') ? input.attr('name') : 'unnamedInput_' + (i ++)] = input.val();
           }
         }
       });
 
-      $.ajax({
-        url: this.form.fwData('originalAction'),
-        type: 'POST',
-        data: fields,
-        context: this,
-        success: function(data) {
+      if (_.size(fields) === 0 && !this.options.submitFormIfAllUnchanged) {
+        // There was no field to submit, so do nothing!
+        _.defer(_.bind(function() {
           this.enableForm();
-          if (!this.options.responseCheck(data)) {
-            // If the response check returns false, there has been an error
-            this.callObservers('error', data);
+          this.ajaxSuccess();
+        }, this));
+      }
+      else {
+        $.ajax({
+          url: this.form.fwData('originalAction'),
+          type: 'POST',
+          data: fields,
+          context: this,
+          success: function(data) {
+            this.enableForm();
+            if (!this.options.responseCheck(data)) {
+              // If the response check returns false, there has been an error
+              this.callObservers('error', data);
+            }
+            else {
+              this.callObservers('success', data);
+              this.ajaxSuccess();
+            }
           }
-          else {
-            this.callObservers('success', data);
-            _.each(this.allElements, function(elements) {
-              Formwatcher.unsetChanged(elements, this);
-              Formwatcher.setOriginalValue(elements);
-
-              var isEmpty = (elements.input.val() === null || !elements.input.val());
-
-              $.each(elements, function() {
-                if (isEmpty) this.addClass('empty');
-                else this.removeClass('empty');
-              });
-
-            });
-          }
-        }
-      });
+        });
+      }
 
       return undefined;
+    },
+    ajaxSuccess: function() {
+      _.each(this.allElements, function(elements) {
+        Formwatcher.unsetChanged(elements, this);
+        Formwatcher.setOriginalValue(elements);
+
+        var isEmpty = (elements.input.val() === null || !elements.input.val());
+
+        $.each(elements, function() {
+          if (isEmpty) this.addClass('empty');
+          else this.removeClass('empty');
+        });
+      });
     }
   });
 
@@ -627,9 +670,30 @@
 
   // Handle all forms that have the data-fw tag
   $(document).ready(function() {
+    var handleForm = function(form) {
+      var form = $(form);
+      var formId = form.attr('id');
+      var options = {};
+      if (formId) {
+        // Check if options have been set for it.
+        if (Formwatcher.options[formId]) {
+          options = Formwatcher.options[formId];
+        }
+      }
+      var domOptions = form.data('fw');
+      if (domOptions) {
+        // domOptions always overwrite the normal options.
+        options = _.extend(options, domOptions);
+      }
+      new Watcher(form, options);
+    }
+
     $('form[data-fw]').each(function() {
-      var form = $(this);
-      new Watcher(form, form.data('fw'));
+      handleForm(this);
+    });
+    
+    _.each(Formwatcher.options, function(options, formId) {
+      handleForm($('#' + formId));
     });
   });
 

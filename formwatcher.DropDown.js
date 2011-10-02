@@ -104,7 +104,7 @@
         list: listElement
       };
 
-      new this.Class(watcher, elements, options, selectedOptionIdx);
+      new DropDown(watcher, elements, options, selectedOptionIdx);
 
       return elements;
     },
@@ -128,8 +128,7 @@
       });
 
       return listElement;
-    },
-    Class: DropDown
+    }
   })));
 
 

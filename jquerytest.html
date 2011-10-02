@@ -64,6 +64,9 @@
       }
     });
     
+//    Formwatcher.options.myForm = { ajax: false, validate: false, onError: function() { alert('yo'); } };
+    Formwatcher.options.myForm = { ajax: true, submitUnchanged: false, validate: true, onError: function() { alert('yo'); } };
+
 //    var x = new Test2();
 //    x.doStuff();
   </script>
@@ -72,7 +75,7 @@
 <body>
   
   
-  <form id="test" action="jquerytest.html" data-fw='{ "ajax": true, "validate": false, "submitUnchanged": false }'>
+  <form id="myForm" action="jquerytest.html">
     
     integer: <input name="some-number" type="text" class="validate-integer not-zero" />
 

@@ -6,7 +6,7 @@
     description: 'Updates every option of a select element to display the font of its value.',
     nodeNames: ['SELECT'],
     classNames: ['font'],
-    activate: function(watcher, input) {
+    decorate: function(watcher, input) {
       this.updateInputFont(input);
 
       $('option', input).each(function() {
@@ -14,6 +14,10 @@
       });
 
       input.change(_.bind(this.updateInputFont, this, input));
+
+      return {
+        input: input
+      };
     },
     updateInputFont: function(input) {
       if (input.val()) {
