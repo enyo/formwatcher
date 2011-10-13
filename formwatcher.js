@@ -157,9 +157,11 @@
     changed: function(elements, watcher) {
       var input = elements.input;
 
-      if ((input.attr('type') === 'checkbox' && input.fwData('previouslyChecked') === input.is(':checked')) || (input.fwData('previousValue') === input.val())) {
+      if (!input.fwData('forceValidationOnChange') &&
+        ((input.attr('type') === 'checkbox' && input.fwData('previouslyChecked') === input.is(':checked')) || (input.fwData('previousValue') === input.val()))) {
         return; // Nothing changed
       }
+      input.fwData('forceValidationOnChange', false);
       this.setPreviousValueToCurrentValue(elements);
 
       if (((input.attr('type') === 'checkbox') && (input.fwData('initialyChecked') != input.is(':checked'))) ||
@@ -616,6 +618,12 @@
               element.addClass('validated');
               element.removeClass('error');
             });
+            if (inlineValidating) {
+              // When we remove an error during inline editing, the error has to
+              // be shown again when the user leaves the input field, even if
+              // the actual value has not changed.
+              elements.input.fwData('forceValidationOnChange', true);
+            }
           }
         }
         if (!inlineValidating && validated) {
