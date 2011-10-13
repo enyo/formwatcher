@@ -21,8 +21,8 @@
     name: 'Required', 
     description: 'Makes sure the value is not blank (nothing or spaces).',
     classNames: ['required'],
-    validate: function(value) {
-      if (!$.trim(value)) {
+    validate: function(value, input) {
+      if ((input.attr('type') === 'checkbox' && !input.is(':checked')) || !$.trim(value)) {
         return 'Can not be blank.';
       }
       return true;

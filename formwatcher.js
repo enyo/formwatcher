@@ -157,8 +157,13 @@
     changed: function(elements, watcher) {
       var input = elements.input;
 
-      if (((input.attr('type') === 'checkbox') && (input.fwData('originalyChecked') != input.is(':checked'))) ||
-        ((input.attr('type') !== 'checkbox') && (input.fwData('originalValue') != input.val()))) {
+      if ((input.attr('type') === 'checkbox' && input.fwData('previouslyChecked') === input.is(':checked')) || (input.fwData('previousValue') === input.val())) {
+        return; // Nothing changed
+      }
+      this.setPreviousValueToCurrentValue(elements);
+
+      if (((input.attr('type') === 'checkbox') && (input.fwData('initialyChecked') != input.is(':checked'))) ||
+        ((input.attr('type') !== 'checkbox') && (input.fwData('initialValue') != input.val()))) {
         Formwatcher.setChanged(elements, watcher);
       }
       else {
@@ -195,15 +200,27 @@
 
       if (!watcher.options.submitUnchanged) Formwatcher.removeName(elements);
     },
-    storeOriginalValue: function(elements) {
+    storeInitialValue: function(elements) {
       var input = elements.input;
-      if (input.attr('type') === 'checkbox') input.fwData('originalyChecked', input.is(':checked'));
-      else input.fwData('originalValue', input.val());
+      if (input.attr('type') === 'checkbox') input.fwData('initialyChecked', input.is(':checked'));
+      else input.fwData('initialValue', input.val());
+      this.setPreviousValueToInitialValue(elements);
     },
-    restoreOriginalValue: function(elements) {
+    restoreInitialValue: function(elements) {
       var input = elements.input;
-      if (input.attr('type') === 'checkbox') input.attr('checked', input.fwData('originalyChecked'));
-      else input.val(input.fwData('originalValue'));
+      if (input.attr('type') === 'checkbox') input.attr('checked', input.fwData('initialyChecked'));
+      else input.val(input.fwData('initialValue'));
+      this.setPreviousValueToInitialValue(elements);
+    },
+    setPreviousValueToInitialValue: function(elements) {
+      var input = elements.input;
+      if (input.attr('type') === 'checkbox') input.fwData('previouslyChecked', input.fwData('initialyChecked'));
+      else input.fwData('previousValue', input.fwData('initialValue'));
+    },
+    setPreviousValueToCurrentValue: function(elements) {
+      var input = elements.input;
+      if (input.attr('type') === 'checkbox') input.fwData('previouslyChecked', input.is(':checked'));
+      else input.fwData('previousValue', input.val());
     },
     removeName: function(elements) {
       var input = elements.input;
@@ -314,7 +331,7 @@
     /**
      * Return true if the validation passed, or an error message if not.
      */
-    validate: function(watcher, input) {
+    validate: function(sanitizedValue, input) {
       return true;
     },
     /**
@@ -466,7 +483,7 @@
               }
             });
 
-            Formwatcher.storeOriginalValue(elements);
+            Formwatcher.storeInitialValue(elements);
 
             if (input.val() === null || !input.val()) {
               $.each(elements, function() {
@@ -573,7 +590,7 @@
           input.fwData('validationErrors', []);
 
           validated = _.all(input.fwData('validators'), function(validator) {
-            var validationOutput = validator.validate(validator.sanitize(input.val()));
+            var validationOutput = validator.validate(validator.sanitize(input.val()), input);
             if (validationOutput !== true) {
               validated = false;
               input.fwData('validationErrors').push(validationOutput);
@@ -668,10 +685,10 @@
         Formwatcher.unsetChanged(elements, this);
         
         if (this.options.resetFormAfterSubmit) {
-          Formwatcher.restoreOriginalValue(elements);
+          Formwatcher.restoreInitialValue(elements);
         }
         else {
-          Formwatcher.storeOriginalValue(elements);
+          Formwatcher.storeInitialValue(elements);
         }
 
         var isEmpty = (elements.input.val() === null || !elements.input.val());
