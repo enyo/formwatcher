@@ -195,10 +195,15 @@
 
       if (!watcher.options.submitUnchanged) Formwatcher.removeName(elements);
     },
-    setOriginalValue: function(elements) {
+    storeOriginalValue: function(elements) {
       var input = elements.input;
       if (input.attr('type') === 'checkbox') input.fwData('originalyChecked', input.is(':checked'));
       else input.fwData('originalValue', input.val());
+    },
+    restoreOriginalValue: function(elements) {
+      var input = elements.input;
+      if (input.attr('type') === 'checkbox') input.attr('checked', input.fwData('originalyChecked'));
+      else input.val(input.fwData('originalValue'));
     },
     removeName: function(elements) {
       var input = elements.input;
@@ -354,6 +359,9 @@
     // To avoid that, formwatcher does not actually send the request. But if you want
     // that behaviour you can set this to true.
     submitFormIfAllUnchanged: false,
+    // When the form is submitted with AJAX, this tells the formwatcher how to
+    // leave the form afterwards. Eg: For guesbook posts this should probably be yes.
+    resetFormAfterSubmit: false,
     // Checks the ajax transport if everything was ok. If this function returns
     // false formwatcher assumes that the form submission resulted in an error.
     // So, if this function returns true `onSuccess` will be called. If false,
@@ -389,11 +397,13 @@
 
   this.Watcher = Class.extend({
     init: function(form, options) {
+      this.form = $(form);
+      
       this.allElements = [];
       this.id = Formwatcher.currentWatcherId ++;
       Formwatcher.add(this);
       this.observers = { };
-      this.form = $(form);
+      
       if (!this.form.length) {
         throw("Form element not found.");
       }
@@ -456,7 +466,7 @@
               }
             });
 
-            Formwatcher.setOriginalValue(elements);
+            Formwatcher.storeOriginalValue(elements);
 
             if (input.val() === null || !input.val()) {
               $.each(elements, function() {
@@ -517,16 +527,19 @@
     },
     submitForm: function() {
       if (!this.options.validate || this.validateForm()) {
-        this.disableForm();
         this.callObservers('submit');
 
         // Do submit
         if (this.options.ajax) {
+          this.disableForm();
           this.submitAjax();
         }
         else {
           this.form.attr('action', this.form.fwData('originalAction'));
-          _.defer(_.bind(this.form.submit, this.form));
+          _.defer(_.bind(function() {
+            this.form.submit();
+            this.disableForm();
+          }, this));
           return false;
         }
       }
@@ -651,9 +664,15 @@
       return undefined;
     },
     ajaxSuccess: function() {
-      _.each(this.allElements, function(elements) {
+      _.each(this.allElements, _.bind(function(elements) {
         Formwatcher.unsetChanged(elements, this);
-        Formwatcher.setOriginalValue(elements);
+        
+        if (this.options.resetFormAfterSubmit) {
+          Formwatcher.restoreOriginalValue(elements);
+        }
+        else {
+          Formwatcher.storeOriginalValue(elements);
+        }
 
         var isEmpty = (elements.input.val() === null || !elements.input.val());
 
@@ -661,7 +680,7 @@
           if (isEmpty) this.addClass('empty');
           else this.removeClass('empty');
         });
-      });
+      }, this));
     }
   });
 
@@ -672,6 +691,12 @@
   $(document).ready(function() {
     var handleForm = function(form) {
       var form = $(form);
+      
+      if (form.fwData('watcher')) {
+        // A form can only be watched once!
+        return;
+      }
+      
       var formId = form.attr('id');
       var options = {};
       if (formId) {
