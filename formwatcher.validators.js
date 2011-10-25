@@ -66,7 +66,7 @@
     classNames: ['validate-float'],
     validate: function(value) {
       var parsedFloat = parseFloat(value);
-      if (isNaN(parsedFloat)) {
+      if (isNaN(parsedFloat) || '' + parsedFloat !== value) {
         return 'Has to be a number.';
       }
       return true;
