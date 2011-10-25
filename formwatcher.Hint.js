@@ -44,13 +44,21 @@
         fontSize: input.css('fontSize'),
         fontFamily: input.css('fontFamily'),
         color: 'grey'
+      }).click(function() {
+        input.focus();
       }).insertAfter(input);
 
       input.focus(function() {
-        hintElement.css({left: 'auto', right: rightPosition});
+        hintElement.css({
+          left: 'auto', 
+          right: rightPosition
+        });
       });
       input.blur(function() {
-        hintElement.css({right: 'auto', left: leftPosition});
+        hintElement.css({
+          right: 'auto', 
+          left: leftPosition
+        });
       });
       
       var changeFunction = function() {
