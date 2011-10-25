@@ -289,7 +289,7 @@
      * Overwrite this function if your logic to which elements your decorator applies
      * is more complicated than a simple nodeName/className comparison.
      */
-    accepts: function(input) {
+    accepts: function(input, watcher) {
       return (_.any(this.nodeNames, function(nodeName) {
         return input.get(0).nodeName == nodeName;
       }) && _.all(this.classNames, function(className) {
@@ -479,8 +479,8 @@
 
             // Check which validators apply
             _.each(Formwatcher.validators, function(validator) {
-              if (validator.accepts(input)) {
-                Formwatcher.debug('Validator "' + validator.name + '" found for input field "' + input.name + '".');
+              if (validator.accepts(input, self)) {
+                Formwatcher.debug('Validator "' + validator.name + '" found for input field "' + input.attr('name') + '".');
                 input.fwData('validators').push(validator);
               }
             });
@@ -592,6 +592,7 @@
           input.fwData('validationErrors', []);
 
           validated = _.all(input.fwData('validators'), function(validator) {
+            Formwatcher.debug('Validating ' + validator.name);
             var validationOutput = validator.validate(validator.sanitize(input.val()), input);
             if (validationOutput !== true) {
               validated = false;
