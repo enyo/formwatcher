@@ -282,10 +282,7 @@
      */
     init: function(watcher) {
       this.watcher = watcher;
-      this.options = _.clone(this.defaultOptions);
-      if (watcher.options[this.name]) {
-        _.extend(this.options, watcher.options[this.name]);
-      }
+      this.options = $.extend(true, {}, this.defaultOptions, watcher.options[this.name] || {} ); // Performing a deep copy of all objects
     },
 
     /**
@@ -449,7 +446,7 @@
       .attr('action', 'javascript:Formwatcher.get('+this.id+').submitForm();');
 
       // Now merging the provided options with the default options.
-      this.options = $.extend(_.clone(Formwatcher.defaultOptions), options || {} );
+      this.options = $.extend(true, {}, Formwatcher.defaultOptions, options || {} ); // Performing a deep copy of all objects
 
 
       // Creating all validators and decorators for this form

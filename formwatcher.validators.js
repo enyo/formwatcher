@@ -6,8 +6,7 @@
     description: 'Makes sure a value is an integer',
     classNames: ['validate-integer'],
     validate: function(value) {
-      var parsedInt = parseInt(value);
-      if (isNaN(parsedInt) || value !== '' + parsedInt) {
+      if (value.replace(/\d*/, '') != '') {
         return 'Has to be a number.';
       }
       return true;
@@ -64,8 +63,12 @@
     name: 'Float',
     description: 'Makes sure a value is a float',
     classNames: ['validate-float'],
+    defaultOptions: { decimalMark: ',' },
     validate: function(value) {
-      if (value.replace(/\d+(\.\d+)?/, '') != '') {
+      Formwatcher.debug('/\\d+(\\' + this.options.decimalMark + '\\d+)?/', 'g');
+//      var regex = new RegExp('/\\d+(\\' + this.options.decimalMark + '\\d+)?/');
+      var regex = new RegExp('\\d+(\\' + this.options.decimalMark + '\\d+)?');
+      if (value.replace(regex, '') != '') {
         return 'Has to be a number.';
       }
       return true;
@@ -84,6 +87,9 @@
       if (value.indexOf(",") >= 0) {
         value = value.replace(/\,/g, '.');
       }
+
+      // Now make sure the right decimal mark is used:
+      value = value.replace(/\./g, this.options.decimalMark);
 
       if (value.indexOf(".") != value.lastIndexOf(".")) {
         // Apparently they have only been used for thousands separators.

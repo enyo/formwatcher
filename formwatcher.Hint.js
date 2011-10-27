@@ -12,7 +12,9 @@
     accepts: function(input) {
       if (this._super(input)) {
         if ((input.data('hint') !== undefined) ||
-          (this.options.auto && this.watcher.getLabel({ input: input }))) { // If autoHint is on, and there IS a label.
+          (this.options.auto && this.watcher.getLabel({
+            input: input
+          }))) { // If autoHint is on, and there IS a label.
           return true;
         }
       } 
@@ -44,7 +46,7 @@
 
       input.appendTo(container);
 
-      var leftPosition = parseInt(input.css('paddingLeft')) + parseInt(input.css('marginLeft')) + parseInt(input.css('borderLeftWidth')) + 'px';
+      var leftPosition = parseInt(input.css('paddingLeft')) + parseInt(input.css('marginLeft')) + parseInt(input.css('borderLeftWidth')) + 3 + 'px'; // + 3 so the cursor is not over the text
       var rightPosition = parseInt(input.css('paddingRight')) + parseInt(input.css('marginRight')) + parseInt(input.css('borderRightWidth')) + 'px';
 
 
@@ -60,29 +62,28 @@
         input.focus();
       }).insertAfter(input);
 
+      var fadeLength = 100;
+
       input.focus(function() {
-        hintElement.css({
-          left: 'auto', 
-          right: rightPosition
-        });
+        if (input.val() == '') hintElement.fadeTo(fadeLength, 0.4);
+//        else hintElement.fadeOut(fadeLength);
       });
       input.blur(function() {
-        hintElement.css({
-          right: 'auto', 
-          left: leftPosition
-        });
+        if (input.val() == '') hintElement.fadeTo(fadeLength, 1);
+//        else hintElement.fadeOut(fadeLength);
       });
       
       var changeFunction = function() {
-        if (input.val() == '') {
-          hintElement.fadeIn(100);
-        }
-        else {
-          hintElement.fadeOut(100);
-        }
+        if (input.val() == '') hintElement.show();
+        else hintElement.hide();
       };
       
       input.keyup(changeFunction);
+      input.keypress(function() { _.defer(changeFunction); });
+      input.keydown(function() { _.defer(changeFunction); });
+//      input.keyup(function() { _.defer(changeFunction); });
+//      input.keydown(function() { _.defer(changeFunction); });
+//      input.keypress(function() { _.defer(changeFunction); });
       input.change(changeFunction);
 
       changeFunction();
