@@ -145,15 +145,6 @@
       errors.hide().addClass('errors');
       return errors;
     },
-    getLabel: function(elements)   {
-      var input = elements.input;
-      var label;
-      if (input.attr("id")) {
-        label = $('label[for='+input.attr("id")+']');
-        if (!label.length) label = null;
-      }
-      return label;
-    },
     changed: function(elements, watcher) {
       var input = elements.input;
 
@@ -284,26 +275,27 @@
     description: 'No description',
     nodeNames: null, // eg: SELECT
     classNames: [], // eg: ['font']'
-    options: { }, // Overwrite this with your default options, and access them with getOption()
-
+    defaultOptions: { }, // Overwrite this with your default options. Those options can be overridden in the watcher config.
+    options: null, // On initialization this gets filled with the actual options so they don't have to be calculated every time.
+    /**
+     * Stores the watcher, and creates a valid options object.
+     */
     init: function(watcher) {
       this.watcher = watcher;
-    },
-
-    /**
-     * Returns the specified option.
-     * You can set the option in your ElementWatcher implementation, and overwrite
-     * them in your Watcher.options.VALIDATOR_NAME configuration.
-     */
-    getOption: function(optionName) {
-      
+      this.options = _.clone(this.defaultOptions);
+      if (watcher.options[this.name]) {
+        _.extend(this.options, watcher.options[this.name]);
+      }
     },
 
     /**
      * Overwrite this function if your logic to which elements your decorator applies
      * is more complicated than a simple nodeName/className comparison.
      */
-    accepts: function(input, watcher) {
+    accepts: function(input) {
+      // If the config for a ElementWatcher is just false, it's disabled for the watcher.
+      if (this.watcher.options[this.name] !== undefined && !this.watcher.options[this.name]) return false;
+
       return (_.any(this.nodeNames, function(nodeName) {
         return input.get(0).nodeName == nodeName;
       }) && _.all(this.classNames, function(className) {
@@ -395,6 +387,11 @@
     // When the form is submitted with AJAX, this tells the formwatcher how to
     // leave the form afterwards. Eg: For guesbook posts this should probably be yes.
     resetFormAfterSubmit: false,
+    // Creating ids for input fields, and setting the `for` attribute on the labels
+    // is the right way to go, but can be a tedious task. If automatchLabel is true,
+    // Formwatcher will automatically match the closest previous label without a `for`
+    // attribute as the correct label.
+    automatchLabel: true,
     // Checks the ajax transport if everything was ok. If this function returns
     // false formwatcher assumes that the form submission resulted in an error.
     // So, if this function returns true `onSuccess` will be called. If false,
@@ -443,8 +440,19 @@
 
       var self = this;
 
+      // Putting the watcher object in the form element.
+      this.form.fwData('watcher', this);
+
+      // Making sure the form always goes through the formwatcher on submit.
+      this.form
+      .fwData('originalAction', this.form.attr('action'))
+      .attr('action', 'javascript:Formwatcher.get('+this.id+').submitForm();');
+
+      // Now merging the provided options with the default options.
+      this.options = $.extend(_.clone(Formwatcher.defaultOptions), options || {} );
+
+
       // Creating all validators and decorators for this form
-      
       this.decorators = [];
       this.validators = [];
       
@@ -456,16 +464,6 @@
       });
 
 
-      // Putting the watcher object in the form element.
-      this.form.fwData('watcher', this);
-
-      // Making sure the form always goes through the formwatcher on submit.
-      this.form
-      .fwData('originalAction', this.form.attr('action'))
-      .attr('action', 'javascript:Formwatcher.get('+this.id+').submitForm();');
-
-      // Now merging the provided options with the default options.
-      this.options = $.extend(_.clone(Formwatcher.defaultOptions), options || {} );
 
       this.observe('submit',  this.options.onSubmit);
       this.observe('success', this.options.onSuccess);
@@ -491,7 +489,7 @@
             }
 
             if (!elements.label) {
-              var label = Formwatcher.getLabel(elements);
+              var label = self.getLabel(elements);
               if (label) elements.label = label;
             }
 
@@ -543,7 +541,19 @@
 
       });
     },
-
+    getLabel: function(elements)   {
+      var input = elements.input;
+      var label;
+      if (input.attr("id")) {
+        label = $('label[for='+input.attr("id")+']');
+        if (!label.length) label = null;
+      }
+      if (!label && this.options.automatchLabel) {
+        var label = input.prev();
+        if (label.get(0).nodeName !== 'LABEL' || label.attr('for')) label = null;
+      }
+      return label;
+    },
     callObservers: function(eventName) {
       var args = _.toArray(arguments);
       args.shift();

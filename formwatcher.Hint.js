@@ -5,9 +5,19 @@
     name: 'Hint',
     description: 'Displays a hint in an input field.',
     nodeNames: ['INPUT', 'TEXTAREA'],
+    defaultOptions: {
+      auto: true, // This automatically makes labels into hints.
+      removeTrailingColon: true // Removes the trailing ' : ' from labels.
+    },
     accepts: function(input) {
-      if (this._super(input) && input.data('hint') !== undefined) return true;
-      else return false;
+      if (this._super(input)) {
+        if ((input.data('hint') !== undefined) ||
+          (this.options.auto && this.watcher.getLabel({ input: input }))) { // If autoHint is on, and there IS a label.
+          return true;
+        }
+      } 
+
+      return false;
     },
     decorate: function(input) {
       var elements = {
@@ -16,12 +26,14 @@
 
       var hint = input.data('hint');
 
-      if (hint === '') {
-        var label = Formwatcher.getLabel(elements);
+      if (hint === undefined || hint == '') {
+        var label = this.watcher.getLabel(elements);
         if (!label) throw "The hint was empty, but there was no label.";
         elements.label = label;
         label.hide();
         hint = label.html();
+        
+        if (this.options.removeTrailingColon) hint = hint.replace(/\s*\:\s*$/, ''); // Remove any trailing ' : '
       }
 
       Formwatcher.debug('Using hint: ' + hint);
