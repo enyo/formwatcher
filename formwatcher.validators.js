@@ -65,8 +65,7 @@
     description: 'Makes sure a value is a float',
     classNames: ['validate-float'],
     validate: function(value) {
-      var parsedFloat = parseFloat(value);
-      if (isNaN(parsedFloat) || '' + parsedFloat !== value) {
+      if (value.replace(/\d+(\.\d+)?/, '') != '') {
         return 'Has to be a number.';
       }
       return true;
