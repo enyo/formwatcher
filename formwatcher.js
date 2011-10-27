@@ -172,7 +172,7 @@
         Formwatcher.unsetChanged(elements, watcher);
       }
 
-      watcher.validateElements(elements);
+      if (this.options.validate) watcher.validateElements(elements);
     },
     setChanged: function(elements, watcher) {
       var input = elements.input;
