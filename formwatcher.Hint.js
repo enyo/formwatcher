@@ -1,7 +1,7 @@
 /*  © Matias Meno   */
 (function( $ ){
 
-  Formwatcher.decorators.push(new (Formwatcher.Decorator.extend({
+  Formwatcher.Decorators.push(Formwatcher.Decorator.extend({
     name: 'Hint',
     description: 'Displays a hint in an input field.',
     nodeNames: ['INPUT', 'TEXTAREA'],
@@ -9,7 +9,7 @@
       if (this._super(input) && input.data('hint') !== undefined) return true;
       else return false;
     },
-    decorate: function(watcher, input) {
+    decorate: function(input) {
       var elements = {
         input: input
       };
@@ -77,6 +77,6 @@
 
       return elements;
     }
-  })));
+  }));
   
 })( jQuery );

@@ -55,12 +55,12 @@
 
 
 
-  Formwatcher.decorators.push(new (Formwatcher.Decorator.extend({
+  Formwatcher.Decorators.push(Formwatcher.Decorator.extend({
     name: 'DropDown',
     description: 'Converts a select into a button, which shows a div of all available options when clicked. This is ment to facilitate designing drop downs.',
     nodeNames: ['SELECT'],
     classNames: ['drop-down'],
-    decorate: function(watcher, select) {
+    decorate: function(select) {
 
       // First create a hidden input field that will be used to post the data.
       var valueInput = $.el('input')
@@ -129,7 +129,7 @@
 
       return listElement;
     }
-  })));
+  }));
 
 
 })( jQuery );

@@ -1,7 +1,7 @@
 
 (function( $ ){
 
-  Formwatcher.validators.push(new (Formwatcher.Validator.extend({
+  Formwatcher.Validators.push(Formwatcher.Validator.extend({
     name: 'Integer',
     description: 'Makes sure a value is an integer',
     classNames: ['validate-integer'],
@@ -15,9 +15,9 @@
     sanitize: function(value) {
       return $.trim(value);
     }
-  })));
+  }));
 
-  Formwatcher.validators.push(new (Formwatcher.Validator.extend({
+  Formwatcher.Validators.push(Formwatcher.Validator.extend({
     name: 'Required', 
     description: 'Makes sure the value is not blank (nothing or spaces).',
     classNames: ['required'],
@@ -27,9 +27,9 @@
       }
       return true;
     }
-  })));
+  }));
 
-  Formwatcher.validators.push(new (Formwatcher.Validator.extend({
+  Formwatcher.Validators.push(Formwatcher.Validator.extend({
     name: 'NotZero',
     description: 'Makes sure the value is not 0.',
     classNames: ['not-zero'],
@@ -40,9 +40,9 @@
       }
       return true;
     }
-  })));
+  }));
 
-  Formwatcher.validators.push(new (Formwatcher.Validator.extend({
+  Formwatcher.Validators.push(Formwatcher.Validator.extend({
     name: 'Email',
     description: 'Makes sure the value is an email.',
     classNames: ['validate-email'],
@@ -58,9 +58,9 @@
     sanitize: function(value) {
       return $.trim(value);
     }
-  })));
+  }));
 
-  Formwatcher.validators.push(new (Formwatcher.Validator.extend({
+  Formwatcher.Validators.push(Formwatcher.Validator.extend({
     name: 'Float',
     description: 'Makes sure a value is a float',
     classNames: ['validate-float'],
@@ -93,6 +93,6 @@
 
       return $.trim(value);
     }
-  })));
+  }));
 
 })( jQuery );

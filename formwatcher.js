@@ -172,7 +172,7 @@
         Formwatcher.unsetChanged(elements, watcher);
       }
 
-      if (this.options.validate) watcher.validateElements(elements);
+      if (watcher.options.validate) watcher.validateElements(elements);
     },
     setChanged: function(elements, watcher) {
       var input = elements.input;
@@ -239,19 +239,19 @@
       input.attr('name', input.fwData('name'));
     },
 
-    decorators: [],
+    Decorators: [],
     decorate: function(watcher, input) {
-      var decorator = _.detect(Formwatcher.decorators, function(decorator) {
+      var decorator = _.detect(watcher.decorators, function(decorator) {
         if (decorator.accepts(input)) return true;
       });
       if (decorator) {
-        return decorator.decorate(watcher, input);
+        return decorator.decorate(input);
       } 
       else return {
         input: input
       };
     },
-    validators: [],
+    Validators: [],
     currentWatcherId: 0,
     watchers: [],
     add: function(watcher) {
@@ -284,6 +284,20 @@
     description: 'No description',
     nodeNames: null, // eg: SELECT
     classNames: [], // eg: ['font']'
+    options: { }, // Overwrite this with your default options, and access them with getOption()
+
+    init: function(watcher) {
+      this.watcher = watcher;
+    },
+
+    /**
+     * Returns the specified option.
+     * You can set the option in your ElementWatcher implementation, and overwrite
+     * them in your Watcher.options.VALIDATOR_NAME configuration.
+     */
+    getOption: function(optionName) {
+      
+    },
 
     /**
      * Overwrite this function if your logic to which elements your decorator applies
@@ -427,6 +441,21 @@
         throw("Form element not found.");
       }
 
+      var self = this;
+
+      // Creating all validators and decorators for this form
+      
+      this.decorators = [];
+      this.validators = [];
+      
+      _.each(Formwatcher.Decorators, function(Decorator) {
+        self.decorators.push(new Decorator(self));
+      });
+      _.each(Formwatcher.Validators, function(Validator) {
+        self.validators.push(new Validator(self));
+      });
+
+
       // Putting the watcher object in the form element.
       this.form.fwData('watcher', this);
 
@@ -442,8 +471,6 @@
       this.observe('success', this.options.onSuccess);
       this.observe('error',   this.options.onError);
 
-
-      var self = this;
 
       $.each($(':input', this.form), function(i, input) {
         input = $(input);
@@ -478,7 +505,7 @@
             input.fwData('validators', []);
 
             // Check which validators apply
-            _.each(Formwatcher.validators, function(validator) {
+            _.each(self.validators, function(validator) {
               if (validator.accepts(input, self)) {
                 Formwatcher.debug('Validator "' + validator.name + '" found for input field "' + input.attr('name') + '".');
                 input.fwData('validators').push(validator);

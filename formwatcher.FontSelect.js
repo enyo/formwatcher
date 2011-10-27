@@ -1,12 +1,12 @@
 /*  © Matias Meno   */
 (function( $ ){
 
-  Formwatcher.decorators.push(new (Formwatcher.Decorator.extend({
+  Formwatcher.Decorators.push(Formwatcher.Decorator.extend({
     name: 'FontSelector',
     description: 'Updates every option of a select element to display the font of its value.',
     nodeNames: ['SELECT'],
     classNames: ['font'],
-    decorate: function(watcher, input) {
+    decorate: function(input) {
       this.updateInputFont(input);
 
       $('option', input).each(function() {
@@ -24,6 +24,6 @@
         input.css('fontFamily', input.val());
       }
     }
-  })));
+  }));
   
 })( jQuery );
