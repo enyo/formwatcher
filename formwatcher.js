@@ -718,6 +718,11 @@
           input.val(sanitizedValue);
         }
       }
+      else {
+        _.each(elements, function(element) {
+          element.addClass('validated');
+        });
+      }
 
       return validated;
     },

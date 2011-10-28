@@ -51,16 +51,22 @@
     }
 
 
-    input.focus, select.focus, textarea.focus, button.focus {
+    input.focus, select.focus, textarea.focus {
       background: #ffc;
 /*      border: 1px solid green;*/
+    }
+    button.focus {
+      color: #ffc;
     }
     input.changed, select.changed, textarea.changed, button.changed {
 /*      font-weight: bold;*/
     }
-    input.error, select.error, textarea.error, button.error {
+    input.error, select.error, textarea.error {
       background: #ffeeee;
-/*      border: 1px solid red;*/
+    }
+    button.error {
+      color: #a00;
+      font-weight: bold;
     }
     input.validated, select.validated, textarea.validated {
       background: #dfd;
