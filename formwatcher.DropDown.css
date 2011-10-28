@@ -11,6 +11,7 @@
   background: white;
   border-radius: 3px;
   -webkit-box-shadow: 0 0 8px #eee;
+  z-index: 1000;
   
 }
 

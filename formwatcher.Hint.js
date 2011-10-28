@@ -46,11 +46,11 @@
 
       input.appendTo(container);
 
-      var leftPosition = parseInt(input.css('paddingLeft')) + parseInt(input.css('marginLeft')) + parseInt(input.css('borderLeftWidth')) + 3 + 'px'; // + 3 so the cursor is not over the text
+      var leftPosition = parseInt(input.css('paddingLeft')) + parseInt(input.css('marginLeft')) + parseInt(input.css('borderLeftWidth')) + 2 + 'px'; // + 2 so the cursor is not over the text
       var rightPosition = parseInt(input.css('paddingRight')) + parseInt(input.css('marginRight')) + parseInt(input.css('borderRightWidth')) + 'px';
 
 
-      var hintElement = $('<span>' + hint + '</span>').css({
+      var hintElement = $.el('span').html(hint).css({
         position: 'absolute',
         display: 'none',
         top: parseInt(input.css('paddingTop')) + parseInt(input.css('marginTop')) + parseInt(input.css('borderTopWidth')) + 'px',

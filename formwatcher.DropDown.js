@@ -20,13 +20,30 @@
       this.updateState();
     },
     toggleList: function() {
-      this.elements.list.toggle();
+      if (this.elements.list.is(':hidden')) this.showList();
+      else this.hideList();
+    },
+    showList: function() {
+      this.elements.list.show();
+      var selectedLi = $('li.selected', this.elements.list);
+      if (selectedLi.size()) {
+        // Make sure the list is scrolled to the selected entry.
+        this.elements.list.scrollTop(this.elements.list.scrollTop() + selectedLi.position().top);
+      }
+
+      // And now register a click event anywhere on the page.
+      var self = this;
+      _.defer(function() { self.elements.list.outerClick(_.bind(self.hideList, self), 'hiding') });
+    },
+    hideList: function() {
+      this.elements.list.hide();
+      this.elements.list.unbindOuterClick('hiding');
     },
     selectedOption: function(optionIdx) {
       this.selectedOptionIdx = optionIdx;
       var option = this.getSelectedOption();
       this.elements.button.html(option.name);
-      this.elements.list.hide();
+      this.hideList();
       this.elements.input.val(option.value);
       this.updateState();
       Formwatcher.changed(this.elements, this.watcher);
@@ -64,9 +81,9 @@
 
       // First create a hidden input field that will be used to post the data.
       var valueInput = $.el('input')
-        .attr('name', select.attr('name'))
-        .attr('type', 'hidden')
-        .val(select.val());
+      .attr('name', select.attr('name') || '')
+      .attr('type', 'hidden')
+      .val(select.val());
 
 
       var options = [];
@@ -90,11 +107,11 @@
       var listElement = this.createListElement(options);
 
       var elementsContainer = $.el('div')
-        .addClass('drop-down')
-        .append(buttonElement)
-        .append(listElement)
-        .append(valueInput)
-        .insertAfter(select);
+      .addClass('drop-down')
+      .append(buttonElement)
+      .append(listElement)
+      .append(valueInput)
+      .insertAfter(select);
 
       select.remove();
 
@@ -104,7 +121,7 @@
         list: listElement
       };
 
-      new DropDown(watcher, elements, options, selectedOptionIdx);
+      new DropDown(this.watcher, elements, options, selectedOptionIdx);
 
       return elements;
     },

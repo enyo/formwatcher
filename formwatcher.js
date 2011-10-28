@@ -58,7 +58,7 @@
 
   $.el = function(nodeName) {
     return $(document.createElement(nodeName));
-  }
+  };
 
   $.fn.center = function() {
     this.css("position","absolute");
@@ -67,6 +67,53 @@
     return this;
   };
   // TODO: implement: fixate
+
+
+  /**
+   * Returns either the id of the element, or a generated id, which will be assigned as ID to the element.
+   */
+  $.fn.uid = function() {
+    var id = this.attr('id');
+    if (!id) {
+      id = 'generatedUID' + (Formwatcher.uidCounter ++);
+      this.attr('id', id);
+    }
+    return id;
+  };
+
+  /**
+   * Registers an event handler if a click occurs outside an element.
+   */
+  $.fn.outerClick = function(handler, namespace) {
+    var namespaceString = '.' + this.uid() + (namespace ?  + '-' + namespace : '');
+    // Invokes handler when user clicks outside of element.
+    $('body').bind('click' + namespaceString,_.bind(function(event) {
+      if (!$(event.target).closest(this).length) {
+        handler();
+      };
+    }, this));
+    return this;
+  };
+  /**
+   * Unbinds the event handler
+   */
+  $.fn.unbindOuterClick = function(namespace) {
+    $('body').unbind('click.' + this.uid() + (namespace ?  + '-' + namespace : ''));
+    return this;
+  };
+
+  /**
+   * Hides an element when an element somewhere else is clicked.
+   */
+  $.fn.hideOnOuterClick = function() {
+    var self = this;
+    var namespace = 'hideOnOuterClick';
+    _.defer(function() { self.outerClick(function() {
+      self.hide();
+      self.unbindOuterClick(namespace);
+    }, namespace) });
+    return this;
+  };
 
 
   // Returns and stores attributes only for formwatcher.
@@ -95,6 +142,7 @@
     Version: '0.5.0',
     REQUIRED_JQUERY_VERSION: '1.6.0',
     debugging: false,
+    uidCounter: 0,
     require: function(libraryName) {
       // inserting via DOM fails in Safari 2.0, so brute force approach
       $('body').append('<script type="text/javascript" src="'+libraryName+'"><\/script>');
@@ -236,6 +284,7 @@
         if (decorator.accepts(input)) return true;
       });
       if (decorator) {
+        Formwatcher.debug('Decorator "' + decorator.name + '" found for input field "' + input.attr('name') + '".');
         return decorator.decorate(input);
       } 
       else return {

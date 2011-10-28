@@ -88,13 +88,13 @@
         value = value.replace(/\,/g, '.');
       }
 
-      // Now make sure the right decimal mark is used:
-      value = value.replace(/\./g, this.options.decimalMark);
-
       if (value.indexOf(".") != value.lastIndexOf(".")) {
         // Apparently they have only been used for thousands separators.
         value = value.replace(/\./g, '');
       }
+
+      // Now make sure the right decimal mark is used:
+      value = value.replace(/\./g, this.options.decimalMark);
 
       return $.trim(value);
     }
