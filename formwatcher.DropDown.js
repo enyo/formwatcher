@@ -2,7 +2,7 @@
 (function( $ ){
 
 
-  var DropDown = Class.extend({
+  var DropDown = Formwatcher.Class.extend({
     init: function(watcher, elements, options, selectedOptionIdx) {
       this.watcher = watcher;
       this.elements = elements;
@@ -28,7 +28,7 @@
       var selectedLi = $('li.selected', this.elements.list);
       if (selectedLi.size()) {
         // Make sure the list is scrolled to the selected entry.
-        this.elements.list.scrollTop(this.elements.list.scrollTop() + selectedLi.position().top);
+        this.elements.list.scrollTop(this.elements.list.scrollTop() + selectedLi.position().top - 15);
       }
 
       // And now register a click event anywhere on the page.
