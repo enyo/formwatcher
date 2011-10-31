@@ -46,14 +46,16 @@
 
       input.appendTo(container);
 
-      var leftPosition = parseInt(input.css('paddingLeft')) + parseInt(input.css('marginLeft')) + parseInt(input.css('borderLeftWidth')) + 2 + 'px'; // + 2 so the cursor is not over the text
-      var rightPosition = parseInt(input.css('paddingRight')) + parseInt(input.css('marginRight')) + parseInt(input.css('borderRightWidth')) + 'px';
+
+
+      var leftPosition = parseInt(input.css('paddingLeft')) + parseInt(input.position().left) + parseInt(input.css('borderLeftWidth')) + 2 + 'px'; // + 2 so the cursor is not over the text
+      var rightPosition = parseInt(input.css('paddingRight')) + parseInt(input.position().right) + parseInt(input.css('borderRightWidth')) + 'px';
 
 
       var hintElement = $.el('span').html(hint).css({
         position: 'absolute',
         display: 'none',
-        top: parseInt(input.css('paddingTop')) + parseInt(input.css('marginTop')) + parseInt(input.css('borderTopWidth')) + 'px',
+        top: parseInt(input.css('paddingTop')) + parseInt(input.position().top) + parseInt(input.css('borderTopWidth')) + 'px',
         left: leftPosition,
         fontSize: input.css('fontSize'),
         fontFamily: input.css('fontFamily'),
