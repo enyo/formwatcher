@@ -11,6 +11,7 @@
   background: white;
   border-radius: 3px;
   -webkit-box-shadow: 0 0 8px #eee;
+  z-index: 1000;
   
 }
 
@@ -35,6 +36,6 @@
   color: black;
 }
 .drop-down .list ul li.selected a {
-  color: green;
-  font-weight: bold;
+  color: #252;
+  background: #eef9ee;
 }

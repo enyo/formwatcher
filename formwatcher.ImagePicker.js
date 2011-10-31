@@ -1,4 +1,4 @@
-/*  © Matthias Loitsch // Graphics © by Tjandra Mayerhold  */
+/*  © Matias Meno // Graphics © by Tjandra Mayerhold  */
 var ImagePicker = Class.create({
   thumbnailSize: 100,
   images: [],

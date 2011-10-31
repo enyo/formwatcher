@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Formwatcher tests</title>
+  
+  
+<!--  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.js"></script>-->
+  <script type="text/javascript" src="jquery-1.6.1.js"></script>
+  <script type="text/javascript" src="underscore.js"></script>
+  <script type="text/javascript" src="formwatcher.Class.js"></script>
+  <script type="text/javascript" src="formwatcher.js"></script>
+  <script type="text/javascript" src="formwatcher.DropDown.js"></script>
+  
+  <style type="text/css">
+    
+    @import "formwatcher.css";
+    
+    @import "formwatcher.DropDown.css";
+    
+    
+    body {
+      background: url("grain.png");
+    }
+
+    input.focus, select.focus, textarea.focus, button.focus {
+      background: yellow;
+/*      border: 1px solid green;*/
+    }
+    input.changed, select.changed, textarea.changed, button.changed {
+      background: #eeffee;
+    }
+    input.error, select.error, textarea.error, button.error {
+      background: #ffeeee;
+/*      border: 1px solid red;*/
+    }
+    input.validated, select.validated, textarea.validated, button.validated {
+      background: #aaffaa;
+/*      border: 1px solid green;*/
+    }
+    .errors {
+      color: red;
+    }
+
+    
+  </style>
+  
+  <script type="text/javascript">
+//    Formwatcher.debugging = true;
+
+    var Test = Class.extend({
+      init: function() {
+        alert('init');
+      },
+      doStuff: function() {
+        alert('super');
+      }
+    });
+    
+    var Test2 = Test.extend({
+      doStuff: function() {
+        this._super();
+        alert('impl');
+      }
+    });
+    
+//    Formwatcher.options.myForm = { ajax: false, validate: false, onError: function() { alert('yo'); } };
+    Formwatcher.options.myForm = { ajax: true, submitUnchanged: false, validate: true, onError: function() { alert('yo'); } };
+
+//    var x = new Test2();
+//    x.doStuff();
+  </script>
+  
+</head>
+<body>
+  
+  
+  <form id="myForm" action="jquerytest.html">
+    
+    integer: <input name="some-number" type="text" class="validate-integer not-zero" />
+
+    <div id="some-number-errors"></div>
+    
+    <br />
+    <br />
+
+   float: <input name="some-float" type="text" class="validate-float not-zero" />
+   
+    <br />
+    <br />
+
+
+    <select name="font" class="font required">
+      
+      <option value="">EMPTY</option>
+      <option value="arial">arial</option>
+      <option value="times">times</option>
+      <option value="verdana">verdana</option>
+      
+    </select>
+    <br />
+    <br />
+
+
+    
+    <select name="image" class="image">
+      
+      <option value="images/imagepicker.close.png">close image</option>
+      <option value="images/imagepicker.slider.handle.png">slider</option>
+      <option value="images/imagepicker.titlebar.left.png">titlebar</option>
+      
+    </select>
+    <br />
+    <br />
+
+
+      
+    <input name="email" type="text" class="required validate-email" />
+
+    <br />
+    <br />
+    <select name="dropdown" class="drop-down required">
+      
+      <option value="">EMPTY</option>
+      <option value="a">Das ist A</option>
+      <option value="b">Das ist B</option>
+      <option value="c">Das ist C</option>
+      <option value="d" selected="selected">Das ist D</option>
+      <option value="e">Das ist E</option>
+      <option value="f">Das ist F</option>
+      <option value="g">Das ist G</option>
+      <option value="h">Das ist H</option>
+      <option value="i">Das ist I</option>
+      
+    </select>
+    <br />
+    <br />
+  <input type="submit" value="submit" />
+    
+  </form>
+  
+  
+</body>
+</html>

@@ -1,4 +1,4 @@
-/*  © Matthias Loitsch   */
+/*  © Matias Meno   */
 /**
  ** This class requires the Control.ColorPicker.
  ** Just include it in the header BEFORE the formwatcher script.
