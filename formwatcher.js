@@ -163,11 +163,11 @@
       }).each(function() {
         var path = this.src.replace(/formwatcher\.js(\?.*)?$/, '');
         var includes = this.src.match(/\?.*load=([a-zA-Z,]*)/);
-        if (includes && includes == 'all') includes = 'validators,';
-        //        (includes ? includes[1] : 'validators,FontSelect,ColorPicker,ImagePicker,SimpleDatePicker').split(',').each(function(include) {
-        $.each((includes ? includes[1] : 'validators,FontSelect').split(','), function(index, include) {
-          Formwatcher.require(path+'formwatcher.'+include+'.js');
-        });
+        if (includes) {
+          $.each(includes[1].split(','), function(index, include) {
+            Formwatcher.require(path+'formwatcher.'+include+'.js');
+          });
+        }
       }
       );
     },
