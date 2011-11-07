@@ -7,7 +7,8 @@
     nodeNames: ['INPUT', 'TEXTAREA'],
     defaultOptions: {
       auto: true, // This automatically makes labels into hints.
-      removeTrailingColon: true // Removes the trailing ' : ' from labels.
+      removeTrailingColon: true, // Removes the trailing ' : ' from labels.
+      color: '#aaa' // The color of the hint.
     },
     accepts: function(input) {
       if (this._super(input)) {
@@ -47,19 +48,22 @@
       input.appendTo(container);
 
 
+      // I think this is a bit of a hack... Don't know how to get the top margin otherwise though, since position().top seems not to work.
+      var topMargin = parseInt(input.css('marginTop'));
+      if (topMargin === NaN) topMargin = 0;
 
       var leftPosition = parseInt(input.css('paddingLeft')) + parseInt(input.position().left) + parseInt(input.css('borderLeftWidth')) + 2 + 'px'; // + 2 so the cursor is not over the text
       var rightPosition = parseInt(input.css('paddingRight')) + parseInt(input.position().right) + parseInt(input.css('borderRightWidth')) + 'px';
 
-
       var hintElement = $.el('span').html(hint).css({
         position: 'absolute',
         display: 'none',
-        top: parseInt(input.css('paddingTop')) + parseInt(input.position().top) + parseInt(input.css('borderTopWidth')) + 'px',
+        top: parseInt(input.css('paddingTop')) + parseInt(input.position().top) + parseInt(input.css('borderTopWidth')) + topMargin + 'px',
         left: leftPosition,
         fontSize: input.css('fontSize'),
+        lineHeight: input.css('lineHeight'),
         fontFamily: input.css('fontFamily'),
-        color: 'grey'
+        color: this.options.color
       }).click(function() {
         input.focus();
       }).insertAfter(input);
