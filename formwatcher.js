@@ -31,7 +31,7 @@
  * 0.0 - 0.1
  * - The basics are done... a form is watched, and the decorators are loaded when needed.
  * - You can observe events now, by either passing it with the options object, or calling observe() afterwards.
- * 
+ *
  * 0.1 - 0.2
  * - Names are not removed anymore after submitting a form (Saving was only possible the first time).
  * - The ColorPicker gets only loaded on dom:loaded so IE6 won't crash anymore.
@@ -48,7 +48,7 @@
  * - Added the changeOnSubmit option. (When the form is set to AJAX, the form is submitted everytime an input is changed)
  * - The wrap() function is now decorate()
  * - Added validators.
- * 
+ *
  * 0.4 - 1.0
  * - Changed the whole library to jQuery.
  */
@@ -109,10 +109,12 @@
   $.fn.hideOnOuterClick = function() {
     var self = this;
     var namespace = 'hideOnOuterClick';
-    _.defer(function() { self.outerClick(function() {
-      self.hide();
-      self.unbindOuterClick(namespace);
-    }, namespace) });
+    _.defer(function() {
+      self.outerClick(function() {
+        self.hide();
+        self.unbindOuterClick(namespace);
+      }, namespace)
+    });
     return this;
   };
 
@@ -122,9 +124,9 @@
   // a copy of it. So if you manipulate an array, you don't have to store it again.
   $.fn.fwData = function(name, value) {
     if (!this.data('_formwatcher')) this.data('_formwatcher', {});
-    
+
     if (name === undefined) return this;
-    
+
     var formwatcherAttributes = this.data('_formwatcher');
     if (value === undefined) {
       // Get the attribute
@@ -181,7 +183,7 @@
       var input = elements.input;
       // First try to see if there is a NAME-errors element, then if there is an ID-errors.
       var errors;
-      if (input.attr("name")) { 
+      if (input.attr("name")) {
         errors = $('#' + input.attr("name") + '-errors');
       }
       if (!errors || !errors.length && input.attr("id")) {
@@ -194,6 +196,19 @@
       }
       errors.hide().addClass('errors');
       return errors;
+    },
+    getLabel: function(elements, automatchLabel)   {
+      var input = elements.input;
+      var label;
+      if (input.attr("id")) {
+        label = $('label[for='+input.attr("id")+']');
+        if (!label.length) label = undefined;
+      }
+      if (!label && automatchLabel) {
+        var label = input.prev();
+        if (!label.length || label.get(0).nodeName !== 'LABEL' || label.attr('for')) label = undefined;
+      }
+      return label;
     },
     changed: function(elements, watcher) {
       var input = elements.input;
@@ -219,7 +234,7 @@
       var input = elements.input;
 
       if (input.fwData('changed')) return;
-      
+
       $.each(elements, function(index, element) {
         element.addClass('changed');
       });
@@ -288,7 +303,7 @@
       if (decorator) {
         Formwatcher.debug('Decorator "' + decorator.name + '" found for input field "' + input.attr('name') + '".');
         return decorator.decorate(input);
-      } 
+      }
       else return {
         input: input
       };
@@ -305,7 +320,7 @@
     getAll: function() {
       return this.watchers;
     },
-      
+
 
     watch: function(form, options) {
       $('document').ready(function() {
@@ -326,60 +341,62 @@
    * MIT Licensed.
    */
   // Inspired by base2 and Prototype
-  var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+  var initializing = false, fnTest = /xyz/.test(function(){
+    xyz;
+  }) ? /\b_super\b/ : /.*/;
   // The base Class implementation (does nothing)
   Formwatcher.Class = function(){};
-  
+
   // Create a new Class that inherits from this class
   Formwatcher.Class.extend = function(prop) {
     var _super = this.prototype;
-    
+
     // Instantiate a base class (but only create the instance,
     // don't run the init constructor)
     initializing = true;
     var prototype = new this();
     initializing = false;
-    
+
     // Copy the properties over onto the new prototype
     for (var name in prop) {
       // Check if we're overwriting an existing function
-      prototype[name] = typeof prop[name] == "function" && 
-        typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-        (function(name, fn){
-          return function() {
-            var tmp = this._super;
-            
-            // Add a new ._super() method that is the same method
-            // but on the super-class
-            this._super = _super[name];
-            
-            // The method only need to be bound temporarily, so we
-            // remove it when we're done executing
-            var ret = fn.apply(this, arguments);        
-            this._super = tmp;
-            
-            return ret;
-          };
-        })(name, prop[name]) :
-        prop[name];
+      prototype[name] = typeof prop[name] == "function" &&
+      typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+      (function(name, fn){
+        return function() {
+          var tmp = this._super;
+
+          // Add a new ._super() method that is the same method
+          // but on the super-class
+          this._super = _super[name];
+
+          // The method only need to be bound temporarily, so we
+          // remove it when we're done executing
+          var ret = fn.apply(this, arguments);
+          this._super = tmp;
+
+          return ret;
+        };
+      })(name, prop[name]) :
+      prop[name];
     }
-    
+
     // The dummy class constructor
     function Class() {
       // All construction is actually done in the init method
       if ( !initializing && this.init )
         this.init.apply(this, arguments);
     }
-    
+
     // Populate our constructed prototype object
     Class.prototype = prototype;
-    
+
     // Enforce the constructor to be what we expect
     Class.prototype.constructor = Class;
 
     // And make this class extendable
     Class.extend = arguments.callee;
-    
+
     return Class;
   };
 
@@ -434,10 +451,10 @@
      * This function does all the magic.
      * It creates additional elements if necessary, and could instantiate an object
      * that will be in charge of handling this input.
-     * 
+     *
      * This function has to return a hash of all fields that you want to get updated
      * with .focus and .changed classes. Typically this is just { input: THE_INPUT }
-     * 
+     *
      * 'input' has to be the actual form element to transmit the data.
      * 'label' is reserved for the actual label.
      */
@@ -499,7 +516,7 @@
     // Otherwise formwatcher removes the name parameter of the input fields so they
     // are not submitted.
     // Remember: checkboxes are ALWAYS submitted if checked, and never if unchecked.
-    submitUnchanged: true, 
+    submitUnchanged: true,
     // If you have `submitUnchanged = false` and the user did not change anything and
     // hit submit, there would not actually be anything submitted to the server.
     // To avoid that, formwatcher does not actually send the request. But if you want
@@ -549,12 +566,12 @@
   this.Watcher = Formwatcher.Class.extend({
     init: function(form, options) {
       this.form = $(form);
-      
+
       this.allElements = [];
       this.id = Formwatcher.currentWatcherId ++;
       Formwatcher.add(this);
       this.observers = { };
-      
+
       if (!this.form.length) {
         throw("Form element not found.");
       }
@@ -566,8 +583,8 @@
 
       // Making sure the form always goes through the formwatcher on submit.
       this.form
-      .fwData('originalAction', this.form.attr('action'))
-      .attr('action', 'javascript:Formwatcher.get('+this.id+').submitForm();');
+      .fwData('originalAction', this.form.attr('action') || '')
+      .attr('action', 'javascript:undefined;');
 
       // Now merging the provided options with the default options.
       this.options = $.extend(true, {}, Formwatcher.defaultOptions, options || {} ); // Performing a deep copy of all objects
@@ -576,7 +593,7 @@
       // Creating all validators and decorators for this form
       this.decorators = [];
       this.validators = [];
-      
+
       _.each(Formwatcher.Decorators, function(Decorator) {
         self.decorators.push(new Decorator(self));
       });
@@ -591,8 +608,8 @@
       this.observe('error',   this.options.onError);
 
 
-      $.each($(':input', this.form), function(i, input) {
-        input = $(input);
+      $.each($(':input', this.form), function(i) {
+        var input = $(this);
         if (!input.fwData('initialized')) {
           if (input.attr('type') === 'hidden') {
             // Hidden input fields should always be submitted since they probably contain entity IDs and such.
@@ -610,7 +627,7 @@
             }
 
             if (!elements.label) {
-              var label = self.getLabel(elements);
+              var label = Formwatcher.getLabel(elements, self.options.automatchLabel);
               if (label) elements.label = label;
             }
 
@@ -661,20 +678,24 @@
         }
 
       });
+
+      var submitButtons = $(':submit', this.form);
+      var hiddenSubmitButtonElement = $('<input type="hidden" name="" value="" />');
+      self.form.append(hiddenSubmitButtonElement);
+
+      $.each(submitButtons, function(i) {
+        var element = $(this);
+        element.click(function(e) {
+          // The submit buttons click events are always triggered if a user presses
+          // Enter inside an input field.
+          hiddenSubmitButtonElement.attr('name', element.attr('name') || '').attr('value', element.attr('value') || '');
+          self.submitForm();
+          e.stopPropagation();
+        });
+      });
+
     },
-    getLabel: function(elements)   {
-      var input = elements.input;
-      var label;
-      if (input.attr("id")) {
-        label = $('label[for='+input.attr("id")+']');
-        if (!label.length) label = null;
-      }
-      if (!label && this.options.automatchLabel) {
-        var label = input.prev();
-        if (label.get(0).nodeName !== 'LABEL' || label.attr('for')) label = null;
-      }
-      return label;
-    },
+
     callObservers: function(eventName) {
       var args = _.toArray(arguments);
       args.shift();
@@ -702,7 +723,8 @@
     disableForm: function() {
       $(':input', this.form).prop('disabled', true);
     },
-    submitForm: function() {
+    submitForm: function(e) {
+      console.dir(e);
       if (!this.options.validate || this.validateForm()) {
         this.callObservers('submit');
 
@@ -855,7 +877,7 @@
     ajaxSuccess: function() {
       _.each(this.allElements, _.bind(function(elements) {
         Formwatcher.unsetChanged(elements, this);
-        
+
         if (this.options.resetFormAfterSubmit) {
           Formwatcher.restoreInitialValue(elements);
         }
@@ -880,12 +902,12 @@
   $(document).ready(function() {
     var handleForm = function(form) {
       var form = $(form);
-      
+
       if (form.fwData('watcher')) {
         // A form can only be watched once!
         return;
       }
-      
+
       var formId = form.attr('id');
       var options = {};
       if (formId) {
@@ -905,7 +927,7 @@
     $('form[data-fw]').each(function() {
       handleForm(this);
     });
-    
+
     _.each(Formwatcher.options, function(options, formId) {
       handleForm($('#' + formId));
     });

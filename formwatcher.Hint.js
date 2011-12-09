@@ -13,12 +13,12 @@
     accepts: function(input) {
       if (this._super(input)) {
         if ((input.data('hint') !== undefined) ||
-          (this.options.auto && this.watcher.getLabel({
+          (this.options.auto && Formwatcher.getLabel({
             input: input
-          }))) { // If autoHint is on, and there IS a label.
+          }, this.watcher.options.automatchLabel))) { // If autoHint is on, and there IS a label.
           return true;
         }
-      } 
+      }
 
       return false;
     },
@@ -30,12 +30,12 @@
       var hint = input.data('hint');
 
       if (hint === undefined || hint == '') {
-        var label = this.watcher.getLabel(elements);
+        var label = Formwatcher.getLabel(elements, this.watcher.options.automatchLabel);
         if (!label) throw "The hint was empty, but there was no label.";
         elements.label = label;
         label.hide();
         hint = label.html();
-        
+
         if (this.options.removeTrailingColon) hint = hint.replace(/\s*\:\s*$/, ''); // Remove any trailing ' : '
       }
 
@@ -78,12 +78,12 @@
         if (input.val() == '') hintElement.fadeTo(fadeLength, 1);
 //        else hintElement.fadeOut(fadeLength);
       });
-      
+
       var changeFunction = function() {
         if (input.val() == '') hintElement.show();
         else hintElement.hide();
       };
-      
+
       input.keyup(changeFunction);
       input.keypress(function() { _.defer(changeFunction); });
       input.keydown(function() { _.defer(changeFunction); });
@@ -97,5 +97,5 @@
       return elements;
     }
   }));
-  
+
 })( jQuery );
