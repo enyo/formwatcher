@@ -3,26 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <title>Formwatcher tests</title>
-  
-  
-<!--  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/scriptaculous/1.9.0/scriptaculous.js"></script>-->
 
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-
-<!--  <script type="text/javascript" src="jquery-1.6.4.js"></script>-->
-  <script type="text/javascript" src="underscore.js"></script>
+  <script type="text/javascript" src="third_party/jquery-1.7.1.js"></script>
+  <script type="text/javascript" src="third_party/underscore-1.2.3.js"></script>
   <script type="text/javascript" src="formwatcher.js?load=validators"></script>
   <script type="text/javascript" src="formwatcher.Hint.js"></script>
   <script type="text/javascript" src="formwatcher.DropDown.js"></script>
-  
+
   <style type="text/css">
-    
+
     @import "formwatcher.css";
-    
+
     @import "formwatcher.DropDown.css";
-    
-    
+
+
     body {
       font-family: arial, sans-serif;
       font-size: 13px;
@@ -30,18 +24,18 @@
     label {
       display: block;
     }
-    
-    
+
+
     #container {
       width: 600px;
       margin: 30px auto;
     }
-    
+
     input, textarea, select {
       width: 300px;
       box-sizing: border-box;
     }
-    
+
     input, textarea  {
       padding: 5px;
     }
@@ -78,19 +72,19 @@
       color: red;
     }
 
-    
+
   </style>
-  
+
   <script type="text/javascript">
     Formwatcher.debugging = true;
     Formwatcher.defaultOptions.Float = { decimalMark: ',' };
   </script>
-  
+
 </head>
 <body>
-  
+
   <div id="container">
-    <form data-fw='{ "ajax": true, "automatchLabel": true }' id="test" action="test.html">
+    <form data-fw='{ "ajax": false, "automatchLabel": true }' id="test" action="test.html">
 
       <label for="some-number">Alter</label> <input id="some-number" name="some-number" type="text" class="validate-integer not-zero" value="" />
 
@@ -185,11 +179,12 @@
       </select>
       <br />
       <br />
-    <input type="submit" value="submit" />
+      <button name="buttonA" value="1">Submit button A</button>
+      <button name="buttonB" value="1">Submit button B</button>
 
     </form>
 
   </div>
-  
+
 </body>
 </html>
