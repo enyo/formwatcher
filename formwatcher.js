@@ -724,7 +724,6 @@
       $(':input', this.form).prop('disabled', true);
     },
     submitForm: function(e) {
-      console.dir(e);
       if (!this.options.validate || this.validateForm()) {
         this.callObservers('submit');
 
