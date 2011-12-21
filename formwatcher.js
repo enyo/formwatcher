@@ -321,6 +321,42 @@
       return this.watchers;
     },
 
+    /**
+     * Searches all forms with a data-fw attribute and watches them
+     */
+    scanDocument: function() {
+      var handleForm = function(form) {
+        form = $(form);
+
+        if (form.fwData('watcher')) {
+          // A form can only be watched once!
+          return;
+        }
+
+        var formId = form.attr('id');
+        var options = {};
+        if (formId) {
+          // Check if options have been set for it.
+          if (Formwatcher.options[formId]) {
+            options = Formwatcher.options[formId];
+          }
+        }
+        var domOptions = form.data('fw');
+        if (domOptions) {
+          // domOptions always overwrite the normal options.
+          options = _.extend(options, domOptions);
+        }
+        new Watcher(form, options);
+      }
+
+      $('form[data-fw]').each(function() {
+        handleForm(this);
+      });
+
+      _.each(Formwatcher.options, function(options, formId) {
+        handleForm($('#' + formId));
+      });
+    },
 
     watch: function(form, options) {
       $('document').ready(function() {
@@ -565,16 +601,23 @@
 
   this.Watcher = Formwatcher.Class.extend({
     init: function(form, options) {
-      this.form = $(form);
+      this.form = typeof form === 'string' ? $('#' + form) : $(form);
+
+      if (this.form.length < 1) {
+        throw("Form element not found.");
+      }
+      else if (this.form.length > 1) {
+        throw("The jQuery contained more than 1 element.");
+      }
+      else if (this.form.get(0).nodeName !== 'FORM') {
+        throw("The element was not a form.");
+      }
 
       this.allElements = [];
       this.id = Formwatcher.currentWatcherId ++;
       Formwatcher.add(this);
       this.observers = { };
 
-      if (!this.form.length) {
-        throw("Form element not found.");
-      }
 
       var self = this;
 
@@ -897,41 +940,7 @@
 
 
 
-  // Handle all forms that have the data-fw tag
-  $(document).ready(function() {
-    var handleForm = function(form) {
-      var form = $(form);
-
-      if (form.fwData('watcher')) {
-        // A form can only be watched once!
-        return;
-      }
-
-      var formId = form.attr('id');
-      var options = {};
-      if (formId) {
-        // Check if options have been set for it.
-        if (Formwatcher.options[formId]) {
-          options = Formwatcher.options[formId];
-        }
-      }
-      var domOptions = form.data('fw');
-      if (domOptions) {
-        // domOptions always overwrite the normal options.
-        options = _.extend(options, domOptions);
-      }
-      new Watcher(form, options);
-    }
-
-    $('form[data-fw]').each(function() {
-      handleForm(this);
-    });
-
-    _.each(Formwatcher.options, function(options, formId) {
-      handleForm($('#' + formId));
-    });
-  });
-
+  $(document).ready(Formwatcher.scanDocument);
 
 
 

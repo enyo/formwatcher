@@ -29,6 +29,37 @@
     /************** * * * * * * * **************/
 
 
+    test("new Watcher()", function() {
+      var form = $('<form id="testform" action="javascript:undefined;"></form>');
+      var form2 = $('<form id="testform2" action="javascript:undefined;"></form>');
+      tmpDiv.append(form, form2, $('<div id="testtest"></div>'));
+      
+      strictEqual(form.fwData('watcher'), undefined, "Initially there shouldn't be a watcher attached.");
+      new Watcher($('#testform'));
+      ok(form.fwData('watcher'), "The formwatcher should be attached to form when jQuery object is passed.");
+      strictEqual(form2.fwData('watcher'), undefined, "Initially there shouldn't be a watcher attached.");
+      new Watcher('testform2');
+      ok(form2.fwData('watcher'), "The formwatcher should be attached to form when the id as string is passed.");
+      
+      raises(function() { new Watcher('blabla'); }, 'If the form is not found it throws an exception.');
+      raises(function() { new Watcher('##sdf'); }, 'If the form id is not formatted correctly it throws an exception');
+      raises(function() { new Watcher($('span')); }, 'If a faulty jQuery object is passed it throws an exception');
+      raises(function() { new Watcher($('testtest')); }, 'If the jQuery element is not a form it throws an exception');
+      raises(function() { new Watcher('testtest'); }, 'If the element id is not a form it throws an exception');
+      
+    });
+
+
+
+    test("Formwatcher.watch()", function() {
+      var form = $('<form id="testform" action="javascript:undefined;"></form>');
+      tmpDiv.append(form);
+
+      strictEqual(form.fwData('watcher'), undefined, "Initially there shouldn't be a watcher attached.");
+      Formwatcher.watch('testform');
+      ok(form.fwData('watcher'), "The formwatcher should be attached to form because document was already loaded");
+    });
+
 
     test("getLabel()", function() {
       var label, elements;
