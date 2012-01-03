@@ -541,7 +541,7 @@
    */
   this.Formwatcher.defaultOptions = {
     // Whether to convert the form to an AJAX form.
-    ajax: true,
+    ajax: false,
     // Whether or not the form should validate on submission. This will invoke
     // every validator attached to your input fields.
     validate: true,
