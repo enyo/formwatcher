@@ -142,7 +142,7 @@
 
 
   this.Formwatcher = {
-    Version: '0.5.0',
+    Version: '1.0.2',
     REQUIRED_JQUERY_VERSION: '1.6.0',
     debugging: false,
     uidCounter: 0,
