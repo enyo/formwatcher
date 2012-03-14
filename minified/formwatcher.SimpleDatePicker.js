@@ -1,0 +1,8 @@
+/*  © Matias Meno   */var SimpleDatePicker=Class.create(Formwatcher.Decorator,{initialize:function(a,b){var c=b.get("input"),d=b.get("year"),e=b.get("month"),f=b.get("day"),g=function(){var g=new Date(
+d.getValue(),e.getValue(),f.getValue());c.value=Math.round(g.getTime()/1e3),Formwatcher.changed(b,a.options)};[d,e,f].each(function(a){a.observe("change",g)},this)}}),decorator=Class.create(Formwatcher
+.Decorator,{accepts:function(a){return a.nodeName==="INPUT"&&a.hasClassName("date")},wrap:function(a,b){b.hide();var c={};if(b.getValue()){var d=new Date(b.getValue()*1e3);c.year=d.getFullYear(),c.day=
+d.getDate(),c.month=d.getMonth()}else c.year=e.getFullYear(),c.day=1,c.month=0;var e=new Date,f=Builder.node("select",{className:"year"});for(var g=e.getFullYear()+5;g>=1980;g--){var h={value:g};g==c.year&&
+(h.selected="selected"),f.appendChild(Builder.node("option",h,g))}var i=Builder.node("select",{className:"month"});$R(0,11).each(function(a){var b={value:a};a==c.month&&(b.selected="selected"),i.appendChild
+(Builder.node("option",b,a+1))});var j=Builder.node("select",{className:"day"});return $R(1,31).each(function(a){var b={value:a};a==c.day&&(b.selected="selected"),j.appendChild(Builder.node("option",b,
+a))}),f.value=c.year,j.value=c.day,i.value=c.month,b.insert({after:f}),b.insert({after:i}),b.insert({after:j}),elements=$H({input:b,year:f,month:i,day:j}),new this.Class(a,elements),elements},Class:SimpleDatePicker
+});Formwatcher.decorators.push(new decorator);

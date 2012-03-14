@@ -1,4 +1,4 @@
-# Formwatcher Version 1.0.2
+# Formwatcher Version 1.1.0
 
 The formwatcher is a tool to easily improve forms with javascript.
 
@@ -10,11 +10,25 @@ It is designed to be as unobtrusive as possible, so that every form remains inta
 The **main features** include:
 
 - Validation
-- Decorators (Turn a simple select input field into an image selector, or a font selector)
+- Decorators (Turn a simple select input field into an image selector, or a font selector or display a nice hint)
 - AJAX conversion (Turn a form into an AJAX call automatically)
 - Simple html attribute configuration that is W3C valid.
 - It's very easy to create your own validators / decorators.
 - ...plenty more.
 
+
+## Usage
+
+The most common useage is to include `formwatcher.js` along with `formwatcher.validators.js` and `formwatcher.Hint.js`.
+Luckily there is a minified pack which contains exactly those 3 files: `minified/formwatcher.pack.js`.
+
+So just include it in your `<head></head>` section:
+
+    <head>
+      [...]
+      <script type="text/javascript" src="javascripts/forwmatcher.pack.js"></script>
+    </head>
+
+Well,... and basically you're done.
 
 Please refer to the README/ folder for instructions on how to use and extend formwatcher.
