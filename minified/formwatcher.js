@@ -1,5 +1,5 @@
 /**
- * Formwatcher Version 1.1.0
+ * Formwatcher Version 1.1.1-dev
  * More infos at http://www.formwatcher.org
  *
  * Copyright (c) 2012, Matias Meno
@@ -28,7 +28,7 @@
 ("id",a)),a},a.fn.outerClick=function(b,c){var d="."+this.uid()+(c?NaN+c:"");return a("body").bind("click"+d,_.bind(function(c){a(c.target).closest(this).length||b()},this)),this},a.fn.unbindOuterClick=
 function(b){return a("body").unbind("click."+this.uid()+(b?NaN+b:"")),this},a.fn.hideOnOuterClick=function(){var a=this,b="hideOnOuterClick";return _.defer(function(){a.outerClick(function(){a.hide(),a
 .unbindOuterClick(b)},b)}),this},a.fn.fwData=function(a,b){this.data("_formwatcher")||this.data("_formwatcher",{});if(a===undefined)return this;var c=this.data("_formwatcher");return b===undefined?c[a]
-:(c[a]=b,this.data("_formwatcher",c),this)},this.Formwatcher={Version:"1.1.0",REQUIRED_JQUERY_VERSION:"1.6.0",debugging:!1,uidCounter:0,require:function(b){a("body").append('<script type="text/javascript" src="'+
+:(c[a]=b,this.data("_formwatcher",c),this)},this.Formwatcher={Version:"1.1.1-dev",REQUIRED_JQUERY_VERSION:"1.6.0",debugging:!1,uidCounter:0,require:function(b){a("body").append('<script type="text/javascript" src="'+
 b+'"></script>')},load:function(){function b(a){var b=a.split(".");return parseInt(b[0])*1e5+parseInt(b[1])*1e3+parseInt(b[2])}if(b(jQuery.fn.jquery)<b(Formwatcher.REQUIRED_JQUERY_VERSION))throw"Formwatcher requires the jQuery JavaScript framework >= "+
 Formwatcher.REQUIRED_JQUERY_VERSION;a("script").filter(function(){return this.src&&this.src.match(/formwatcher\.js(\?.*)?$/)}).each(function(){var b=this.src.replace(/formwatcher\.js(\?.*)?$/,""),c=this
 .src.match(/\?.*load=([a-zA-Z,]*)/);c&&a.each(c[1].split(","),function(a,c){Formwatcher.require(b+"formwatcher."+c+".js")})})},debug:function(){this.debugging&&typeof console!="undefined"&&typeof console
