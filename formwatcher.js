@@ -1,5 +1,5 @@
 /**
- * Formwatcher Version 1.0.2-dev
+ * Formwatcher Version 1.0.2
  * More infos at http://www.formwatcher.org
  *
  * Copyright (c) 2012, Matias Meno
@@ -143,7 +143,7 @@
 
 
   this.Formwatcher = {
-    Version: '1.0.2-dev',
+    Version: '1.0.2',
     REQUIRED_JQUERY_VERSION: '1.6.0',
     debugging: false,
     uidCounter: 0,
