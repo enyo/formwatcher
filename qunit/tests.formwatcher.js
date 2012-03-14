@@ -167,15 +167,37 @@
 
     test("Hint", function() {
 
-      tmpDiv.append($('<form action="javascript:undefined;"><input id="i1" type="text" data-hint="Test" /><input id="i2" type="text" value="prefilled" data-hint="Test" /></form>'))
+      tmpDiv.append($('<form action="javascript:undefined;"><input id="i1" type="text" data-hint="Test1" /><input id="i2" type="text" value="prefilled" data-hint="Test2" /><input id="i3" type="text" data-hint="Test3" /></form>'))
 
       var form = $('form', tmpDiv);
       var input1 = $('#i1', form);
       var input2 = $('#i2', form);
+      var input3 = $('#i3', form);
 
       new Watcher(form);
 
-      ok(form.fwData('watcher'), 'data-fw="" should be handled by formwatcher.')
+      var hint1 = input1.parent().find('.hint');
+      var hint2 = input2.parent().find('.hint');
+      var hint3 = input3.parent().find('.hint');
+
+      ok(hint1, 'Input1 should have a hint element.')
+      equal(hint1.html(), 'Test1', 'The hint should be taken from data-hint')
+      ok(hint2, 'Input2 should have a hint element.')
+      equal(hint2.html(), 'Test2', 'The hint should be taken from data-hint')
+      ok(hint1.is(':visible'), 'Hint1 should be visible')
+      ok(!hint2.is(':visible'), 'Hint2 should be hidden because it is prefilled')
+      ok(hint3.is(':visible'), 'Hint3 should also be visible because it is initially empty')
+
+      stop();
+
+      _.delay(function() {
+        input3.val('Somevalue');
+        _.delay(function() {
+          ok(!hint3.is(':visible'), 'Hint3 should now be invisible since the browser autofilled it.')
+          start();
+        }, 100);
+      }, 2);
+
     });
 
 
