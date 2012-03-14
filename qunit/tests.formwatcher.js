@@ -131,6 +131,25 @@
 
 
 
+    test("scanDocument", function() {
+
+      var form1 = $('<form action="javascript:undefined;" data-fw=""></form>');
+      var form2 = $('<form action="javascript:undefined;" data-fw=\'{ "ajax": true }\'></form>');
+      var form3 = $('<form action="javascript:undefined;"></form>');
+
+      tmpDiv.append(form1);
+      tmpDiv.append(form2);
+      tmpDiv.append(form3);
+
+      Formwatcher.scanDocument();
+
+      ok(form1.fwData('watcher'), 'data-fw="" should be handled by formwatcher.')
+      ok(form2.fwData('watcher'), 'data-fw="{ [...] }" should be handled by formwatcher.')
+      equal(form3.fwData('watcher'), null, 'Without data-fw attribute this form should be ignored.')
+    });
+
+
+
   }
 
 })(jQuery);

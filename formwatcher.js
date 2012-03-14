@@ -352,6 +352,12 @@
       $('form[data-fw]').each(function() {
         handleForm(this);
       });
+      // IE7 does not apply the selector form[data-fw] to elements where data-fw is empty.
+      // So as a fix I have to scan those too. Since handleForm never adds two watchers it's safe to iterate twice
+      // over it.
+      $('form[data-fw=""]').each(function() {
+        handleForm(this);
+      });
 
       _.each(Formwatcher.options, function(options, formId) {
         handleForm($('#' + formId));
