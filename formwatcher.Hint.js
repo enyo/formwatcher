@@ -41,11 +41,7 @@
 
       Formwatcher.debug('Using hint: ' + hint);
 
-      var container = $('<div />', {
-        style: 'display: inline-block; position: relative;'
-      }).insertAfter(input);
-
-      input.appendTo(container);
+      input.wrap('<span style="position: relative;" />');
 
 
       // I think this is a bit of a hack... Don't know how to get the top margin otherwise though, since position().top seems not to work.
@@ -92,7 +88,15 @@
 //      input.keypress(function() { _.defer(changeFunction); });
       input.change(changeFunction);
 
-      changeFunction();
+      var nextTimeout = 10;
+      // This is an ugly but very easy fix to make sure Hints are hidden when the browser autofills.
+      var delayChangeFunction = function() {
+        changeFunction();
+        _.delay(delayChangeFunction, nextTimeout);
+        nextTimeout = nextTimeout * 2;
+        nextTimeout = nextTimeout > 1000 ? 1000 : nextTimeout;
+      }
+      delayChangeFunction();
 
       return elements;
     }
