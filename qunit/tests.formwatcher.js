@@ -156,6 +156,41 @@
 
 
 
+    module("Formwatcher validators", {
+      setup: function() {
+        tmpDiv.empty();
+      },
+      teardown: function() {
+        tmpDiv.empty();
+      }
+    });
+
+    test("Email", function() {
+      tmpDiv.append($('<form action="javascript:undefined;"><input type="text" class="validate-email" /></form>'));
+      
+      var form = tmpDiv.find('form')
+        , input = form.find('input')
+        , elements = { input: input };
+
+      var watcher = new Watcher(form, { validate: true});
+
+      ok(watcher.validateForm(), 'It should validate if empty because it is not required');
+
+      // mostly taken from wikipedia
+      var validEmails = [ 'm@tias.me', 'niceandsimple@example.com', 'simplewith+symbol@example.com', 'less.common@example.com', 'a.little.more.unusual@dept.example.com', "'@[10.10.10.10]" ];
+
+      _.each(validEmails, function(email) {
+        input.val(email);
+        ok(watcher.validateForm(), email + ' is a valid address');
+      });
+
+    });
+    test("Empty elements always pass if not required", function() {
+      tmpDiv.append($('<form action="javascript:undefined;"><input type="text" class="required validate-email" /><input id="i2" type="text" value="prefilled" data-hint="Test2" /><input id="i3" type="text" data-hint="Test3" /></form>'))
+    });
+
+
+
     module("Formwatcher decorators", {
       setup: function() {
         tmpDiv.empty();
