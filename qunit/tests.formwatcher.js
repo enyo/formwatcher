@@ -106,7 +106,7 @@
      */
     test("Multiple submit buttons", function() {
 
-      this.form = $('<form action="javascript:undefined;"><button name="buttonA" value="valueA">buttonA</button><button name="buttonB" value="valueB">buttonB</button></form>');
+      this.form = $('<form action="javascript:undefined;"><button type="submit" name="buttonA" value="valueA">buttonA</button><button type="submit" name="buttonB" value="valueB">buttonB</button></form>');
       this.buttonA = $('button[name=buttonA]', this.form);
       this.buttonB = $('button[name=buttonB]', this.form);
 
@@ -118,7 +118,7 @@
       this.x = 4;
 
       this.buttonA.click();
-      var hidden = $('input[type=hidden][name=buttonA]', this.form);
+      var hidden = $('input[type="hidden"][name="buttonA"]', this.form);
       equal(hidden.length, 1, 'Click on button A should create a hidden input field with the same name as the button');
       equal(hidden.attr('value'), 'valueA', '...and should set the value of the button');
       
@@ -137,6 +137,10 @@
       var form2 = $('<form action="javascript:undefined;" data-fw=\'{ "ajax": true }\'></form>');
       var form3 = $('<form action="javascript:undefined;"></form>');
 
+      // tmpDiv.get(0).innerHTML = '<form action="javascript:undefined;" data-fw=""></form>';
+
+      // var form4 = $('form', tmpDiv);
+
       tmpDiv.append(form1);
       tmpDiv.append(form2);
       tmpDiv.append(form3);
@@ -144,8 +148,9 @@
       Formwatcher.scanDocument();
 
       ok(form1.fwData('watcher'), 'data-fw="" should be handled by formwatcher.')
+      // ok(form4.fwData('watcher'), 'data-fw="" should be handled by formwatcher.')
       ok(form2.fwData('watcher'), 'data-fw="{ [...] }" should be handled by formwatcher.')
-      equal(form3.fwData('watcher'), null, 'Without data-fw attribute this form should be ignored.')
+      equal(form3.fwData('watcher'), undefined, 'Without data-fw attribute this form should be ignored.')
     });
 
 

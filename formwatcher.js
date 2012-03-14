@@ -349,13 +349,8 @@
         new Watcher(form, options);
       }
 
-      $('form[data-fw]').each(function() {
-        handleForm(this);
-      });
-      // IE7 does not apply the selector form[data-fw] to elements where data-fw is empty.
-      // So as a fix I have to scan those too. Since handleForm never adds two watchers it's safe to iterate twice
-      // over it.
-      $('form[data-fw=""]').each(function() {
+      // IE7 does not apply the selector form[data-fw] to elements where data-fw is empty so I added data-fw="".
+      $('form[data-fw], form[data-fw=""]').each(function() {
         handleForm(this);
       });
 
@@ -735,8 +730,7 @@
       $.each(submitButtons, function(i) {
         var element = $(this);
         element.click(function(e) {
-          // The submit buttons click events are always triggered if a user presses
-          // Enter inside an input field.
+          // The submit buttons click events are always triggered if a user presses ENTER inside an input field.
           hiddenSubmitButtonElement.attr('name', element.attr('name') || '').attr('value', element.attr('value') || '');
           self.submitForm();
           e.stopPropagation();
