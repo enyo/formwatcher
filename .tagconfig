@@ -1,0 +1,17 @@
+{
+  "files": [
+    {
+      "name": "formwatcher.js",
+      "regexs": [
+        "\\* Formwatcher Version ###",
+        "Version\\: '###'"
+      ]
+    },
+    {
+      "name": "README.md",
+      "regexs": [
+        "# Formwatcher Version ###"
+      ]
+    }
+  ]
+}

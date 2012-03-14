@@ -1,7 +1,8 @@
 /**
+ * Formwatcher Version 1.0.2-dev
  * More infos at http://www.formwatcher.org
  *
- * Copyright (c) 2009, Matias Meno
+ * Copyright (c) 2012, Matias Meno
  * Graphics by Tjandra Mayerhold
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -142,7 +143,7 @@
 
 
   this.Formwatcher = {
-    Version: '1.0.2',
+    Version: '1.0.2-dev',
     REQUIRED_JQUERY_VERSION: '1.6.0',
     debugging: false,
     uidCounter: 0,
