@@ -24,37 +24,6 @@
  * THE SOFTWARE.
  */
 
-
-
-/**
- * Changelog
- *
- * 0.0 - 0.1
- * - The basics are done... a form is watched, and the decorators are loaded when needed.
- * - You can observe events now, by either passing it with the options object, or calling observe() afterwards.
- *
- * 0.1 - 0.2
- * - Names are not removed anymore after submitting a form (Saving was only possible the first time).
- * - The ColorPicker gets only loaded on dom:loaded so IE6 won't crash anymore.
- * - Form actions aren't set to javascript:undefined anymore, but a valid javascript function that submits the AJAX form (so form.submit() will work again)
- *
- * 0.2 - 0.3
- * - The wrap function really gets an input now, and has to return the elements wrapper.
- * - Checkboxes are now supported.
- * - Labels for inputs are watched as well now. ('changed' and 'focus' classes are added).
- *
- * 0.3 - 0.4
- * - Corrected the bug that after submitting the AJAX form, the labels and all other elements get 'unchanged'
- * - License change
- * - Added the changeOnSubmit option. (When the form is set to AJAX, the form is submitted everytime an input is changed)
- * - The wrap() function is now decorate()
- * - Added validators.
- *
- * 0.4 - 1.0
- * - Changed the whole library to jQuery.
- */
-
-
 (function( $ ){
 
 
