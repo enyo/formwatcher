@@ -1,0 +1,2 @@
+/*  © Matias Meno   */(function(a){Formwatcher.Decorators.push(Formwatcher.Decorator.extend({name:"FontSelector",description:"Updates every option of a select element to display the font of its value.",nodeNames:["SELECT"],classNames:["font"],decorate:function(b){return this.updateInputFont(b),a("option"
+,b).each(function(){a(this).css("fontFamily",a(this).val())}),b.change(_.bind(this.updateInputFont,this,b)),{input:b}},updateInputFont:function(a){a.val()&&a.css("fontFamily",a.val())}}))})(jQuery);
