@@ -45,7 +45,7 @@
 
       // I think this is a bit of a hack... Don't know how to get the top margin otherwise though, since position().top seems not to work.
       var topMargin = parseInt(input.css('marginTop'));
-      if (topMargin === NaN) topMargin = 0;
+      if (isNaN(topMargin)) topMargin = 0;
 
       var leftPosition = parseInt(input.css('paddingLeft')) + parseInt(input.position().left) + parseInt(input.css('borderLeftWidth')) + 2 + 'px'; // + 2 so the cursor is not over the text
       var rightPosition = parseInt(input.css('paddingRight')) + parseInt(input.position().right) + parseInt(input.css('borderRightWidth')) + 'px';
@@ -59,7 +59,7 @@
         lineHeight: input.css('lineHeight'),
         fontFamily: input.css('fontFamily'),
         color: this.options.color
-      }).click(function() {
+      }).addClass('hint').click(function() {
         input.focus();
       }).insertAfter(input);
 

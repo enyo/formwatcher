@@ -8,6 +8,7 @@
      * I add test TODOs here when I don't have time to implement them right away.
      *
      * - TODO: Test when form.action is not defined
+     * - TODO: Test all validators
      *
      */
 
@@ -153,6 +154,29 @@
       equal(form3.fwData('watcher'), undefined, 'Without data-fw attribute this form should be ignored.')
     });
 
+
+
+    module("Formwatcher decorators", {
+      setup: function() {
+        tmpDiv.empty();
+      },
+      teardown: function() {
+        tmpDiv.empty();
+      }
+    });
+
+    test("Hint", function() {
+
+      tmpDiv.append($('<form action="javascript:undefined;"><input id="i1" type="text" data-hint="Test" /><input id="i2" type="text" value="prefilled" data-hint="Test" /></form>'))
+
+      var form = $('form', tmpDiv);
+      var input1 = $('#i1', form);
+      var input2 = $('#i2', form);
+
+      new Watcher(form);
+
+      ok(form.fwData('watcher'), 'data-fw="" should be handled by formwatcher.')
+    });
 
 
   }
