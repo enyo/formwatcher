@@ -1,5 +1,9 @@
 #!/bin/bash
 
 for i in *.js; do
-  uglifyjs --max-line-len 300 "$i" > minified/$i;
+  uglifyjs --max-line-len 200 "$i" > minified/$i;
 done;
+
+cat "minified/formwatcher.js" > "minified/formwatcher.pack.js"
+cat "minified/formwatcher.validators.js" >> "minified/formwatcher.pack.js"
+cat "minified/formwatcher.Hint.js" >> "minified/formwatcher.pack.js"
