@@ -813,6 +813,10 @@
           input.fwData('validationErrors', []);
 
           validated = _.all(input.fwData('validators'), function(validator) {
+            if (input.val() == '' && validator.name != 'Required') {
+              Formwatcher.debug('Validating ' + validator.name + '. Field was empty so continuing.');
+              return true;
+            }
             Formwatcher.debug('Validating ' + validator.name);
             var validationOutput = validator.validate(validator.sanitize(input.val()), input);
             if (validationOutput !== true) {
