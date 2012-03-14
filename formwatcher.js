@@ -190,11 +190,11 @@
         errors = $('#' + input.attr("id") + '-errors');
       }
       if (!errors || !errors.length) {
-        errors = $(document.createElement('div'));
+        errors = $(document.createElement('span'));
         if (input.attr("name")) errors.attr("id", input.attr("name") + '-errors');
         input.after(errors);
       }
-      errors.hide().addClass('errors');
+      errors.hide().addClass('errors').addClass('fw-errors');
       return errors;
     },
     getLabel: function(elements, automatchLabel)   {
@@ -661,7 +661,6 @@
           }
           else {
             var elements = Formwatcher.decorate(self, input);
-
             if (elements.input.get() !== input.get()) {
               // The input has changed, since the decorator can convert it to a hidden field
               // and actually show a completely different UI

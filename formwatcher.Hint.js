@@ -41,8 +41,7 @@
 
       Formwatcher.debug('Using hint: ' + hint);
 
-      input.wrap('<span style="position: relative;" />');
-
+      input.wrap('<span style="display: inline; position: relative;" />');
 
       // I think this is a bit of a hack... Don't know how to get the top margin otherwise though, since position().top seems not to work.
       var topMargin = parseInt(input.css('marginTop'));
