@@ -1,7 +1,8 @@
 /**
+ * Formwatcher Version 1.0.2
  * More infos at http://www.formwatcher.org
  *
- * Copyright (c) 2009, Matias Meno
+ * Copyright (c) 2012, Matias Meno
  * Graphics by Tjandra Mayerhold
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -190,11 +191,11 @@
         errors = $('#' + input.attr("id") + '-errors');
       }
       if (!errors || !errors.length) {
-        errors = $(document.createElement('div'));
+        errors = $(document.createElement('span'));
         if (input.attr("name")) errors.attr("id", input.attr("name") + '-errors');
         input.after(errors);
       }
-      errors.hide().addClass('errors');
+      errors.hide().addClass('errors').addClass('fw-errors');
       return errors;
     },
     getLabel: function(elements, automatchLabel)   {
@@ -349,7 +350,8 @@
         new Watcher(form, options);
       }
 
-      $('form[data-fw]').each(function() {
+      // IE7 does not apply the selector form[data-fw] to elements where data-fw is empty so I added data-fw="".
+      $('form[data-fw], form[data-fw=""]').each(function() {
         handleForm(this);
       });
 
@@ -660,7 +662,6 @@
           }
           else {
             var elements = Formwatcher.decorate(self, input);
-
             if (elements.input.get() !== input.get()) {
               // The input has changed, since the decorator can convert it to a hidden field
               // and actually show a completely different UI
@@ -729,8 +730,7 @@
       $.each(submitButtons, function(i) {
         var element = $(this);
         element.click(function(e) {
-          // The submit buttons click events are always triggered if a user presses
-          // Enter inside an input field.
+          // The submit buttons click events are always triggered if a user presses ENTER inside an input field.
           hiddenSubmitButtonElement.attr('name', element.attr('name') || '').attr('value', element.attr('value') || '');
           self.submitForm();
           e.stopPropagation();
@@ -814,6 +814,10 @@
           input.fwData('validationErrors', []);
 
           validated = _.all(input.fwData('validators'), function(validator) {
+            if (input.val() == '' && validator.name != 'Required') {
+              Formwatcher.debug('Validating ' + validator.name + '. Field was empty so continuing.');
+              return true;
+            }
             Formwatcher.debug('Validating ' + validator.name);
             var validationOutput = validator.validate(validator.sanitize(input.val()), input);
             if (validationOutput !== true) {
