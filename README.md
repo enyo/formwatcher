@@ -1,5 +1,8 @@
 # Formwatcher Version 1.1.1-dev
 
+> I'm currently switching this library to work with qwery, bonzo and underscore instead of
+> jQuery and adding the library to ender, so it's a bit messy right now.
+
 The formwatcher is a tool to easily improve forms with javascript.
 
 It is designed to be as unobtrusive as possible, so that every form remains intact without the use of Javascript.

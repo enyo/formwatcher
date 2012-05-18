@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in *.js; do
+for i in lib/*.js; do
   uglifyjs --max-line-len 200 "$i" > minified/$i;
 done;
 

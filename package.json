@@ -1,0 +1,41 @@
+{
+  "name": "formwatcher",
+  "version": "1.1.1-dev",
+  "description": "Unobtrusively improve forms with JavaScript.",
+  "homepage": "http://www.formwatcher.org",
+  "keywords": [ "form", "unobtrusive", "ender" ],
+  "maintainers": [
+    {
+      "name": "Matias Meno",
+      "email": "m@tias.me",
+      "web": "http://www.matiasmeno.com"
+    } 
+  ],
+  "contributors": [
+    {
+      "name": "Matias Meno",
+      "email": "m@tias.me",
+      "web": "http://www.matiasmeno.com"
+    } 
+  ],
+  "bugs": {
+    "mail": "m@tias.me",
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT" 
+    } 
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/enyo/formwatcher.git" 
+    } 
+  ],
+  "dependencies": {
+     "qwery": "3.x",
+     "underscore": "1.x"
+  },
+  "ender": "noop"
+}
