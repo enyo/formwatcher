@@ -17,6 +17,13 @@
       "regexs": [
         "Formwatcher Version ###"
       ]
+    },
+    {
+      "name": "src/formwatcher.coffee",
+      "regexs": [
+        "Formwatcher Version ###",
+        "version: \"###\""
+      ]
     }
   ]
 }

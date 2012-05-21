@@ -1,4 +1,4 @@
-# Formwatcher Version 1.1.1-dev
+# Formwatcher Version 2.0.0-dev
 
 > I'm currently switching this library to work with qwery, bonzo and underscore instead of
 > jQuery and adding the library to ender, so it's a bit messy right now.
