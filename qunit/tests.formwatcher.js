@@ -31,13 +31,13 @@
     test("new Watcher()", function() {
       var form = $('<form id="testform" action="javascript:undefined;"></form>');
       var form2 = $('<form id="testform2" action="javascript:undefined;"></form>');
-      tmpDiv.append(form, form2, $('<div id="testtest"></div>'));
+      tmpDiv.append(form).append(form2).append($('<div id="testtest"></div>'));
       
       strictEqual(form.fwData('watcher'), undefined, "Initially there shouldn't be a watcher attached.");
       new Watcher($('#testform'));
       ok(form.fwData('watcher'), "The formwatcher should be attached to form when jQuery object is passed.");
       strictEqual(form2.fwData('watcher'), undefined, "Initially there shouldn't be a watcher attached.");
-      new Watcher('testform2');
+      new Watcher("testform2");
       ok(form2.fwData('watcher'), "The formwatcher should be attached to form when the id as string is passed.");
       
       raises(function() { new Watcher('blabla'); }, 'If the form is not found it throws an exception.');
@@ -63,10 +63,10 @@
     test("getLabel()", function() {
       var label, elements;
 
-      this.label1 = $('<label id="test-label1-id"></label>');
-      this.label2 = $('<label id="test-label2-id"></label>');
-      this.input = $('<input id="test-input-id"></input>');
-      tmpDiv.append(this.label1, this.label2, this.input);
+      this.label1 = $.create('<label id="test-label1-id"></label>');
+      this.label2 = $.create('<label id="test-label2-id"></label>');
+      this.input = $.create('<input id="test-input-id"></input>');
+      tmpDiv.append(this.label1).append(this.label2).append(this.input);
 
       elements = {
         input: this.input
@@ -104,8 +104,7 @@
      *  that, formwatcher has to create a hidden element with the name.
      */
     test("Multiple submit buttons", function() {
-
-      this.form = $('<form action="javascript:undefined;"><button type="submit" name="buttonA" value="valueA">buttonA</button><button type="submit" name="buttonB" value="valueB">buttonB</button></form>');
+      this.form = $.create('<form action="javascript:undefined;"><button type="submit" name="buttonA" value="valueA">buttonA</button><button type="submit" name="buttonB" value="valueB">buttonB</button></form>');
       this.buttonA = $('button[name=buttonA]', this.form);
       this.buttonB = $('button[name=buttonB]', this.form);
 
@@ -114,8 +113,8 @@
       new Watcher(this.form, {
         ajax: false
       });
-      this.x = 4;
 
+      this.x = 4;
       this.buttonA.click();
       var hidden = $('input[type="hidden"][name="buttonA"]', this.form);
       equal(hidden.length, 1, 'Click on button A should create a hidden input field with the same name as the button');
@@ -125,7 +124,6 @@
       var hidden = $('input[type=hidden][name=buttonB]', this.form);
       equal(hidden.length, 1, 'Click on button A should create a hidden input field with the same name as the button');
       equal(hidden.attr('value'), 'valueB', '...and should set the value of the button');
-
     });
 
 
@@ -222,21 +220,20 @@
       var hint1 = input1.parent().find('.hint');
       var hint2 = input2.parent().find('.hint');
       var hint3 = input3.parent().find('.hint');
-
       ok(hint1, 'Input1 should have a hint element.')
       equal(hint1.html(), 'Test1', 'The hint should be taken from data-hint')
       ok(hint2, 'Input2 should have a hint element.')
       equal(hint2.html(), 'Test2', 'The hint should be taken from data-hint')
-      ok(hint1.is(':visible'), 'Hint1 should be visible')
-      ok(!hint2.is(':visible'), 'Hint2 should be hidden because it is prefilled')
-      ok(hint3.is(':visible'), 'Hint3 should also be visible because it is initially empty')
+      ok(hint1.css('display') !== 'none', 'Hint1 should be visible')
+      ok(hint2.css('display') === 'none', 'Hint2 should be hidden because it is prefilled')
+      ok(hint3.css('display') !== 'none', 'Hint3 should also be visible because it is initially empty')
 
       stop();
 
       _.delay(function() {
         input3.val('Somevalue');
         _.delay(function() {
-          ok(!hint3.is(':visible'), 'Hint3 should now be invisible since the browser autofilled it.')
+          ok(hint3.css('display') === 'none', 'Hint3 should now be invisible since the browser autofilled it.')
           start();
         }, 100);
       }, 2);

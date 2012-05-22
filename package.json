@@ -38,7 +38,8 @@
      "qwery": "3.x",
      "bonzo": "1.x",
      "bean": "0.x",
-     "reqwest": "0.x"
+     "reqwest": "0.x",
+     "morpheus": "0.x"
   },
   "ender": "noop"
 }

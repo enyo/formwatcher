@@ -37,7 +37,10 @@ Formwatcher.Decorators.push class extends Formwatcher.Decorator
 
     Formwatcher.debug "Using hint: " + hint
 
-    input.wrap "<span style=\"display: inline; position: relative;\" />"
+
+    wrapper = $.create("<span style=\"display: inline; position: relative;\" />")
+    wrapper.insertAfter input
+    wrapper.append input
 
     # I think this is a bit of a hack... Don't know how to get the top margin otherwise though, since `position().top` seems not to work.
     topMargin = @decParseInt input.css("marginTop")
@@ -47,8 +50,8 @@ Formwatcher.Decorators.push class extends Formwatcher.Decorator
 
     rightPosition = @decParseInt(input.css("paddingRight")) + @decParseInt(input.position().right) + @decParseInt(input.css("borderRightWidth")) + "px"
 
-    hintElement = $.create "<span />"
-    .html hint
+    hintElement = $.create("<span />")
+    .html(hint)
     .css
       position: "absolute"
       display: "none"
@@ -59,16 +62,21 @@ Formwatcher.Decorators.push class extends Formwatcher.Decorator
       fontFamily: input.css "fontFamily"
       color: @options.color
     .addClass("hint")
-    .on "click", ->
-      input.focus()
+    .on("click", -> input.focus())
     .insertAfter input
 
     fadeLength = 100
     input.focus ->
-      hintElement.fadeTo fadeLength, 0.4  if input.val() is ""
+      if input.val() is ""
+        hintElement.animate
+          opacity: 0.4
+          duration: fadeLength
 
     input.blur ->
-      hintElement.fadeTo fadeLength, 1  if input.val() is ""
+      if input.val() is ""
+        hintElement.animate
+          opacity: 1
+          duration: fadeLength
 
     changeFunction = ->
       if input.val() is ""
@@ -90,7 +98,7 @@ Formwatcher.Decorators.push class extends Formwatcher.Decorator
       changeFunction()
       _.delay delayChangeFunction, nextTimeout
       nextTimeout = nextTimeout * 2
-      nextTimeout = (if nextTimeout > 1000 then 1000 else nextTimeout)
+      nextTimeout = (if nextTimeout > 10000 then 10000 else nextTimeout)
 
     delayChangeFunction()
     elements

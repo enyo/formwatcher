@@ -60,9 +60,8 @@ $.ender
   fwData: (name, value) ->
     # Create an empty formwatcher object if there isn't one yet.
     @data "_formwatcher", { } unless @data("_formwatcher")?
-
+    
     return @ unless name?
-
     formwatcherAttributes = @data("_formwatcher")
     if value?
       formwatcherAttributes[name] = value
@@ -70,6 +69,12 @@ $.ender
       return this
     else
       return formwatcherAttributes[name]
+  , true
+
+
+$.ender
+  position: ->
+    @offset()
   , true
 
 
@@ -105,8 +110,10 @@ Formwatcher =
       label = $ "label[for=" + input.attr("id") + "]"
       label = `undefined`  unless label.length
     if not label and automatchLabel
-      label = input.prev()
-      label = `undefined`  if not label.length or label.get(0).nodeName isnt "LABEL" or label.attr("for")
+      label = input.previous()
+      window.testinput = input
+      label = undefined if !label.length or label.get(0).nodeName isnt "LABEL" or label.attr("for")?
+
     label
 
   changed: (elements, watcher) ->
@@ -381,7 +388,7 @@ class Watcher
     @observe "submit", @options.onSubmit
     @observe "success", @options.onSuccess
     @observe "error", @options.onError
-    $(":input", @form).each (i, input) =>
+    $(":input", @form).each (input) =>
       input = $ input
       unless input.fwData("initialized")
         if input.attr("type") is "hidden"
