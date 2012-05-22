@@ -1,6 +1,4 @@
 
-(function($) {
-
   Formwatcher.tests = function() {
 
 
@@ -247,5 +245,3 @@
 
 
   }
-
-})(jQuery);

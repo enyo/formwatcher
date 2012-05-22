@@ -18,9 +18,13 @@
     }
   </style>
 
-  <script type="text/javascript" src="../vendor/jquery-1.7.1.js"></script>
-  <script type="text/javascript" src="../vendor/underscore-1.2.3.js"></script>
+  <script type="text/javascript" src="../vendor/ender.js"></script>
+  <script type="text/javascript">
+    var _ = require("underscore");
+  </script>
+
   <script type="text/javascript" src="../vendor/qunit-1.2.0.js"></script>
+
 
   <script type="text/javascript" src="../lib/formwatcher.js"></script>
   <script type="text/javascript" src="../lib/formwatcher.validators.js"></script>
@@ -30,7 +34,7 @@
 
   <script type="text/javascript">
     var tmpDiv;
-    $(document).ready(function() {
+    $.domReady(function() {
       tmpDiv = $('#tmp');
       Formwatcher.tests();
     });

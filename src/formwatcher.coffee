@@ -24,28 +24,54 @@
 
 
 
+# Helper function to deep extend objects
+deepExtend = (object, extenders...) ->
+  return { } unless object?
+  for other in extenders
+    for own key, val of other
+      unless object[key]? and typeof val is "object"
+        object[key] = val
+      else
+        object[key] = deepExtend object[key], val
+  object
+
+
+
 # Returns or generates a UID for any html element
-$.fn.uid = ->
-  id = @attr("id")
-  unless id
-    id = "generatedUID" + (Formwatcher.uidCounter++)
-    @attr "id", id
-  id
+$.ender
+  uid: ->
+    return null unless @[0]?
+
+    el = @first()
+
+    id = el.attr "id"
+    unless id?
+      id = "formwatcher-uid-" + (Formwatcher.uidCounter++)
+      el.attr "id", id
+    id
+  , true
+
 
 
 # Returns and stores attributes only for formwatcher.
 # Be careful when you get data because it does return the actual object, not
 # a copy of it. So if you manipulate an array, you don't have to store it again.
-$.fn.fwData = (name, value) ->
-  @data "_formwatcher", {}  unless @data("_formwatcher")
-  return this  if name is `undefined`
-  formwatcherAttributes = @data("_formwatcher")
-  if value is `undefined`
-    formwatcherAttributes[name]
-  else
-    formwatcherAttributes[name] = value
-    @data "_formwatcher", formwatcherAttributes
-    this
+$.ender
+  fwData: (name, value) ->
+    # Create an empty formwatcher object if there isn't one yet.
+    @data "_formwatcher", { } unless @data("_formwatcher")?
+
+    return @ unless name?
+
+    formwatcherAttributes = @data("_formwatcher")
+    if value?
+      formwatcherAttributes[name] = value
+      @data "_formwatcher", formwatcherAttributes
+      return this
+    else
+      return formwatcherAttributes[name]
+  , true
+
 
 
 # ## Formwatcher, the global namespace
@@ -62,11 +88,11 @@ Formwatcher =
   getErrorsElement: (elements, createIfNotFound) ->
     input = elements.input
 
-    errors = $("#" + input.attr("name") + "-errors") if input.attr("name")
-    errors = $("#" + input.attr("id") + "-errors") unless errors?.length or !input.attr("id")
+    errors = $("##{input.attr('name')}-errors") if input.attr("name")
+    errors = $("##{input.attr('id')}-errors") unless errors?.length or !input.attr("id")
 
     if not errors or not errors.length
-      errors = $(document.createElement("span"))
+      errors = $.create "<span />"
       errors.attr "id", input.attr("name") + "-errors"  if input.attr("name")
       input.after errors
     errors.hide().addClass("errors").addClass "fw-errors"
@@ -76,7 +102,7 @@ Formwatcher =
     input = elements.input
     label = undefined
     if input.attr("id")
-      label = $("label[for=" + input.attr("id") + "]")
+      label = $ "label[for=" + input.attr("id") + "]"
       label = `undefined`  unless label.length
     if not label and automatchLabel
       label = input.prev()
@@ -97,8 +123,8 @@ Formwatcher =
   setChanged: (elements, watcher) ->
     input = elements.input
     return  if input.fwData("changed")
-    $.each elements, (index, element) ->
-      element.addClass "changed"
+
+    element.addClass "changed" for i, element in elements
 
     input.fwData "changed", true
     Formwatcher.restoreName elements  unless watcher.options.submitUnchanged
@@ -107,8 +133,8 @@ Formwatcher =
   unsetChanged: (elements, watcher) ->
     input = elements.input
     return  unless input.fwData("changed")
-    $.each elements, (index, element) ->
-      element.removeClass "changed"
+
+    element.removeClass "changed" for i, element in elements
 
     input.fwData "changed", false
     Formwatcher.removeName elements unless watcher.options.submitUnchanged
@@ -189,15 +215,12 @@ Formwatcher =
       options = _.extend(options, domOptions)  if domOptions
       new Watcher(form, options)
 
-    $("form[data-fw], form[data-fw=\"\"]").each ->
-      handleForm this
+    $('form[data-fw], form[data-fw=""]').each -> handleForm this
 
-    _.each Formwatcher.options, (options, formId) ->
-      handleForm $("#" + formId)
+    handleForm $ "##{formId}" for formId of Formwatcher.options
 
   watch: (form, options) ->
-    $("document").ready ->
-      new Watcher(form, options)
+    $.domReady -> new Watcher form, options
 
 
 # ## The ElementWatcher root class
@@ -213,7 +236,7 @@ class Formwatcher._ElementWatcher
 
   # Stores the watcher, and creates a valid options object.
   constructor: (@watcher) ->
-    @options = $.extend true, {}, @defaultOptions, watcher.options[@name] ? { }
+    @options = deepExtend { }, @defaultOptions, watcher.options[@name] ? { }
 
   # Overwrite this function if your logic to which elements your decorator applies
   # is more complicated than a simple nodeName/className comparison.
@@ -332,23 +355,23 @@ Formwatcher.options = { }
 # This is the class that gets instantiated for each form.
 class Watcher
   constructor: (form, options) ->
-    @form = (if typeof form is "string" then $("#" + form) else $(form))
+    @form = if typeof form is "string" then $("##{form}") else $ form
     if @form.length < 1
       throw ("Form element not found.")
     else if @form.length > 1
       throw ("The jQuery contained more than 1 element.")
     else throw ("The element was not a form.")  if @form.get(0).nodeName isnt "FORM"
-    @allElements = []
+    @allElements = [ ]
     @id = Formwatcher.currentWatcherId++
     Formwatcher.add this
-    @observers = {}
+    @observers = { }
 
     # Putting the watcher object in the form element.
     @form.fwData "watcher", this
     @form.fwData("originalAction", @form.attr("action") or "").attr "action", "javascript:undefined;"
-    @options = $.extend(true, {}, Formwatcher.defaultOptions, options or {})
-    @decorators = []
-    @validators = []
+    @options = deepExtend { }, Formwatcher.defaultOptions, options or { }
+    @decorators = [ ]
+    @validators = [ ]
     _.each Formwatcher.Decorators, (Decorator) =>
       @decorators.push new Decorator @
 
@@ -358,8 +381,8 @@ class Watcher
     @observe "submit", @options.onSubmit
     @observe "success", @options.onSuccess
     @observe "error", @options.onError
-    $.each $(":input", @form), (i, input) =>
-      input = $(input)
+    $(":input", @form).each (i, input) =>
+      input = $ input
       unless input.fwData("initialized")
         if input.attr("type") is "hidden"
           input.fwData "forceSubmission", true
@@ -372,7 +395,7 @@ class Watcher
             label = Formwatcher.getLabel(elements, @options.automatchLabel)
             elements.label = label  if label
           unless elements.errors
-            errorsElement = Formwatcher.getErrorsElement(elements, true)
+            errorsElement = Formwatcher.getErrorsElement elements, true
             elements.errors = errorsElement
           @allElements.push elements
           input.fwData "validators", []
@@ -383,27 +406,24 @@ class Watcher
 
           Formwatcher.storeInitialValue elements
           if input.val() is null or not input.val()
-            $.each elements, ->
-              @addClass "empty"
+            element.addClass "empty" for i, element of elements
+
           Formwatcher.removeName elements unless @options.submitUnchanged
+
           onchangeFunction = _.bind Formwatcher.changed, Formwatcher, elements, @
           validateElementsFunction = _.bind @validateElements, @, elements, true
-          $.each elements, ->
-            @focus _.bind(->
-              @addClass "focus"
-            , this)
-            @blur _.bind(->
-              @removeClass "focus"
-            , this)
-            @change onchangeFunction
-            @blur onchangeFunction
-            @keyup validateElementsFunction
+          for i, element of elements
+            element.on "focus", => element.addClass "focus"
+            element.on "blur", => element.removeClass "focus"
+            element.on "change", onchangeFunction
+            element.on "blur", onchangeFunction
+            element.on "keyup", validateElementsFunction
 
-    submitButtons = $(":submit", @form)
-    hiddenSubmitButtonElement = $("<input type=\"hidden\" name=\"\" value=\"\" />")
+    submitButtons = $ ":submit", @form
+    hiddenSubmitButtonElement = $.create '<input type="hidden" name="" value="" />'
     @form.append hiddenSubmitButtonElement
-    $.each submitButtons, (i, element) =>
-      element = $(element)
+    submitButtons.each (element) =>
+      element = $ element
       element.click (e) =>
         hiddenSubmitButtonElement.attr("name", element.attr("name") or "").attr "value", element.attr("value") or ""
         @submitForm()
@@ -425,9 +445,9 @@ class Watcher
       this isnt func
     @
 
-  enableForm: -> $(":input", @form).prop "disabled", false
+  enableForm: -> $(":input", @form).attr "disabled", false
 
-  disableForm: -> $(":input", @form).prop "disabled", true
+  disableForm: -> $(":input", @form).attr "disabled", true
 
   submitForm: (e) ->
     if not @options.validate or @validateForm()
@@ -446,15 +466,21 @@ class Watcher
 
   validateForm: ->
     validated = true
+
+    # Not using _.detect() here, because I want every element to be inspected, even
+    # if the first one fails.
     _.each @allElements, (elements) ->
       validated = false unless @validateElements(elements)
     , this
     validated
 
+
+  # `inlineValidating` specifies whether the user is still in the element, typing.
   validateElements: (elements, inlineValidating) ->
     input = elements.input
     validated = true
     if input.fwData("validators").length
+      # Only revalidated if the value has changed
       if not inlineValidating or not input.fwData("lastValidatedValue") or input.fwData("lastValidatedValue") isnt input.val()
         input.fwData "lastValidatedValue", input.val()
         Formwatcher.debug "Validating input " + input.attr("name")
@@ -485,6 +511,9 @@ class Watcher
             element.addClass "validated"
             element.removeClass "error"
 
+          # When we remove an error during inline editing, the error has to
+          # be shown again when the user leaves the input field, even if
+          # the actual value has not changed.
           elements.input.fwData "forceValidationOnChange", true  if inlineValidating
       if not inlineValidating and validated
         sanitizedValue = input.fwData("lastValidatedValue")
@@ -502,9 +531,20 @@ class Watcher
     fields = {}
     i = 0
 
-    $.each $(":input", @form), (i, input) =>
-      input = $(input)
-      fields[(if input.attr("name") then input.attr("name") else "unnamedInput_" + (i++))] = input.val()  if input.attr("type") isnt "checkbox" or input.is(":checked")  if input.fwData("forceSubmission") or input.attr("type") is "checkbox" or input.fwData("changed") or @options.submitUnchanged
+    $(":input", @form).each (input, i) =>
+      input = $ input
+
+      # In previous versions I checked if the input field was hidden, and forced the submission
+      # then. But if a decorator transforms any input field in a hidden field, and puts
+      # a JS selector on top of it, the actual input field will always be hidden, thus submitted.
+      # So now the check if the field is hidden and should be submitted takes place
+      # in the constructor, and sets `forceSubmission` on the input field.
+
+      if input.fwData("forceSubmission") || input.attr("type") == "checkbox" || input.fwData('changed') || self.options.submitUnchanged
+        if input.attr('type') != 'checkbox' || input.is(':checked')
+          attributeName = if input.attr("name") then input.attr("name") else "unnamedInput_#{i}"
+          fields[attributeName] = input.val()
+
 
     if _.size(fields) is 0 and not @options.submitFormIfAllUnchanged
       _.defer _.bind(->
@@ -517,29 +557,29 @@ class Watcher
         type: "POST"
         data: fields
         context: this
-        success: (data) ->
+        error: (request) =>
+          @callObservers "error", request.response
+        success: (data) =>
           @enableForm()
           unless @options.responseCheck(data)
             @callObservers "error", data
           else
             @callObservers "success", data
             @ajaxSuccess()
-    `undefined`
 
   ajaxSuccess: ->
-    _.each @allElements, _.bind((elements) ->
-      Formwatcher.unsetChanged elements, this
+    for elements in @allElements
+      Formwatcher.unsetChanged elements, @
       if @options.resetFormAfterSubmit
         Formwatcher.restoreInitialValue elements
       else
         Formwatcher.storeInitialValue elements
       isEmpty = (elements.input.val() is null or not elements.input.val())
-      $.each elements, ->
+      for i, element of elements
         if isEmpty
-          @addClass "empty"
+          element.addClass "empty"
         else
-          @removeClass "empty"
-    , this)
+          element.removeClass "empty"
 
 
 

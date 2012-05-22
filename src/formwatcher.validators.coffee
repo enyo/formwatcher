@@ -1,5 +1,8 @@
 
 
+trim = (string) -> string.replace /^\s.*\s$/, ""
+
+
 # ## Integer validator
 #
 # Makes sure that only digits are present
@@ -12,7 +15,7 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
     true
 
   sanitize: (value) ->
-    $.trim value
+    trim value
 
 
 
@@ -24,7 +27,7 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
   description: "Makes sure the value is not blank (nothing or spaces)."
   classNames: [ "required" ]
   validate: (value, input) ->
-    return "Can not be blank."  if (input.attr("type") is "checkbox" and not input.is(":checked")) or not $.trim(value)
+    return "Can not be blank."  if (input.attr("type") is "checkbox" and not input.is(":checked")) or not trim value
     true
 
 
@@ -56,7 +59,7 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
     true
 
   sanitize: (value) ->
-    $.trim value
+    trim value
 
 
 
@@ -102,4 +105,4 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
     # Now make sure the right decimal mark is used:
     value = value.replace(/\./g, @options.decimalMark)
 
-    $.trim value
+    trim value

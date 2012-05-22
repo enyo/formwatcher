@@ -25,7 +25,7 @@ Formwatcher.Decorators.push class extends Formwatcher.Decorator
 
   decorate: (input) ->
     elements = input: input
-    hint = input.data("hint")
+    hint = input.data "hint"
 
     if !hint? or !hint
       label = Formwatcher.getLabel elements, @watcher.options.automatchLabel
@@ -47,7 +47,9 @@ Formwatcher.Decorators.push class extends Formwatcher.Decorator
 
     rightPosition = @decParseInt(input.css("paddingRight")) + @decParseInt(input.position().right) + @decParseInt(input.css("borderRightWidth")) + "px"
 
-    hintElement = $("<span />").html(hint).css(
+    hintElement = $.create "<span />"
+    .html hint
+    .css
       position: "absolute"
       display: "none"
       top: @decParseInt(input.css("paddingTop")) + @decParseInt(input.position().top) + @decParseInt(input.css("borderTopWidth")) + topMargin + "px"
@@ -56,9 +58,11 @@ Formwatcher.Decorators.push class extends Formwatcher.Decorator
       lineHeight: input.css "lineHeight"
       fontFamily: input.css "fontFamily"
       color: @options.color
-    ).addClass("hint").click(->
+    .addClass("hint")
+    .on "click", ->
       input.focus()
-    ).insertAfter(input)
+    .insertAfter input
+
     fadeLength = 100
     input.focus ->
       hintElement.fadeTo fadeLength, 0.4  if input.val() is ""

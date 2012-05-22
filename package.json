@@ -34,8 +34,11 @@
     } 
   ],
   "dependencies": {
+     "underscore": "1.x",
      "qwery": "3.x",
-     "underscore": "1.x"
+     "bonzo": "1.x",
+     "bean": "0.x",
+     "reqwest": "0.x"
   },
   "ender": "noop"
 }
