@@ -73,6 +73,10 @@ $.ender
 
 
 
+# The selector for all input types
+inputSelector = "input, textarea, select, button"
+
+
 # ## Formwatcher, the global namespace
 Formwatcher =
   version: "2.0.0-dev"
@@ -93,8 +97,9 @@ Formwatcher =
 
     if not errors or not errors.length
       errors = $.create "<span />"
-      errors.attr "id", input.attr("name") + "-errors"  if input.attr("name")
-      input.after errors
+      errors.attr "id", input.attr("name") + "-errors" if input.attr("name")
+      errors.insertAfter input
+      # input.after errors
     errors.hide().addClass("errors").addClass "fw-errors"
     errors
 
@@ -413,7 +418,7 @@ class Watcher
     @observe "submit", @options.onSubmit
     @observe "success", @options.onSuccess
     @observe "error", @options.onError
-    $(":input", @form).each (input) =>
+    $(inputSelector, @form).each (input) =>
       input = $ input
       unless input.fwData("initialized")
         if input.attr("type") is "hidden"
@@ -474,9 +479,9 @@ class Watcher
     @observers[eventName] = (observer for observer in @observers[eventName] when observer isnt func)
     @
 
-  enableForm: -> $(":input", @form).attr "disabled", false
+  enableForm: -> $(inputSelector, @form).attr "disabled", false
 
-  disableForm: -> $(":input", @form).attr "disabled", true
+  disableForm: -> $(inputSelector, @form).attr "disabled", true
 
   submitForm: (e) ->
     if not @options.validate or @validateForm()
@@ -566,7 +571,7 @@ class Watcher
     fieldCount = 0
     i = 0
 
-    $(":input", @form).each (input, i) =>
+    $(inputSelector, @form).each (input, i) =>
       input = $ input
 
       # In previous versions I checked if the input field was hidden, and forced the submission

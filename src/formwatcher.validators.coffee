@@ -84,7 +84,6 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
     decimalMark: ","
 
   validate: (value) ->
-    Formwatcher.debug "/\\d+(\\" + @options.decimalMark + "\\d+)?/", "g"
     regex = new RegExp("\\d+(\\" + @options.decimalMark + "\\d+)?")
     return "Has to be a number."  unless value.replace(regex, "") is ""
     true
