@@ -123,7 +123,8 @@ Formwatcher =
     watcher.validateElements elements  if watcher.options.validate
 
   setChanged: (elements, watcher) ->
-    return  if input.fwData("changed")
+    input = elements.input
+    return if input.fwData("changed")
 
     element.addClass "changed" for own i, element of elements
 
