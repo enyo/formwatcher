@@ -562,7 +562,8 @@ class Watcher
 
   submitAjax: ->
     Formwatcher.debug "Submitting form via AJAX."
-    fields = {}
+    fields = { }
+    fieldCount = 0
     i = 0
 
     $(":input", @form).each (input, i) =>
@@ -573,14 +574,14 @@ class Watcher
       # a JS selector on top of it, the actual input field will always be hidden, thus submitted.
       # So now the check if the field is hidden and should be submitted takes place
       # in the constructor, and sets `forceSubmission` on the input field.
-
       if input.fwData("forceSubmission") || input.attr("type") == "checkbox" || input.fwData('changed') || self.options.submitUnchanged
         if input.attr('type') != 'checkbox' || input.is(':checked')
+          fieldCount++
           attributeName = if input.attr("name") then input.attr("name") else "unnamedInput_#{i}"
           fields[attributeName] = input.val()
 
 
-    if _.size(fields) is 0 and not @options.submitFormIfAllUnchanged
+    if fieldCount is 0 and not @options.submitFormIfAllUnchanged
       setTimeout =>
         @enableForm()
         @ajaxSuccess()
