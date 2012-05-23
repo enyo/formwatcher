@@ -457,7 +457,7 @@ class Watcher
             element.on "blur", onchangeFunction
             element.on "keyup", validateElementsFunction
 
-    submitButtons = $ "input[type=submit], button[type=''], button[type='submit']", @form
+    submitButtons = $ "input[type=submit], button[type=''], button[type='submit'], button:not([type])", @form
     hiddenSubmitButtonElement = $.create '<input type="hidden" name="" value="" />'
     @form.append hiddenSubmitButtonElement
     submitButtons.each (element) =>
