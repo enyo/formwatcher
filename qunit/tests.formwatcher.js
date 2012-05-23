@@ -217,26 +217,29 @@
 
       new Watcher(form);
 
-      var hint1 = input1.parent().find('.hint');
-      var hint2 = input2.parent().find('.hint');
-      var hint3 = input3.parent().find('.hint');
-      ok(hint1, 'Input1 should have a hint element.')
-      equal(hint1.html(), 'Test1', 'The hint should be taken from data-hint')
-      ok(hint2, 'Input2 should have a hint element.')
-      equal(hint2.html(), 'Test2', 'The hint should be taken from data-hint')
-      ok(hint1.css('display') !== 'none', 'Hint1 should be visible')
-      ok(hint2.css('display') === 'none', 'Hint2 should be hidden because it is prefilled')
-      ok(hint3.css('display') !== 'none', 'Hint3 should also be visible because it is initially empty')
-
       stop();
-
       _.delay(function() {
-        input3.val('Somevalue');
+        var hint1 = input1.parent().find('.hint');
+        var hint2 = input2.parent().find('.hint');
+        var hint3 = input3.parent().find('.hint');
+
+        ok(hint1.length, 'Input1 should have a hint element.')
+        equal(hint1.html(), 'Test1', 'The hint should be taken from data-hint')
+        ok(hint2.length, 'Input2 should have a hint element.')
+        equal(hint2.html(), 'Test2', 'The hint should be taken from data-hint')
+        ok(hint1.css('display') !== 'none', 'Hint1 should be visible')
+        ok(hint2.css('display') === 'none', 'Hint2 should be hidden because it is prefilled')
+        ok(hint3.css('display') !== 'none', 'Hint3 should also be visible because it is initially empty')
+
+
         _.delay(function() {
-          ok(hint3.css('display') === 'none', 'Hint3 should now be invisible since the browser autofilled it.')
-          start();
-        }, 100);
-      }, 2);
+          input3.val('Somevalue');
+          _.delay(function() {
+            ok(hint3.css('display') === 'none', 'Hint3 should now be invisible since the browser autofilled it.')
+            start();
+          }, 100);
+        }, 2);
+      });
 
     });
 

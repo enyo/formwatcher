@@ -72,12 +72,6 @@ $.ender
   , true
 
 
-$.ender
-  position: ->
-    @offset()
-  , true
-
-
 
 # ## Formwatcher, the global namespace
 Formwatcher =
