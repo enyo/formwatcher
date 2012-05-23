@@ -620,4 +620,4 @@ if window?
   window.Formwatcher = Formwatcher
   window.Watcher = Watcher
 
-$(document).ready Formwatcher.scanDocument
+$.domReady -> Formwatcher.scanDocument()
