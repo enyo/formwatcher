@@ -188,10 +188,11 @@
       // mostly taken from wikipedia
       var validEmails = [ 'm@tias.me', 'niceandsimple@example.com', 'simplewith+symbol@example.com', 'less.common@example.com', 'a.little.more.unusual@dept.example.com', "'@[10.10.10.10]" ];
 
-      _.each(validEmails, function(email) {
+      for (var i = 0; i < validEmails.length; i ++) {
+        var email = validEmails[i];
         input.val(email);
         ok(watcher.validateForm(), email + ' is a valid address');
-      });
+      }
 
     });
 
@@ -218,7 +219,7 @@
       new Watcher(form);
 
       stop();
-      _.delay(function() {
+      setTimeout(function() {
         var hint1 = input1.parent().find('.hint');
         var hint2 = input2.parent().find('.hint');
         var hint3 = input3.parent().find('.hint');
@@ -232,14 +233,14 @@
         ok(hint3.css('display') !== 'none', 'Hint3 should also be visible because it is initially empty')
 
 
-        _.delay(function() {
+        setTimeout(function() {
           input3.val('Somevalue');
-          _.delay(function() {
+          setTimeout(function() {
             ok(hint3.css('display') === 'none', 'Hint3 should now be invisible since the browser autofilled it.')
             start();
           }, 100);
         }, 2);
-      });
+      }, 1);
 
     });
 
