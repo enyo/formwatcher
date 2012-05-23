@@ -76,13 +76,13 @@ Formwatcher.Decorators.push class extends Formwatcher.Decorator
       .insertAfter input
 
       fadeLength = 100
-      input.focus ->
+      input.focusin ->
         if input.val() is ""
           hintElement.animate
             opacity: 0.4
             duration: fadeLength
 
-      input.blur ->
+      input.focusout ->
         if input.val() is ""
           hintElement.animate
             opacity: 1

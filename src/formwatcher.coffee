@@ -87,6 +87,7 @@ Formwatcher =
   getErrorsElement: (elements, createIfNotFound) ->
     input = elements.input
 
+    # First try to see if there is a NAME-errors element, then if there is an ID-errors.
     errors = $("##{input.attr('name')}-errors") if input.attr("name")
     errors = $("##{input.attr('id')}-errors") unless errors?.length or !input.attr("id")
 
@@ -122,10 +123,9 @@ Formwatcher =
     watcher.validateElements elements  if watcher.options.validate
 
   setChanged: (elements, watcher) ->
-    input = elements.input
     return  if input.fwData("changed")
 
-    element.addClass "changed" for i, element in elements
+    element.addClass "changed" for own i, element of elements
 
     input.fwData "changed", true
     Formwatcher.restoreName elements  unless watcher.options.submitUnchanged
@@ -135,7 +135,7 @@ Formwatcher =
     input = elements.input
     return  unless input.fwData("changed")
 
-    element.removeClass "changed" for i, element in elements
+    element.removeClass "changed" for own i, element of elements
 
     input.fwData "changed", false
     Formwatcher.removeName elements unless watcher.options.submitUnchanged
@@ -183,10 +183,17 @@ Formwatcher =
     input.attr "name", input.fwData("name")
 
   Decorators: []
+  # `decorate()` only uses the first decorator found. You can't use multiple decorators on the same input.
+  # If you want to have two decorators applied, you have to create a new decorator joining them.
   decorate: (watcher, input) ->
-    decorator = _.detect(watcher.decorators, (decorator) ->
-      true  if decorator.accepts(input)
-    )
+    decorator = null
+
+    # Like `_.detect()`
+    for dec in watcher.decorators
+      if dec.accepts input
+        decorator = dec
+        break
+
     if decorator
       Formwatcher.debug "Decorator \"" + decorator.name + "\" found for input field \"" + input.attr("name") + "\"."
       decorator.decorate input
@@ -205,18 +212,28 @@ Formwatcher =
   getAll: ->
     @watchers
 
+  # Searches all forms with a data-fw attribute and watches them
   scanDocument: ->
     handleForm = (form) ->
       form = $(form)
-      return  if form.fwData("watcher")
+
+      # A form can only be watched once!
+      return if form.fwData("watcher")
+
       formId = form.attr("id")
-      options = {}
-      options = Formwatcher.options[formId]  if Formwatcher.options[formId]  if formId
+
+      # Check if options have been set for it.
+      options = if formId? and Formwatcher.options[formId]? then Formwatcher.options[formId] else { }
+
       domOptions = form.data("fw")
-      options = _.extend(options, domOptions)  if domOptions
+
+      # domOptions always overwrite the normal options.
+      options = deepExtend options, domOptions if domOptions
+
       new Watcher(form, options)
 
-    $('form[data-fw], form[data-fw=""]').each -> handleForm this
+    # IE7 does not apply the selector form[data-fw] to elements where data-fw is empty so I added data-fw="".
+    $('form[data-fw], form[data-fw=""]').each (form) -> handleForm form
 
     handleForm $ "##{formId}" for formId of Formwatcher.options
 
@@ -244,11 +261,25 @@ class Formwatcher._ElementWatcher
   accepts: (input) ->
     # If the config for a ElementWatcher is just false, it's disabled for the watcher.
     return false if @watcher.options[@name]? and @watcher.options[@name] == false
-    _.any(@nodeNames, (nodeName) ->
-      input.get(0).nodeName is nodeName
-    ) and _.all(@classNames, (className) ->
-      input.hasClass className
-    )
+
+    correctNodeName = false
+    inputNodeName = input.get(0).nodeName
+
+    for nodeName in @nodeNames
+      if inputNodeName is nodeName
+        correctNodeName = true
+        break
+
+    return false unless correctNodeName
+
+    correctClassNames = true
+
+    for className in @classNames
+      unless input.hasClass className
+        correctClassNames = false
+        break
+
+    return correctClassNames
 
 
 # ## Decorator class
@@ -373,11 +404,10 @@ class Watcher
     @options = deepExtend { }, Formwatcher.defaultOptions, options or { }
     @decorators = [ ]
     @validators = [ ]
-    _.each Formwatcher.Decorators, (Decorator) =>
-      @decorators.push new Decorator @
 
-    _.each Formwatcher.Validators, (Validator) =>
-      @validators.push new Validator @
+    @decorators.push new Decorator @ for Decorator in Formwatcher.Decorators
+
+    @validators.push new Validator @ for Validator in Formwatcher.Validators
 
     @observe "submit", @options.onSubmit
     @observe "success", @options.onSuccess
@@ -400,7 +430,7 @@ class Watcher
             elements.errors = errorsElement
           @allElements.push elements
           input.fwData "validators", []
-          _.each @validators, (validator) =>
+          for validator in @validators
             if validator.accepts input, @
               Formwatcher.debug "Validator \"" + validator.name + "\" found for input field \"" + input.attr("name") + "\"."
               input.fwData("validators").push validator
@@ -411,8 +441,9 @@ class Watcher
 
           Formwatcher.removeName elements unless @options.submitUnchanged
 
-          onchangeFunction = _.bind Formwatcher.changed, Formwatcher, elements, @
-          validateElementsFunction = _.bind @validateElements, @, elements, true
+          onchangeFunction = => Formwatcher.changed elements, @
+          validateElementsFunction = => @validateElements elements, true
+
           for i, element of elements
             element.on "focus", => element.addClass "focus"
             element.on "blur", => element.removeClass "focus"
@@ -420,7 +451,7 @@ class Watcher
             element.on "blur", onchangeFunction
             element.on "keyup", validateElementsFunction
 
-    submitButtons = $ ":submit", @form
+    submitButtons = $ "input[type=submit], button[type=''], button[type='submit']", @form
     hiddenSubmitButtonElement = $.create '<input type="hidden" name="" value="" />'
     @form.append hiddenSubmitButtonElement
     submitButtons.each (element) =>
@@ -430,11 +461,8 @@ class Watcher
         @submitForm()
         e.stopPropagation()
 
-  callObservers: (eventName) ->
-    args = _.toArray(arguments)
-    args.shift()
-    _.each @observers[eventName], (observer) =>
-      observer.apply @, args
+  callObservers: (eventName, args...) ->
+    observer.apply @, args for observer in @observers[eventName]
 
   observe: (eventName, func) ->
     @observers[eventName] = []  if @observers[eventName] is `undefined`
@@ -442,8 +470,7 @@ class Watcher
     @
 
   stopObserving: (eventName, func) ->
-    @observers[eventName] = _.select @observers[eventName], ->
-      this isnt func
+    @observers[eventName] = (observer for observer in @observers[eventName] when observer isnt func)
     @
 
   enableForm: -> $(":input", @form).attr "disabled", false
@@ -453,26 +480,28 @@ class Watcher
   submitForm: (e) ->
     if not @options.validate or @validateForm()
       @callObservers "submit"
+
+      # Do submit
       if @options.ajax
+
         @disableForm()
         @submitAjax()
       else
         @form.attr "action", @form.fwData("originalAction")
-        _.defer _.bind(->
+        setTimeout =>
           @form.submit()
           @disableForm()
-        , this)
+        , 1
         false
-    else
 
   validateForm: ->
     validated = true
 
     # Not using _.detect() here, because I want every element to be inspected, even
     # if the first one fails.
-    _.each @allElements, (elements) ->
+    for elements in @allElements
       validated = false unless @validateElements(elements)
-    , this
+
     validated
 
 
@@ -486,29 +515,23 @@ class Watcher
         input.fwData "lastValidatedValue", input.val()
         Formwatcher.debug "Validating input " + input.attr("name")
         input.fwData "validationErrors", []
-        validated = _.all(input.fwData("validators"), (validator) ->
+
+        for validator in input.fwData "validators"
+
           if input.val() is "" and validator.name isnt "Required"
             Formwatcher.debug "Validating " + validator.name + ". Field was empty so continuing."
-            return true
+            continue
+
           Formwatcher.debug "Validating " + validator.name
           validationOutput = validator.validate(validator.sanitize(input.val()), input)
           if validationOutput isnt true
             validated = false
             input.fwData("validationErrors").push validationOutput
-            return false
-          true
-        )
-        unless validated
-          _.each elements, (element) ->
-            element.removeClass "validated"
+            break
 
-          unless inlineValidating
-            elements.errors.html(input.fwData("validationErrors").join("<br />")).show()
-            _.each elements, (element) ->
-              element.addClass "error"
-        else
+        if validated
           elements.errors.html("").hide()
-          _.each elements, (element) ->
+          for own i, element of elements
             element.addClass "validated"
             element.removeClass "error"
 
@@ -516,15 +539,24 @@ class Watcher
           # be shown again when the user leaves the input field, even if
           # the actual value has not changed.
           elements.input.fwData "forceValidationOnChange", true  if inlineValidating
+
+        else
+
+          element.removeClass "validated" for own i, element of elements
+
+          unless inlineValidating
+            elements.errors.html(input.fwData("validationErrors").join("<br />")).show()
+            element.addClass "error" for own i, element of elements
+
       if not inlineValidating and validated
         sanitizedValue = input.fwData("lastValidatedValue")
-        _.each input.fwData("validators"), (validator) ->
+        for validator in input.fwData("validators")
           sanitizedValue = validator.sanitize(sanitizedValue)
 
         input.val sanitizedValue
     else
-      _.each elements, (element) ->
-        element.addClass "validated"
+      element.addClass "validated" for own i, element of elements
+
     validated
 
   submitAjax: ->
@@ -548,10 +580,10 @@ class Watcher
 
 
     if _.size(fields) is 0 and not @options.submitFormIfAllUnchanged
-      _.defer _.bind(->
+      setTimeout =>
         @enableForm()
         @ajaxSuccess()
-      , this)
+      , 1
     else
       $.ajax
         url: @form.fwData("originalAction")
