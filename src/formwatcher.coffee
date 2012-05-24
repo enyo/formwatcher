@@ -37,21 +37,6 @@ deepExtend = (object, extenders...) ->
 
 
 
-# Returns or generates a UID for any html element
-$.ender
-  uid: ->
-    return null unless @[0]?
-
-    el = @first()
-
-    id = el.attr "id"
-    unless id?
-      id = "formwatcher-uid-" + (Formwatcher.uidCounter++)
-      el.attr "id", id
-    id
-  , true
-
-
 
 # Returns and stores attributes only for formwatcher.
 # Be careful when you get data because it does return the actual object, not
@@ -81,7 +66,6 @@ inputSelector = "input, textarea, select, button"
 Formwatcher =
   version: "2.0.0-dev"
   debugging: false
-  uidCounter: 0
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
   debug: ->
@@ -118,10 +102,10 @@ Formwatcher =
 
   changed: (elements, watcher) ->
     input = elements.input
-    return  if not input.fwData("forceValidationOnChange") and (input.attr("type") is "checkbox" and input.fwData("previouslyChecked") is input.is(":checked")) or (input.fwData("previousValue") is input.val())
+    return  if not input.fwData("forceValidationOnChange") and (input.attr("type") is "checkbox" and input.fwData("previouslyChecked") is !!input[0].checked) or (input.fwData("previousValue") is input.val())
     input.fwData "forceValidationOnChange", false
     @setPreviousValueToCurrentValue elements
-    if (input.attr("type") is "checkbox") and (input.fwData("initialyChecked") isnt input.is(":checked")) or (input.attr("type") isnt "checkbox") and (input.fwData("initialValue") isnt input.val())
+    if (input.attr("type") is "checkbox") and (input.fwData("initialyChecked") isnt !!input[0].checked) or (input.attr("type") isnt "checkbox") and (input.fwData("initialValue") isnt input.val())
       Formwatcher.setChanged elements, watcher
     else
       Formwatcher.unsetChanged elements, watcher
@@ -149,7 +133,7 @@ Formwatcher =
   storeInitialValue: (elements) ->
     input = elements.input
     if input.attr("type") is "checkbox"
-      input.fwData "initialyChecked", input.is(":checked")
+      input.fwData "initialyChecked", !!input[0].checked
     else
       input.fwData "initialValue", input.val()
 
@@ -173,7 +157,7 @@ Formwatcher =
   setPreviousValueToCurrentValue: (elements) ->
     input = elements.input
     if input.attr("type") is "checkbox"
-      input.fwData "previouslyChecked", input.is(":checked")
+      input.fwData "previouslyChecked", !!input[0].checked
     else
       input.fwData "previousValue", input.val()
 
