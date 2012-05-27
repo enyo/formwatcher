@@ -31,7 +31,7 @@
     {
       "type": "git",
       "url": "https://github.com/enyo/formwatcher.git" 
-    } 
+    }
   ],
   "dependencies": {
      "underscore": "1.x",
@@ -41,5 +41,6 @@
      "reqwest": "0.x",
      "morpheus": "0.x"
   },
+  "main": [ "./lib/formwatcher.js", "./lib/validators.js" ],
   "ender": "noop"
 }
