@@ -1,9 +1,9 @@
 # Formwatcher Version 2.0.0-dev
+#
 # More infos at http://www.formwatcher.org
-# 
+#
 # Copyright (c) 2012, Matias Meno
-# Graphics by Tjandra Mayerhold
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
