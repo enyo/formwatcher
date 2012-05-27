@@ -15,7 +15,7 @@
     {
       "name": "lib/formwatcher.js",
       "regexs": [
-        "Formwatcher Version ###"
+        "version: \"###\""
       ]
     },
     {
@@ -23,6 +23,12 @@
       "regexs": [
         "Formwatcher Version ###",
         "version: \"###\""
+      ]
+    },
+    {
+      "name": "docs/formwatcher.html",
+      "regexs": [
+        "Formwatcher Version ###"
       ]
     }
   ]

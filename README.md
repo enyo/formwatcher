@@ -1,37 +1,48 @@
 # Formwatcher Version 2.0.0-dev
 
-> I'm currently switching this library to work with qwery, bonzo and underscore instead of
-> jQuery and adding the library to ender, so it's a bit messy right now.
+The formwatcher is a tool to easily improve forms with JavaScript.
 
-The formwatcher is a tool to easily improve forms with javascript.
+It is designed to be as unobtrusive as possible, so that every form remains intact without
+the use of JavaScript, and is built with (and depends on):
 
-It is designed to be as unobtrusive as possible, so that every form remains intact without the use of Javascript.
+  - [qwery][] (Selector Engine)
+  - [bonzo][] (DOM utility)
+  - [bean][] (Event utility)
+  - [reqwest][] (AJAX utility)
 
+[qwery]: https://github.com/ded/qwery
+[bonzo]: https://github.com/ded/bonzo
+[bean]: https://github.com/fat/bean
+[reqwest]: https://github.com/ded/reqwest
+
+
+
+
+## Installation
+
+Simply install with [ender](http://ender.no.de):
+
+    ender build formwatcher
+
+or
+
+    ender add formwatcher
+
+You can also just download the `lib/` files, and install the dependencies manually, but I don't recommend it.
 
 ## Features
 
 The **main features** include:
 
-- Validation
-- Decorators (Turn a simple select input field into an image selector, or a font selector or display a nice hint)
+- Validation *
+- Decorators * (Turn a simple select input field into an image selector, or a font selector or display a nice hint)
 - AJAX conversion (Turn a form into an AJAX call automatically)
 - Simple html attribute configuration that is W3C valid.
 - It's very easy to create your own validators / decorators.
 - ...plenty more.
 
+** * Formwatcher is built to be easily extendible, so writing your own validators and
+decorators is both easy and recommended**
 
-## Usage
 
-The most common useage is to include `formwatcher.js` along with `formwatcher.validators.js` and `formwatcher.Hint.js`.
-Luckily there is a minified pack which contains exactly those 3 files: `minified/formwatcher.pack.js`.
-
-So just include it in your `<head></head>` section:
-
-    <head>
-      [...]
-      <script type="text/javascript" src="javascripts/forwmatcher.pack.js"></script>
-    </head>
-
-Well,... and basically you're done.
-
-Please refer to the README/ folder for instructions on how to use and extend formwatcher.
+> Please refer to the README/ folder for instructions on how to use and extend formwatcher.
