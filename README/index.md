@@ -4,11 +4,11 @@
 
 Formwatcher attaches itself to a form, and improves the user interaction with you input fields.
 
-One of the main goals of formwatcher are:
+A few of the main goals of formwatcher are:
 
 - Be completely unobtrusive (your forms still work without JS)
-- Easily extend existing forms without having to change much or anything to them.
-- Provide the best user experience when handling the form
+- Provide sensible defaults so you won't have to configure much
+- Provide the best user experience possible
 
 
 Other main features include:

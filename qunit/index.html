@@ -3,19 +3,35 @@
 
   <title>Formwatcher | QUnit tests</title>
 
-  <link rel="stylesheet" href="../third_party/qunit-1.2.0.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="../vendor/qunit-1.2.0.css" type="text/css" media="screen" />
 
-  <script type="text/javascript" src="../third_party/jquery-1.7.1.js"></script>
-  <script type="text/javascript" src="../third_party/underscore-1.2.3.js"></script>
-  <script type="text/javascript" src="../third_party/qunit-1.2.0.js"></script>
+  <style type="text/css">
+    .minified-reminder {
+      font-size: 14px;
+      font-family: arial, tahoma, sans-serif;
+      color: #aaa;
+      font-weight: normal;
+      margin: 20px 10px;
+    }
+    .minified-reminder a {
+      color: #999;
+    }
+  </style>
 
-  <script type="text/javascript" src="../formwatcher.js"></script>
+  <script type="text/javascript" src="../vendor/ender.js"></script>
+
+  <script type="text/javascript" src="../vendor/qunit-1.2.0.js"></script>
+
+
+  <script type="text/javascript" src="../lib/formwatcher.js"></script>
+  <script type="text/javascript" src="../lib/validators.js"></script>
+  <script type="text/javascript" src="../lib/hint/hint.js"></script>
 
   <script type="text/javascript" src="./tests.formwatcher.js"></script>
 
   <script type="text/javascript">
     var tmpDiv;
-    $(document).ready(function() {
+    $.domReady(function() {
       tmpDiv = $('#tmp');
       Formwatcher.tests();
     });
@@ -34,5 +50,8 @@
 
   <!-- Use this div to create temporary elements. -->
   <div id="tmp"></div>
+
+  <div class="minified-reminder">Don't forget to test the <a href="minified.html">minified files</a> too from time to time.</div>
+
 
 </body>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+
+  <title>Formwatcher | QUnit tests</title>
+
+  <link rel="stylesheet" href="../vendor/qunit-1.2.0.css" type="text/css" media="screen" />
+
+  <script type="text/javascript" src="../vendor/jquery-1.7.1.js"></script>
+  <script type="text/javascript" src="../vendor/underscore-1.2.3.js"></script>
+  <script type="text/javascript" src="../vendor/qunit-1.2.0.js"></script>
+
+  <script type="text/javascript" src="../minified/formwatcher.js"></script>
+  <script type="text/javascript" src="../minified/formwatcher.validators.js"></script>
+  <script type="text/javascript" src="../minified/formwatcher.Hint.js"></script>
+
+  <script type="text/javascript" src="./tests.formwatcher.js"></script>
+
+  <script type="text/javascript">
+    var tmpDiv;
+    $(document).ready(function() {
+      tmpDiv = $('#tmp');
+      Formwatcher.tests();
+    });
+  </script>
+
+</head>
+
+<body>
+
+  <h1 id="qunit-header">QUnit example</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+  <div id="qunit-fixture">test markup, will be hidden</div>
+
+  <!-- Use this div to create temporary elements. -->
+  <div id="tmp"></div>
+
+</body>

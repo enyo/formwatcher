@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "name": "package.json",
+      "regexs": [
+        "\"version\": \"###\""
+      ]
+    },
+    {
+      "name": "README.md",
+      "regexs": [
+        "Version ###"
+      ]
+    },
+    {
+      "name": "lib/formwatcher.js",
+      "regexs": [
+        "version: \"###\""
+      ]
+    },
+    {
+      "name": "src/formwatcher.coffee",
+      "regexs": [
+        "Formwatcher Version ###",
+        "version: \"###\""
+      ]
+    },
+    {
+      "name": "docs/formwatcher.html",
+      "regexs": [
+        "Formwatcher Version ###"
+      ]
+    }
+  ]
+}

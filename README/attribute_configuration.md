@@ -27,7 +27,7 @@ A Formwatcher configuration could look like this:
     <form action="" data-fw='{ "ajax": true, "validate": false }'>
     </form>
 
-__NOTE:__ The `data-fw` content is JSON. All names and strings have to be
+__NOTE:__ The `data-fw` content is pure JSON. All names and strings have to be
 in double quotes, so you have to put the `data-fw` value itself in single quotes.
 
 Since it's JSON, not JS, you won't be able to directly define your callback
