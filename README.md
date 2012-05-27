@@ -34,16 +34,16 @@ You can also just download the `lib/` files, and install the dependencies manual
 
 The **main features** include:
 
-- Validation *
-- Decorators * (Turn a simple select input field into an image selector, or a font selector or display a nice hint)
+- Validation ¹
+- Decorators ¹ (Turn a simple select input field into an image selector, or a font selector or display a nice hint)
 - AJAX conversion (Turn a form into an AJAX call automatically)
 - Simple html attribute configuration that is W3C valid.
 - It's very easy to create your own validators / decorators.
 - ...plenty more.
 
 
-* **Formwatcher is built to be easily extendible, so writing your own validators and
-decorators is both easy and recommended**
+¹ *Formwatcher is built to be easily extendible, so writing your own validators and
+decorators is both easy and recommended*
 
 
 > Please refer to the README/ folder for instructions on how to use and extend formwatcher.
