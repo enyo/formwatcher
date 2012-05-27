@@ -41,7 +41,8 @@ The **main features** include:
 - It's very easy to create your own validators / decorators.
 - ...plenty more.
 
-** * Formwatcher is built to be easily extendible, so writing your own validators and
+
+* **Formwatcher is built to be easily extendible, so writing your own validators and
 decorators is both easy and recommended**
 
 
