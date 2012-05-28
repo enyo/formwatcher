@@ -79,15 +79,18 @@ Formwatcher.tests = ->
     @buttonA = $("button[name=buttonA]", @form)
     @buttonB = $("button[name=buttonB]", @form)
     tmpDiv.append @form
-    new Watcher(@form,
-      ajax: false
-    )
+    new Watcher @form, ajax: false
+
     @x = 4
     @buttonA.click()
+    allHidden = $ 'input[type="hidden"]', @form
+    equal allHidden.length, 1, "There should only be one hidden field for the right button"
     hidden = $("input[type=\"hidden\"][name=\"buttonA\"]", @form)
     equal hidden.length, 1, "Click on button A should create a hidden input field with the same name as the button"
     equal hidden.attr("value"), "valueA", "...and should set the value of the button"
     @buttonB.click()
+    allHidden = $ 'input[type="hidden"]', @form
+    equal allHidden.length, 1, "There should only be one hidden field for the right button"
     hidden = $("input[type=hidden][name=buttonB]", @form)
     equal hidden.length, 1, "Click on button A should create a hidden input field with the same name as the button"
     equal hidden.attr("value"), "valueB", "...and should set the value of the button"

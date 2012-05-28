@@ -446,6 +446,7 @@ class Watcher
     submitButtons.each (element) =>
       element = $ element
       element.click (e) =>
+        # The submit buttons click events are always triggered if a user presses ENTER inside an input field.
         hiddenSubmitButtonElement.attr("name", element.attr("name") or "").attr "value", element.attr("value") or ""
         @submitForm()
         e.stopPropagation()
@@ -470,7 +471,6 @@ class Watcher
     if not @options.validate or @validateForm()
       @callObservers "submit"
 
-      return false
 
       # Do submit
       if @options.ajax
@@ -558,15 +558,20 @@ class Watcher
     $(inputSelector, @form).each (input, i) =>
       input = $ input
 
+      # Buttons are only submitted when pressed. If a submit button triggers the submission
+      # of the form then it creates a hidden input field to transmit it.
+      if input[0].nodeName == "BUTTON" or (input[0].nodeName == "INPUT" and (input.attr("type").toLowerCase() == "submit" or input.attr("type").toLowerCase() == "button"))
+        return
+
       # In previous versions I checked if the input field was hidden, and forced the submission
       # then. But if a decorator transforms any input field in a hidden field, and puts
       # a JS selector on top of it, the actual input field will always be hidden, thus submitted.
       # So now the check if the field is hidden and should be submitted takes place
       # in the constructor, and sets `forceSubmission` on the input field.
-      if input.fwData("forceSubmission") || input.attr("type") == "checkbox" || input.fwData('changed') || self.options.submitUnchanged
-        if input.attr('type') != 'checkbox' || input.is(':checked')
+      if input.fwData("forceSubmission") || input.attr("type") == "checkbox" || input.fwData('changed') || @options.submitUnchanged
+        if input.attr("type") != "checkbox" || input.get(0).checked
           fieldCount++
-          attributeName = if input.attr("name") then input.attr("name") else "unnamedInput_#{i}"
+          attributeName = input.attr("name") ? "unnamedInput_#{i}"
           fields[attributeName] = input.val()
 
 
@@ -578,8 +583,9 @@ class Watcher
     else
       $.ajax
         url: @form.fwData("originalAction")
-        type: "POST"
+        method: "post"
         data: fields
+        type: "text"
         error: (request) =>
           @callObservers "error", request.response
         success: (data) =>

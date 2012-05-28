@@ -74,7 +74,7 @@
       return equal(Formwatcher.getLabel(elements, false), undefined, "autoMatch: false;  Should return undefined when there no element before the input.");
     });
     test("Multiple submit buttons", function() {
-      var hidden;
+      var allHidden, hidden;
       this.form = $.create("<form action=\"javascript:undefined;\"><button type=\"submit\" name=\"buttonA\" value=\"valueA\">buttonA</button><button type=\"submit\" name=\"buttonB\" value=\"valueB\">buttonB</button></form>");
       this.buttonA = $("button[name=buttonA]", this.form);
       this.buttonB = $("button[name=buttonB]", this.form);
@@ -84,10 +84,14 @@
       });
       this.x = 4;
       this.buttonA.click();
+      allHidden = $('input[type="hidden"]', this.form);
+      equal(allHidden.length, 1, "There should only be one hidden field for the right button");
       hidden = $("input[type=\"hidden\"][name=\"buttonA\"]", this.form);
       equal(hidden.length, 1, "Click on button A should create a hidden input field with the same name as the button");
       equal(hidden.attr("value"), "valueA", "...and should set the value of the button");
       this.buttonB.click();
+      allHidden = $('input[type="hidden"]', this.form);
+      equal(allHidden.length, 1, "There should only be one hidden field for the right button");
       hidden = $("input[type=hidden][name=buttonB]", this.form);
       equal(hidden.length, 1, "Click on button A should create a hidden input field with the same name as the button");
       return equal(hidden.attr("value"), "valueB", "...and should set the value of the button");
