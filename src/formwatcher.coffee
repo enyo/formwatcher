@@ -51,7 +51,7 @@ $.ender
     if value?
       formwatcherAttributes[name] = value
       @data "_formwatcher", formwatcherAttributes
-      return this
+      return @
     else
       return formwatcherAttributes[name]
   , true
@@ -68,8 +68,7 @@ Formwatcher =
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
-  debug: ->
-    console.debug.apply console, arguments if @debugging and console?.debug?
+  debug: -> console.debug.apply console, arguments if @debugging and console?.debug?
 
   # Tries to find an existing errors element, and creates one if there isn't.
   getErrorsElement: (elements, createIfNotFound) ->
@@ -215,10 +214,10 @@ Formwatcher =
       # Check if options have been set for it.
       options = if formId? and Formwatcher.options[formId]? then Formwatcher.options[formId] else { }
 
-      domOptions = form.data("fw")
+      domOptions = form.data "fw"
 
       # domOptions always overwrite the normal options.
-      options = deepExtend options, domOptions if domOptions
+      options = deepExtend options, JSON.parse domOptions if domOptions
 
       new Watcher(form, options)
 
@@ -288,8 +287,7 @@ class Formwatcher.Decorator extends Formwatcher._ElementWatcher
   #
   # `input` has to be the actual form element to transmit the data.
   # `label` is reserved for the actual label.
-  decorate: (watcher, input) ->
-    input: input
+  decorate: (watcher, input) -> input: input
 
 
 # ## Validator class
@@ -300,15 +298,13 @@ class Formwatcher.Validator extends Formwatcher._ElementWatcher
   nodeNames: [ "INPUT", "TEXTAREA", "SELECT" ]
 
   # Return true if the validation passed, or an error message if not.
-  validate: (sanitizedValue, input) ->
-    true
+  validate: (sanitizedValue, input) -> true
 
   # If your value can be sanitized (eg: integers should not have leading or trailing spaces)
   # this function should return the sanitized value.
   #
   # When the user leaves the input field, the value will be updated with this value in the field.
-  sanitize: (value) ->
-    value
+  sanitize: (value) -> value
 
 
 
@@ -378,18 +374,21 @@ Formwatcher.options = { }
 class Watcher
   constructor: (form, options) ->
     @form = if typeof form is "string" then $("##{form}") else $ form
+
     if @form.length < 1
-      throw ("Form element not found.")
+      throw "Form element not found."
     else if @form.length > 1
-      throw ("The jQuery contained more than 1 element.")
-    else throw ("The element was not a form.")  if @form.get(0).nodeName isnt "FORM"
+      throw "More than one form was found."
+    else if @form.get(0).nodeName isnt "FORM"
+      throw "The element was not a form."
+
     @allElements = [ ]
     @id = Formwatcher.currentWatcherId++
-    Formwatcher.add this
+    Formwatcher.add @
     @observers = { }
 
     # Putting the watcher object in the form element.
-    @form.fwData "watcher", this
+    @form.fwData "watcher", @
     @form.fwData("originalAction", @form.attr("action") or "").attr "action", "javascript:undefined;"
     @options = deepExtend { }, Formwatcher.defaultOptions, options or { }
     @decorators = [ ]
@@ -471,9 +470,10 @@ class Watcher
     if not @options.validate or @validateForm()
       @callObservers "submit"
 
+      return false
+
       # Do submit
       if @options.ajax
-
         @disableForm()
         @submitAjax()
       else
@@ -580,7 +580,6 @@ class Watcher
         url: @form.fwData("originalAction")
         type: "POST"
         data: fields
-        context: this
         error: (request) =>
           @callObservers "error", request.response
         success: (data) =>

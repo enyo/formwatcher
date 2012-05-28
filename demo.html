@@ -79,10 +79,7 @@
 
 
     <div id="container">
-<pre>
-<?php if (!empty($_POST)) { print_r($_POST); } ?>
-</pre>
-      <form data-fw='{ "ajax": false, "automatchLabel": true }' id="test" action="demo.php" method="post">
+      <form data-fw='{ "ajax": true, "automatchLabel": true }' id="test" action="demo.php" method="post">
 
         <label for="some-number">Alter (Number, not zero)</label> <input id="some-number" name="some-number" type="text" class="validate-integer not-zero" value="" />
 
@@ -95,14 +92,14 @@
 
         <br />
         <br />
-        <label for="some-text">Beschreibung: </label> <textarea id="some-text" name="some-text"></textarea>
+        <label for="some-text">Beschreibung: </label> <textarea id="some-text" name="some-text" class="required"></textarea>
 
         <br />
         <br />
 
 
         <label>Required font selector</label>
-        <select name="font" class="font required">
+        <select name="font" class="font ">
 
           <option value="">EMPTY</option>
           <option value="arial">arial</option>
@@ -115,7 +112,7 @@
 
 
         <label>Pimped drop down</label>
-        <select class="drop-down required">
+        <select class="drop-down">
 
           <option value="">EMPTY</option>
           <option value="arial">House</option>
@@ -156,7 +153,7 @@
 
 
         <label>E-Mail</label>
-        <input name="email" type="text" class="required validate-email" />
+        <input name="email" type="text" class="validate-email" />
 
         <br />
         <br />
