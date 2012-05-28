@@ -51,7 +51,7 @@ $.ender
     if value?
       formwatcherAttributes[name] = value
       @data "_formwatcher", formwatcherAttributes
-      return this
+      return @
     else
       return formwatcherAttributes[name]
   , true
@@ -68,8 +68,7 @@ Formwatcher =
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
-  debug: ->
-    console.debug.apply console, arguments if @debugging and console?.debug?
+  debug: -> console.debug.apply console, arguments if @debugging and console?.debug?
 
   # Tries to find an existing errors element, and creates one if there isn't.
   getErrorsElement: (elements, createIfNotFound) ->
@@ -215,10 +214,10 @@ Formwatcher =
       # Check if options have been set for it.
       options = if formId? and Formwatcher.options[formId]? then Formwatcher.options[formId] else { }
 
-      domOptions = form.data("fw")
+      domOptions = form.data "fw"
 
       # domOptions always overwrite the normal options.
-      options = deepExtend options, domOptions if domOptions
+      options = deepExtend options, JSON.parse domOptions if domOptions
 
       new Watcher(form, options)
 
@@ -288,8 +287,7 @@ class Formwatcher.Decorator extends Formwatcher._ElementWatcher
   #
   # `input` has to be the actual form element to transmit the data.
   # `label` is reserved for the actual label.
-  decorate: (watcher, input) ->
-    input: input
+  decorate: (watcher, input) -> input: input
 
 
 # ## Validator class
@@ -300,15 +298,13 @@ class Formwatcher.Validator extends Formwatcher._ElementWatcher
   nodeNames: [ "INPUT", "TEXTAREA", "SELECT" ]
 
   # Return true if the validation passed, or an error message if not.
-  validate: (sanitizedValue, input) ->
-    true
+  validate: (sanitizedValue, input) -> true
 
   # If your value can be sanitized (eg: integers should not have leading or trailing spaces)
   # this function should return the sanitized value.
   #
   # When the user leaves the input field, the value will be updated with this value in the field.
-  sanitize: (value) ->
-    value
+  sanitize: (value) -> value
 
 
 
@@ -378,18 +374,21 @@ Formwatcher.options = { }
 class Watcher
   constructor: (form, options) ->
     @form = if typeof form is "string" then $("##{form}") else $ form
+
     if @form.length < 1
-      throw ("Form element not found.")
+      throw "Form element not found."
     else if @form.length > 1
-      throw ("The jQuery contained more than 1 element.")
-    else throw ("The element was not a form.")  if @form.get(0).nodeName isnt "FORM"
+      throw "More than one form was found."
+    else if @form.get(0).nodeName isnt "FORM"
+      throw "The element was not a form."
+
     @allElements = [ ]
     @id = Formwatcher.currentWatcherId++
-    Formwatcher.add this
+    Formwatcher.add @
     @observers = { }
 
     # Putting the watcher object in the form element.
-    @form.fwData "watcher", this
+    @form.fwData "watcher", @
     @form.fwData("originalAction", @form.attr("action") or "").attr "action", "javascript:undefined;"
     @options = deepExtend { }, Formwatcher.defaultOptions, options or { }
     @decorators = [ ]
@@ -447,6 +446,7 @@ class Watcher
     submitButtons.each (element) =>
       element = $ element
       element.click (e) =>
+        # The submit buttons click events are always triggered if a user presses ENTER inside an input field.
         hiddenSubmitButtonElement.attr("name", element.attr("name") or "").attr "value", element.attr("value") or ""
         @submitForm()
         e.stopPropagation()
@@ -471,9 +471,9 @@ class Watcher
     if not @options.validate or @validateForm()
       @callObservers "submit"
 
+
       # Do submit
       if @options.ajax
-
         @disableForm()
         @submitAjax()
       else
@@ -558,15 +558,20 @@ class Watcher
     $(inputSelector, @form).each (input, i) =>
       input = $ input
 
+      # Buttons are only submitted when pressed. If a submit button triggers the submission
+      # of the form then it creates a hidden input field to transmit it.
+      if input[0].nodeName == "BUTTON" or (input[0].nodeName == "INPUT" and (input.attr("type").toLowerCase() == "submit" or input.attr("type").toLowerCase() == "button"))
+        return
+
       # In previous versions I checked if the input field was hidden, and forced the submission
       # then. But if a decorator transforms any input field in a hidden field, and puts
       # a JS selector on top of it, the actual input field will always be hidden, thus submitted.
       # So now the check if the field is hidden and should be submitted takes place
       # in the constructor, and sets `forceSubmission` on the input field.
-      if input.fwData("forceSubmission") || input.attr("type") == "checkbox" || input.fwData('changed') || self.options.submitUnchanged
-        if input.attr('type') != 'checkbox' || input.is(':checked')
+      if input.fwData("forceSubmission") || input.attr("type") == "checkbox" || input.fwData('changed') || @options.submitUnchanged
+        if input.attr("type") != "checkbox" || input.get(0).checked
           fieldCount++
-          attributeName = if input.attr("name") then input.attr("name") else "unnamedInput_#{i}"
+          attributeName = input.attr("name") ? "unnamedInput_#{i}"
           fields[attributeName] = input.val()
 
 
@@ -578,9 +583,9 @@ class Watcher
     else
       $.ajax
         url: @form.fwData("originalAction")
-        type: "POST"
+        method: "post"
         data: fields
-        context: this
+        type: "text"
         error: (request) =>
           @callObservers "error", request.response
         success: (data) =>
