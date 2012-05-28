@@ -1,2 +1,3 @@
 <?php
-  print_r($_POST);
+  header("Content-type: application/json");
+  echo json_encode($_POST);

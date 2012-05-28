@@ -1,4 +1,4 @@
-# Formwatcher Version 2.0.1
+# Formwatcher Version 2.0.2
 #
 # More infos at http://www.formwatcher.org
 #
@@ -64,7 +64,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.0.1"
+  version: "2.0.2"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -434,11 +434,13 @@ class Watcher
           validateElementsFunction = => @validateElements elements, true
 
           for i, element of elements
-            element.on "focus", => element.addClass "focus"
-            element.on "blur", => element.removeClass "focus"
-            element.on "change", onchangeFunction
-            element.on "blur", onchangeFunction
-            element.on "keyup", validateElementsFunction
+            ((element) ->
+              element.on "focus", => console.log element; element.addClass "focus"
+              element.on "blur", => element.removeClass "focus"
+              element.on "change", onchangeFunction
+              element.on "blur", onchangeFunction
+              element.on "keyup", validateElementsFunction
+            )(element)
 
     submitButtons = $ "input[type=submit], button[type=''], button[type='submit'], button:not([type])", @form
     hiddenSubmitButtonElement = $.create '<input type="hidden" name="" value="" />'
@@ -463,9 +465,9 @@ class Watcher
     @observers[eventName] = (observer for observer in @observers[eventName] when observer isnt func)
     @
 
-  enableForm: -> $(inputSelector, @form).attr "disabled", false
+  enableForm: -> $(inputSelector, @form).removeAttr "disabled"
 
-  disableForm: -> $(inputSelector, @form).attr "disabled", true
+  disableForm: -> $(inputSelector, @form).attr "disabled", "disabled"
 
   submitForm: (e) ->
     if not @options.validate or @validateForm()
@@ -588,12 +590,12 @@ class Watcher
         type: "text"
         error: (request) =>
           @callObservers "error", request.response
-        success: (data) =>
+        success: (request) =>
           @enableForm()
-          unless @options.responseCheck(data)
-            @callObservers "error", data
+          unless @options.responseCheck request.response
+            @callObservers "error", request.response
           else
-            @callObservers "success", data
+            @callObservers "success", request.response
             @ajaxSuccess()
 
   ajaxSuccess: ->

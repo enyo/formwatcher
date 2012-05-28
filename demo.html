@@ -28,6 +28,7 @@
       input, textarea, select {
         width: 300px;
         box-sizing: border-box;
+        border: 1px solid silver;
       }
 
       input, textarea  {
@@ -35,32 +36,35 @@
       }
       input, textarea, select  {
         font-size: 13px;
+        outline: none;
       }
 
 
-      input.focus, select.focus, textarea.focus {
-        background: #ffc;
-        /*      border: 1px solid green;*/
-      }
-      button.focus {
-        color: #ffc;
-      }
       input.changed, select.changed, textarea.changed, button.changed {
         /*      font-weight: bold;*/
       }
       input.error, select.error, textarea.error {
-        background: #ffeeee;
+        background: #fff6f6;
+        border-color: #eaa;
       }
       button.error {
         color: #a00;
         font-weight: bold;
       }
       input.validated, select.validated, textarea.validated {
-        background: #dfd;
+        background: #eef9ee;
+        border-color: #9a9;
         /*      border: 1px solid green;*/
       }
       button.validated {
         color: #363;
+      }
+      input.focus, select.focus, textarea.focus {
+        background: #ffc;
+        /*      border: 1px solid green;*/
+      }
+      button.focus {
+        color: #ffc;
       }
       .errors {
         color: red;
