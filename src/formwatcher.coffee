@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.0
+# Formwatcher Version 2.1.1-dev
 #
 # More infos at http://www.formwatcher.org
 #
@@ -64,7 +64,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.1.0"
+  version: "2.1.1-dev"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
