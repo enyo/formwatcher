@@ -1,0 +1,29 @@
+body {
+  font-family: "Lato", arial, tahoma, sans-serif;
+  font-size: 14px;
+}
+#container {
+  width: 600px;
+  margin: 50px auto;
+}
+#container #main h1,
+#container #main #get-the-source {
+  font-size: 2em;
+  font-style: italic;
+}
+#container #main h1 {
+  margin: 30px 0;
+  font-size: 40px;
+  font-weight: normal;
+}
+#container #main a {
+  color: #00f;
+}
+#container footer {
+  margin-top: 150px;
+  color: #aaa;
+  text-align: justify;
+}
+#container footer a {
+  color: #aaa;
+}
