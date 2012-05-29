@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.0
+# Formwatcher Version 2.1.1
 #
 # More infos at http://www.formwatcher.org
 #
@@ -64,7 +64,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.1.0"
+  version: "2.1.1"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -316,6 +316,9 @@ class Formwatcher.Validator extends Formwatcher._ElementWatcher
 Formwatcher.defaultOptions =
   # Whether to convert the form to an AJAX form.
   ajax: false
+  # You can set this to force a specific method (eg.: `post`). If null, the method of the
+  # form attribute `method` is taken.
+  ajaxMethod: null
   # Whether or not the form should validate on submission. This will invoke
   # every validator attached to your input fields.
   validate: true
@@ -395,8 +398,17 @@ class Watcher
     @validators = [ ]
 
     @decorators.push new Decorator @ for Decorator in Formwatcher.decorators
-
     @validators.push new Validator @ for Validator in Formwatcher.validators
+
+
+    @options.ajaxMethod = @form.attr("method")?.toLowerCase() if @options.ajaxMethod == null
+
+    switch @options.ajaxMethod
+      when "post", "put", "delete"
+        # Everything fine
+      else
+        # I'm using get as the default since it's the default for forms.
+        @options.ajaxMethod = "get"
 
     @observe "submit", @options.onSubmit
     @observe "success", @options.onSuccess
@@ -576,7 +588,6 @@ class Watcher
           attributeName = input.attr("name") ? "unnamedInput_#{i}"
           fields[attributeName] = input.val()
 
-
     if fieldCount is 0 and not @options.submitFormIfAllUnchanged
       setTimeout =>
         @enableForm()
@@ -585,7 +596,7 @@ class Watcher
     else
       $.ajax
         url: @form.fwData("originalAction")
-        method: "post"
+        method: @options.ajaxMethod
         data: fields
         type: "text"
         error: (request) =>

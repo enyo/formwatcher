@@ -45,8 +45,9 @@ Formwatcher.decorators.push class extends Formwatcher.Decorator
     wrapper.append input
 
     # I think this is a bit of a hack... Don't know how to get the top margin otherwise though, since `offset().top` seems not to work.
-    topMargin = @decParseInt input.css("marginTop")
-    topMargin = 0  if isNaN(topMargin)
+    # EDIT: Since the value offsetTop seems to account for the margin, I don't have to use it anymore.
+    # topMargin = @decParseInt input.css("marginTop")
+    # topMargin = 0  if isNaN(topMargin)
 
     # Not using input.offset() here, because I'm actually interested in the offset relative to the offsetParent
     inputOffset = 
@@ -57,7 +58,7 @@ Formwatcher.decorators.push class extends Formwatcher.Decorator
 
     leftPosition = @decParseInt(input.css("paddingLeft")) + @decParseInt(inputOffset.left) + @decParseInt(input.css("borderLeftWidth")) + 2 + "px" # + 2 so the cursor is not over the text
     # rightPosition = @decParseInt(input.css("paddingRight")) + @decParseInt(inputOffset.left + inputOffset.width) + @decParseInt(input.css("borderRightWidth")) + "px"
-    topPosition = @decParseInt(input.css("paddingTop")) + @decParseInt(inputOffset.top) + @decParseInt(input.css("borderTopWidth")) + topMargin + "px"
+    topPosition = @decParseInt(input.css("paddingTop")) + @decParseInt(inputOffset.top) + @decParseInt(input.css("borderTopWidth")) + "px"
 
     hintElement = $.create("<span />")
     .html(hint)
