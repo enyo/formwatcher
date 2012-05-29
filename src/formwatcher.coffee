@@ -1,4 +1,4 @@
-# Formwatcher Version 2.0.2
+# Formwatcher Version 2.0.3
 #
 # More infos at http://www.formwatcher.org
 #
@@ -64,7 +64,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.0.2"
+  version: "2.0.3"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -435,7 +435,7 @@ class Watcher
 
           for i, element of elements
             ((element) ->
-              element.on "focus", => console.log element; element.addClass "focus"
+              element.on "focus", => element.addClass "focus"
               element.on "blur", => element.removeClass "focus"
               element.on "change", onchangeFunction
               element.on "blur", onchangeFunction
