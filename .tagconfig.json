@@ -7,6 +7,12 @@
       ]
     },
     {
+      "name": "lib/hint/package.json",
+      "regexs": [
+        "\"version\": \"###\""
+      ]
+    },
+    {
       "name": "README.md",
       "regexs": [
         "Version ###"

@@ -1,4 +1,4 @@
-# Formwatcher Version 2.0.4
+# Formwatcher Version 2.1.0
 #
 # More infos at http://www.formwatcher.org
 #
@@ -64,7 +64,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.0.4"
+  version: "2.1.0"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -171,7 +171,7 @@ Formwatcher =
     return  if input.attr("type") is "checkbox"
     input.attr "name", input.fwData("name")
 
-  Decorators: []
+  decorators: []
   # `decorate()` only uses the first decorator found. You can't use multiple decorators on the same input.
   # If you want to have two decorators applied, you have to create a new decorator joining them.
   decorate: (watcher, input) ->
@@ -189,7 +189,7 @@ Formwatcher =
     else
       input: input
 
-  Validators: []
+  validators: []
   currentWatcherId: 0
   watchers: []
   add: (watcher) ->
@@ -394,9 +394,9 @@ class Watcher
     @decorators = [ ]
     @validators = [ ]
 
-    @decorators.push new Decorator @ for Decorator in Formwatcher.Decorators
+    @decorators.push new Decorator @ for Decorator in Formwatcher.decorators
 
-    @validators.push new Validator @ for Validator in Formwatcher.Validators
+    @validators.push new Validator @ for Validator in Formwatcher.validators
 
     @observe "submit", @options.onSubmit
     @observe "success", @options.onSuccess
