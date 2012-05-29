@@ -2,6 +2,7 @@ body {
   font-family: "Lato", arial, tahoma, sans-serif;
   font-size: 14px;
   line-height: 140%;
+  color: #333;
 }
 #container {
   width: 600px;
