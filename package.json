@@ -35,6 +35,7 @@
   ],
   "dependencies": {
      "qwery": "3.x",
+     "domready": "0.x",
      "bonzo": "1.x",
      "bean": "0.x",
      "reqwest": "0.x",
