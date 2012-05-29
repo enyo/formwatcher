@@ -1,11 +1,22 @@
+gradient(fallbackColor, args...)
+  background-color: fallbackColor;
+  gradientColors = unquote(join(',',args))
+  background-image: -webkit-linear-gradient(top, gradientColors); // Chrome 10+, Saf5.1+, iOS 5+
+  background-image:    -moz-linear-gradient(top, gradientColors); // FF3.6
+  background-image:     -ms-linear-gradient(top, gradientColors); // IE10
+  background-image:      -o-linear-gradient(top, gradientColors); // Opera 11.10+
+  background-image:         linear-gradient(top, gradientColors);
+
+
 body
-  font-family "Lato", arial, tahoma, sans-serif
-  font-size 14px
   line-height 140%
   color #333
 
-
-
+body
+input
+button
+  font-family "Lato", arial, tahoma, sans-serif
+  font-size 14px
 
 
 #container
@@ -39,12 +50,27 @@ body
       $height = 30px
       input
       button
+        border-radius 2px
         height $height
         border 1px solid #aaa
         box-sizing border-box
         width 200px
         padding 5px 8px
         line-height $height - 10px
+        box-shadow 0 1px 2px rgba(0, 0, 0, 0.15)
+
+      button[type="submit"]
+        gradient(#84c43d, #b1e76f 0, #8aca3f 2%, #9aca66 50%, #84c43d 50%, #7da351 100%)
+        color white
+        border-color #7da351
+        //font-weight bold
+        font-size 15px
+        text-shadow 0px 1px 1px rgba(0, 0, 0, 0.6)
+        &:hover
+          text-shadow 0px 1px 1px rgba(0, 0, 0, 1)
+        &:active
+          padding-top 6px 
+          padding-bottom 4px 
 
       input.validated
       select.validated

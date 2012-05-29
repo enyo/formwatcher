@@ -28,7 +28,14 @@ or
 
 Try submitting the form without filling out all fields or try an invalid email address.
 
-<form action="index.html" method="get" id="my-form" data-fw='{ "ajax": false }'>
+<script type="text/javascript">
+  Formwatcher.options['my-form'] = {
+    onSuccess: function() { alert("Form successfully submitted."); },
+    resetFormAfterSubmit: true
+  };
+</script>
+
+<form action="target.html" method="get" id="my-form" data-fw='{ "ajax": true }'>
 
   <div><input type="text" name="login" value="" data-hint="Login" class="required" /></div>
   <div><input type="password" name="password" value="" data-hint="Password" class="required" /></div>
@@ -41,7 +48,14 @@ Try submitting the form without filling out all fields or try an invalid email a
 
 Source:
 
-    <form action="index.html" method="get" id="my-form" data-fw='{ "ajax": false }'>
+    <script type="text/javascript">
+      Formwatcher.options['my-form'] = {
+        onSuccess: function() { alert("Form successfully submitted."); },
+        resetFormAfterSubmit: true
+      };
+    </script>
+
+    <form action="target.html" method="get" id="my-form" data-fw='{ "ajax": true }'>
 
       <div><input type="text" name="login" value="" data-hint="Login" class="required" /></div>
       <div><input type="password" name="password" value="" data-hint="Password" class="required" /></div>
