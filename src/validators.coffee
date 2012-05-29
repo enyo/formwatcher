@@ -6,7 +6,7 @@ trim = (string) -> string.replace /^\s.*\s$/, ""
 # ## Integer validator
 #
 # Makes sure that only digits are present
-Formwatcher.Validators.push class extends Formwatcher.Validator
+Formwatcher.validators.push class extends Formwatcher.Validator
   name: "Integer"
   description: "Makes sure a value is an integer"
   classNames: [ "validate-integer" ]
@@ -22,7 +22,7 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
 # ## Required validator
 #
 # If it's a checkbox, it has to be checked. Otherwise the value can't be 0 or an empty string (whitespace is trimmed)
-Formwatcher.Validators.push class extends Formwatcher.Validator
+Formwatcher.validators.push class extends Formwatcher.Validator
   name: "Required"
   description: "Makes sure the value is not blank (nothing or spaces)."
   classNames: [ "required" ]
@@ -34,7 +34,7 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
 # ## NotZero validator
 #
 # The value can be any number except 0
-Formwatcher.Validators.push class extends Formwatcher.Validator
+Formwatcher.validators.push class extends Formwatcher.Validator
   name: "NotZero"
   description: "Makes sure the value is not 0."
   classNames: [ "not-zero" ]
@@ -48,7 +48,7 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
 # ## Email validator
 #
 # Uses the best regular expression I could find to validate email addresses
-Formwatcher.Validators.push class extends Formwatcher.Validator
+Formwatcher.validators.push class extends Formwatcher.Validator
   name: "Email"
   description: "Makes sure the value is an email."
   classNames: [ "validate-email" ]
@@ -76,7 +76,7 @@ Formwatcher.Validators.push class extends Formwatcher.Validator
 #
 # The actual value that will be used is the number, with the `decimalMark` option. So if you pass `','` as decimal mark
 # the formatted value will be: `"123456,789"`
-Formwatcher.Validators.push class extends Formwatcher.Validator
+Formwatcher.validators.push class extends Formwatcher.Validator
   name: "Float"
   description: "Makes sure a value is a float"
   classNames: [ "validate-float" ]
