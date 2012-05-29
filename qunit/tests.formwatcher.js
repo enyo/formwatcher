@@ -111,6 +111,29 @@
       equal(form2.fwData("watcher").options.ajax, true, "The config should have been properly parsed");
       return equal(form2.fwData("watcher").options.submitUnchanged, false, "The config should have been properly parsed");
     });
+    test("method is taken from form method", function() {
+      var form1, form2, form3, form4, watcher;
+      form1 = $("<form action=\"javascript:undefined;\" method='post'></form>");
+      form2 = $("<form action=\"javascript:undefined;\" method='put'></form>");
+      form3 = $("<form action=\"javascript:undefined;\" method=''></form>");
+      form4 = $("<form action=\"javascript:undefined;\"></form>");
+      watcher = new Watcher(form1);
+      equal(watcher.options.ajaxMethod, "post", "The method should have been taken from the form.");
+      watcher = new Watcher(form2);
+      equal(watcher.options.ajaxMethod, "put", "The method should have been taken from the form.");
+      watcher = new Watcher(form3);
+      equal(watcher.options.ajaxMethod, "get", "Form had an empty method so the default get should have been used");
+      watcher = new Watcher(form4);
+      equal(watcher.options.ajaxMethod, "get", "Form had an empty method so the default get should have been used");
+      watcher = new Watcher(form2, {
+        ajaxMethod: "get"
+      });
+      equal(watcher.options.ajaxMethod, "get", "The options should have overwritten the form method");
+      watcher = new Watcher(form2, {
+        ajaxMethod: "postbla"
+      });
+      return equal(watcher.options.ajaxMethod, "get", "Invalid methods should be converted to get.");
+    });
     module("Formwatcher validators", {
       setup: function() {
         return tmpDiv.empty();
