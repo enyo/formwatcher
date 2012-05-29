@@ -1,9 +1,9 @@
 {
-  "name": "formwatcher",
-  "version": "2.0.4",
-  "description": "Unobtrusively improve forms with JavaScript. Written for ender.",
+  "name": "formwatcher-hint",
+  "version": "2.0.4-dev",
+  "description": "Cross browser beautiful hints",
   "homepage": "http://www.formwatcher.org",
-  "keywords": [ "form", "unobtrusive", "ender" ],
+  "keywords": [ "form", "formwatcher", "hint", "unobtrusive", "ender" ],
   "maintainers": [
     {
       "name": "Matias Meno",
@@ -34,13 +34,8 @@
     }
   ],
   "dependencies": {
-     "qwery": "3.x",
-     "domready": "0.x",
-     "bonzo": "1.x",
-     "bean": "0.x",
-     "reqwest": "0.x",
-     "morpheus": "0.x"
+     "formwatcher": "2.x"
   },
-  "main": [ "./lib/formwatcher.js", "./lib/validators.js" ],
+  "main": "./hint.js",
   "ender": "noop"
 }
