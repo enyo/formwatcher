@@ -59,7 +59,7 @@ Formwatcher automatically watches a form as soon as it detects the `data-fw=""` 
 
 ## Documentation
 
-Please see the [documentation at github](https://github.com/enyo/formwatcher/tree/master/README) for further reading or
+Please see the [documentation at github](https://github.com/enyo/formwatcher) for further reading or
 go through the [generated docs](docs/formwatcher.html).
 
 ## Get the source at [github.com](https://github.com/enyo/formwatcher/tags)
