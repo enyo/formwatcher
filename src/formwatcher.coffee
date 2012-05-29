@@ -435,7 +435,7 @@ class Watcher
 
           for i, element of elements
             ((element) ->
-              element.on "focus", => console.log element; element.addClass "focus"
+              element.on "focus", => element.addClass "focus"
               element.on "blur", => element.removeClass "focus"
               element.on "change", onchangeFunction
               element.on "blur", onchangeFunction
