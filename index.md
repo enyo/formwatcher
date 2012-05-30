@@ -10,6 +10,18 @@ The formwatcher is a tool to easily improve forms with javascript based on the j
 It is designed to be as unobtrusive as possible, so that every form remains intact if javascript is not enabled.
 
 
+## Features
+
+- AJAX conversion: Turn a form into an AJAX call automatically
+- Automatically add `.focus`, `.changed`, `.validated`, `.error`, `.empty`, etc... classes to input fields
+- Lots of built in validators, and the possibilty to write your own
+- Decorators: Turn a simple select input field into an image selector, or a font selector or display a nice hint
+- Simple html attribute configuration that is W3C valid, either by setting classes on the input field, or using the `data-fw` attribute.
+- Automatching of `<label>` elements so you don't have to write the `for=""` attribute.
+- ...and more
+
+Formwatcher is tested with qunit and works in Safari, Chrome, Firefox, Opera and IE7+.
+
 ## Installation
 
 The best way to install formwatcher is by using [ender][]
