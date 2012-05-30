@@ -23,6 +23,9 @@ It is written in [CoffeeScript][] and built with (and depends on):
 [coffeescript]: http://coffeescript.org/
 
 
+Visit the [official site](http://www.formwatcher.org/) for a demo.
+
+
 ## Installation
 
 Simply install with [ender](http://ender.no.de):
@@ -39,18 +42,17 @@ You can also just download the `lib/` files, and install the dependencies manual
 
 ## Features
 
-The **main features** include:
+The **features** include:
 
-- Validation ¹
-- Decorators ¹ (Turn a simple select input field into an image selector, or a font selector or display a nice hint)
-- AJAX conversion (Turn a form into an AJAX call automatically)
-- Simple html attribute configuration that is W3C valid.
-- It's very easy to create your own validators / decorators.
-- ...plenty more.
+- AJAX conversion: Turn a form into an AJAX call automatically
+- Automatically add `.focus`, `.changed`, `.validated`, `.error`, `.empty`, etc... classes to input fields
+- Lots of built in validators, and the possibilty to write your own
+- Decorators: Turn a simple select input field into an image selector, or a font selector or display a nice hint
+- Simple html attribute configuration that is W3C valid, either by setting classes on the input field, or using the `data-fw` attribute.
+- Automatching of `<label>` elements so you don't have to write the `for=""` attribute.
+- ...and more
 
-
-¹ *Formwatcher is built to be easily extendible, so writing your own validators and
-decorators is both easy and recommended*
+Formwatcher is tested with qunit and works in Safari, Chrome, Firefox, Opera and IE7+.
 
 
 ## Configuration
