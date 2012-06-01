@@ -34,7 +34,7 @@ Formwatcher.decorators.push class extends Formwatcher.Decorator
 
     input.calender options
 
-    input.bind "focus click", ->
-      # TODO: set the current date.      
+    # TODO: set the current date. This is currently not possible in CalEnder. I submitted a patch.
+    # input.bind "focus click", ->
 
     elements
