@@ -55,6 +55,17 @@ The **features** include:
 Formwatcher is tested with qunit and works in Safari, Chrome, Firefox, Opera and IE7+.
 
 
+##Formwatcher modules
+
+Those are the modules that can already exist and can be used with formwatcher:
+
+- `formwatcher-hint` Shows nice hints that fade out when the input field is focused.
+- `formwatcher-date-picker` Based on [CalEnder](https://github.com/ded/CalEnder)
+- *more coming soon...*
+
+To install any of them simply use ender like this: `ender add formwatcher-hint` for example.
+
+
 ## Configuration
 
 You can configure formwatcher [imperatively](#imperative-configuration) or by
