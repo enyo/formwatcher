@@ -1,0 +1,42 @@
+{
+  "name": "formwatcher-date-picker",
+  "version": "2.1.2-dev",
+  "description": "Date picker using CalEnder",
+  "homepage": "http://www.formwatcher.org",
+  "keywords": [ "form", "formwatcher", "calender", "date", "unobtrusive", "ender" ],
+  "maintainers": [
+    {
+      "name": "Matias Meno",
+      "email": "m@tias.me",
+      "web": "http://www.matiasmeno.com"
+    } 
+  ],
+  "contributors": [
+    {
+      "name": "Matias Meno",
+      "email": "m@tias.me",
+      "web": "http://www.matiasmeno.com"
+    } 
+  ],
+  "bugs": {
+    "mail": "m@tias.me"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT" 
+    } 
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/enyo/formwatcher.git" 
+    }
+  ],
+  "dependencies": {
+     "formwatcher": "2.x",
+     "calender": "0.x"
+  },
+  "main": "./date-picker.js",
+  "ender": "noop"
+}
