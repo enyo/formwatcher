@@ -24,7 +24,7 @@ Formwatcher is tested with qunit and works in Safari, Chrome, Firefox, Opera and
 
 ## Installation
 
-The best way to install formwatcher is by using [ender][]
+The best way to install formwatcher is with [ender][]:
 
     ender build formwatcher
 
@@ -34,6 +34,16 @@ or
 
 
 [ender]: http://ender.no.de/
+
+
+The basic formwatcher install does **not** include decorators. If you want to use a decorator, you have to install it.
+
+Examples:
+
+    ender add formwatcher-hint
+    ender add formwatcher-date-picker
+
+For a complete list of formwatcher decorators (or addon validators) [search for the "formwatcher" tag in the npm registry](http://search.npmjs.org/#/_tag/formwatcher).
 
 
 ## Demo
