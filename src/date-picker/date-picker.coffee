@@ -9,8 +9,7 @@
 
 window.strPad = (str, length = 2) ->
   str = str.toString()
-  while str.length < length
-    str = "0" + str 
+  str = "0" + str while str.length < length
   str
 
 Formwatcher.decorators.push class extends Formwatcher.Decorator
