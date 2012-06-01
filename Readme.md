@@ -65,6 +65,9 @@ Those are the modules that can already exist and can be used with formwatcher:
 
 To install any of them simply use ender like this: `ender add formwatcher-hint` for example.
 
+To list all formwatcher modules in the npm registry you can simply
+[list all modules with the formwatcher tag](http://search.npmjs.org/#/_tag/formwatcher).
+
 
 ## Configuration
 
