@@ -13,7 +13,7 @@
       ]
     },
     {
-      "name": "README.md",
+      "name": "Readme.md",
       "regexs": [
         "Version ###"
       ]
