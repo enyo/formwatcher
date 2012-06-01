@@ -3,6 +3,7 @@
   "version": "2.1.2-dev",
   "description": "Unobtrusively improve forms with JavaScript. Written for ender.",
   "homepage": "http://www.formwatcher.org",
+  "tags": [ "ender", "formwatcher" ],
   "keywords": [ "form", "unobtrusive", "ender" ],
   "maintainers": [
     {

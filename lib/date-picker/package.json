@@ -3,6 +3,7 @@
   "version": "2.1.2-dev",
   "description": "Date picker using CalEnder",
   "homepage": "http://www.formwatcher.org",
+  "tags": [ "ender", "formwatcher" ],
   "keywords": [ "form", "formwatcher", "calender", "date", "unobtrusive", "ender" ],
   "maintainers": [
     {

@@ -3,6 +3,7 @@
   "version": "2.1.2-dev",
   "description": "Cross browser beautiful hints",
   "homepage": "http://www.formwatcher.org",
+  "tags": [ "ender", "formwatcher" ],
   "keywords": [ "form", "formwatcher", "hint", "unobtrusive", "ender" ],
   "maintainers": [
     {
