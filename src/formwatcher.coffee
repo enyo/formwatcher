@@ -23,6 +23,8 @@
 # THE SOFTWARE.
 
 
+# Using ender
+$ = ender
 
 # Returns and stores attributes only for formwatcher.
 # Be careful when you get data because it does return the actual object, not

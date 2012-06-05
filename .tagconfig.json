@@ -32,6 +32,18 @@
       ]
     },
     {
+      "name": "minified/formwatcher.js",
+      "regexs": [
+        "version:\"###\""
+      ]
+    },
+    {
+      "name": "minified/formwatcher.pack.js",
+      "regexs": [
+        "version:\"###\""
+      ]
+    },
+    {
       "name": "docs/formwatcher.html",
       "regexs": [
         "Formwatcher Version ###"
