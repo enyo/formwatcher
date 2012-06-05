@@ -13,7 +13,7 @@
       ]
     },
     {
-      "name": "README.md",
+      "name": "Readme.md",
       "regexs": [
         "Version ###"
       ]
@@ -29,6 +29,18 @@
       "regexs": [
         "Formwatcher Version ###",
         "version: \"###\""
+      ]
+    },
+    {
+      "name": "minified/formwatcher.js",
+      "regexs": [
+        "version:\"###\""
+      ]
+    },
+    {
+      "name": "minified/formwatcher.pack.js",
+      "regexs": [
+        "version:\"###\""
       ]
     },
     {

@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.1
+# Formwatcher Version 2.1.3
 
 The formwatcher is a tool to easily improve forms with JavaScript with following goals in mind:
 
@@ -23,6 +23,9 @@ It is written in [CoffeeScript][] and built with (and depends on):
 [coffeescript]: http://coffeescript.org/
 
 
+Visit the [official site](http://www.formwatcher.org/) for a demo.
+
+
 ## Installation
 
 Simply install with [ender](http://ender.no.de):
@@ -39,18 +42,31 @@ You can also just download the `lib/` files, and install the dependencies manual
 
 ## Features
 
-The **main features** include:
+The **features** include:
 
-- Validation ¹
-- Decorators ¹ (Turn a simple select input field into an image selector, or a font selector or display a nice hint)
-- AJAX conversion (Turn a form into an AJAX call automatically)
-- Simple html attribute configuration that is W3C valid.
-- It's very easy to create your own validators / decorators.
-- ...plenty more.
+- AJAX conversion: Turn a form into an AJAX call automatically
+- Automatically add `.focus`, `.changed`, `.validated`, `.error`, `.empty`, etc... classes to input fields
+- Lots of built in validators, and the possibilty to write your own
+- Decorators: Turn a simple select input field into an image selector, or a font selector or display a nice hint
+- Simple html attribute configuration that is W3C valid, either by setting classes on the input field, or using the `data-fw` attribute.
+- Automatching of `<label>` elements so you don't have to write the `for=""` attribute.
+- ...and more
+
+Formwatcher is tested with qunit and works in Safari, Chrome, Firefox, Opera and IE7+.
 
 
-¹ *Formwatcher is built to be easily extendible, so writing your own validators and
-decorators is both easy and recommended*
+##Formwatcher modules
+
+Those are the modules that can already exist and can be used with formwatcher:
+
+- `formwatcher-hint` Shows nice hints that fade out when the input field is focused.
+- `formwatcher-date-picker` Based on [CalEnder](https://github.com/ded/CalEnder)
+- *more coming soon...*
+
+To install any of them simply use ender like this: `ender add formwatcher-hint` for example.
+
+To list all formwatcher modules in the npm registry you can simply
+[list all modules with the formwatcher tag](http://search.npmjs.org/#/_tag/formwatcher).
 
 
 ## Configuration

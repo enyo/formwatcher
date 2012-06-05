@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.1
+# Formwatcher Version 2.1.3
 #
 # More infos at http://www.formwatcher.org
 #
@@ -23,20 +23,8 @@
 # THE SOFTWARE.
 
 
-
-# Helper function to deep extend objects
-deepExtend = (object, extenders...) ->
-  return { } unless object?
-  for other in extenders
-    for own key, val of other
-      unless object[key]? and typeof val is "object"
-        object[key] = val
-      else
-        object[key] = deepExtend object[key], val
-  object
-
-
-
+# Using ender
+$ = ender
 
 # Returns and stores attributes only for formwatcher.
 # Be careful when you get data because it does return the actual object, not
@@ -64,7 +52,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.1.1"
+  version: "2.1.3"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -85,6 +73,19 @@ Formwatcher =
       # input.after errors
     errors.hide().addClass("errors").addClass "fw-errors"
     errors
+
+
+  # Helper function to deep extend objects
+  deepExtend: (object, extenders...) ->
+    return { } unless object?
+    for other in extenders
+      for own key, val of other
+        unless object[key]? and typeof val is "object"
+          object[key] = val
+        else
+          object[key] = @deepExtend object[key], val
+    object
+
 
   getLabel: (elements, automatchLabel) ->
     input = elements.input
@@ -203,7 +204,7 @@ Formwatcher =
 
   # Searches all forms with a data-fw attribute and watches them
   scanDocument: ->
-    handleForm = (form) ->
+    handleForm = (form) =>
       form = $(form)
 
       # A form can only be watched once!
@@ -217,7 +218,7 @@ Formwatcher =
       domOptions = form.data "fw"
 
       # domOptions always overwrite the normal options.
-      options = deepExtend options, JSON.parse domOptions if domOptions
+      options = @deepExtend options, JSON.parse domOptions if domOptions
 
       new Watcher(form, options)
 
@@ -243,7 +244,7 @@ class Formwatcher._ElementWatcher
 
   # Stores the watcher, and creates a valid options object.
   constructor: (@watcher) ->
-    @options = deepExtend { }, @defaultOptions, watcher.options[@name] ? { }
+    @options = Formwatcher.deepExtend { }, @defaultOptions, watcher.options[@name] ? { }
 
   # Overwrite this function if your logic to which elements your decorator applies
   # is more complicated than a simple nodeName/className comparison.
@@ -393,7 +394,7 @@ class Watcher
     # Putting the watcher object in the form element.
     @form.fwData "watcher", @
     @form.fwData("originalAction", @form.attr("action") or "").attr "action", "javascript:undefined;"
-    @options = deepExtend { }, Formwatcher.defaultOptions, options or { }
+    @options = Formwatcher.deepExtend { }, Formwatcher.defaultOptions, options or { }
     @decorators = [ ]
     @validators = [ ]
 

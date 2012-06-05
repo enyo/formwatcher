@@ -4,6 +4,9 @@
 # This decorator puts a text over a label that fades out when the user selects the label, or edits the text.
 
 
+# Using ender
+$ = ender
+
 
 Formwatcher.decorators.push class extends Formwatcher.Decorator
 
