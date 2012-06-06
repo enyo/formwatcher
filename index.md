@@ -103,5 +103,5 @@ go through the [generated docs](docs/formwatcher.html).
 
 
 
+You might be interested in another project of ours: [www.opentip.org](http://www.opentip.org/)
 
-You might be interested in another project of ours: [www.opentip.org](http://www.opentip.org/).
