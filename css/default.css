@@ -38,9 +38,8 @@ button {
 #container #main form input,
 #container #main form button {
   border-radius: 2px;
-  height: 30px;
+  height: 20px;
   border: 1px solid #aaa;
-  box-sizing: border-box;
   width: 200px;
   padding: 5px 8px;
   margin: 0;
@@ -60,6 +59,7 @@ button {
   text-shadow: 0px 1px 1px rgba(0,0,0,0.6);
   padding: 5px 15px;
   width: auto;
+  height: 30px;
 }
 #container #main form button[type="submit"]:hover {
   text-shadow: 0px 1px 1px #000;
