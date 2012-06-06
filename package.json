@@ -40,7 +40,8 @@
      "bonzo": "1.x",
      "bean": "0.x",
      "reqwest": "0.x",
-     "morpheus": "0.x"
+     "morpheus": "0.x",
+     "ender-json": "1.x"
   },
   "main": [ "./lib/formwatcher.js", "./lib/validators.js" ],
   "ender": "noop"

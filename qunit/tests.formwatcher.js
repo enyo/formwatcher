@@ -98,9 +98,9 @@
     });
     test("scanDocument", function() {
       var form1, form2, form3;
-      form1 = $("<form action=\"javascript:undefined;\" data-fw=\"\"></form>");
-      form2 = $("<form action=\"javascript:undefined;\" data-fw='{ \"ajax\": true, \"submitUnchanged\": false }'></form>");
-      form3 = $("<form action=\"javascript:undefined;\"></form>");
+      form1 = $('<form id="f1" action="javascript:undefined;" data-fw=""></form>');
+      form2 = $('<form id="f2" action="javascript:undefined;" data-fw=\'{ "ajax": true, "submitUnchanged": false }\'></form>');
+      form3 = $('<form id="f3" action="javascript:undefined;"></form>');
       tmpDiv.append(form1);
       tmpDiv.append(form2);
       tmpDiv.append(form3);

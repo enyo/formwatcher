@@ -13,12 +13,15 @@ It is written in [CoffeeScript][] and built with (and depends on):
   - [bonzo][] (DOM utility)
   - [bean][] (Event utility)
   - [reqwest][] (AJAX utility)
+  - [ender-json][] (JSON parser for browsers that don't natively support it)
 
 [domready]: https://github.com/ded/domready
 [qwery]: https://github.com/ded/qwery
 [bonzo]: https://github.com/ded/bonzo
 [bean]: https://github.com/fat/bean
 [reqwest]: https://github.com/ded/reqwest
+[ender-json]: https://github.com/amccollum/ender-json
+
 
 [coffeescript]: http://coffeescript.org/
 

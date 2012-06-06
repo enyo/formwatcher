@@ -222,8 +222,7 @@ Formwatcher =
 
       new Watcher(form, options)
 
-    # IE7 does not apply the selector form[data-fw] to elements where data-fw is empty so I added data-fw="".
-    $('form[data-fw], form[data-fw=""]').each (form) -> handleForm form
+    $("form[data-fw]").each (form) -> handleForm form
 
     handleForm $ "##{formId}" for formId of Formwatcher.options
 

@@ -96,9 +96,9 @@ Formwatcher.tests = ->
     equal hidden.attr("value"), "valueB", "...and even IE7 should set the value of the button"
 
   test "scanDocument", ->
-    form1 = $("<form action=\"javascript:undefined;\" data-fw=\"\"></form>")
-    form2 = $("<form action=\"javascript:undefined;\" data-fw='{ \"ajax\": true, \"submitUnchanged\": false }'></form>")
-    form3 = $("<form action=\"javascript:undefined;\"></form>")
+    form1 = $('<form id="f1" action="javascript:undefined;" data-fw=""></form>')
+    form2 = $('<form id="f2" action="javascript:undefined;" data-fw=\'{ "ajax": true, "submitUnchanged": false }\'></form>')
+    form3 = $('<form id="f3" action="javascript:undefined;"></form>')
     tmpDiv.append form1
     tmpDiv.append form2
     tmpDiv.append form3
