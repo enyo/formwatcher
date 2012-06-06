@@ -461,8 +461,17 @@ class Watcher
     submitButtons.each (element) =>
       element = $ element
       element.click (e) =>
+        if element[0].tagName == "BUTTON"
+          # That's a IE7 bugfix: The `value` attribute of buttons in IE7 is always the content if a content is present.
+          tmpElementText = element.text()
+          element.text ""
+          elementValue = element.val() ? ""
+          element.text tmpElementText
+        else
+          elementValue = element.val() ? ""
+
         # The submit buttons click events are always triggered if a user presses ENTER inside an input field.
-        hiddenSubmitButtonElement.attr("name", element.attr("name") or "").attr "value", element.attr("value") or ""
+        hiddenSubmitButtonElement.attr("name", element.attr("name") or "").val elementValue
         @submitForm()
         e.stopPropagation()
 
