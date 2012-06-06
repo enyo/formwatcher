@@ -71,23 +71,27 @@ Try submitting the form without filling out all fields or try an invalid email a
 
 Source:
 
-    <script type="text/javascript">
-      Formwatcher.options['my-form'] = {
-        onSuccess: function() { alert("Form successfully submitted."); },
-        resetFormAfterSubmit: true
-      };
-    </script>
+{% highlight javascript %}
+// JavaScript
+Formwatcher.options['my-form'] = {
+  onSuccess: function() { alert("Form successfully submitted."); },
+  resetFormAfterSubmit: true
+};
+{% endhighlight %}
 
-    <form action="target.html" method="get" id="my-form" data-fw='{ "ajax": true }'>
+{% highlight html %}
+<!-- HTML -->
+<form action="target.html" method="get" id="my-form" data-fw='{ "ajax": true }'>
 
-      <div><input type="text" name="login" value="" data-hint="Login" class="required" /></div>
-      <div><input type="password" name="password" value="" data-hint="Password" class="required" /></div>
-      <div><input type="text" name="email" value="" data-hint="Email" class="validate-email required" /></div>
-      <div><input type="text" name="age" value="" data-hint="Your age" class="validate-integer required" /></div>
+  <div><input type="text" name="login" value="" data-hint="Login" class="required" /></div>
+  <div><input type="password" name="password" value="" data-hint="Password" class="required" /></div>
+  <div><input type="text" name="email" value="" data-hint="Email" class="validate-email required" /></div>
+  <div><input type="text" name="age" value="" data-hint="Your age" class="validate-integer required" /></div>
 
-      <button type="submit">Submit</button>
-        
-    </form>
+  <button type="submit">Submit</button>
+    
+</form>
+{% endhighlight %}
 
 As you can see there's hardly any configuration necessary to produce this form that feels just right.
 
