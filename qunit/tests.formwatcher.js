@@ -75,8 +75,8 @@
     });
     test("Multiple submit buttons", function() {
       var allHidden, hidden;
-      this.form = $.create("<form action=\"javascript:undefined;\"><button type=\"submit\" name=\"buttonA\" value=\"valueA\">buttonA</button><button type=\"submit\" name=\"buttonB\" value=\"valueB\">buttonB</button></form>");
-      this.buttonA = $("button[name=buttonA]", this.form);
+      this.form = $.create('<form action="javascript:undefined;"><input type="submit" name="buttonA" value="valueA" /><button type="submit" name="buttonB" value="valueB">Button B</button></form>');
+      this.buttonA = $("input[name=buttonA]", this.form);
       this.buttonB = $("button[name=buttonB]", this.form);
       tmpDiv.append(this.form);
       new Watcher(this.form, {
@@ -94,13 +94,13 @@
       equal(allHidden.length, 1, "There should only be one hidden field for the right button");
       hidden = $("input[type=hidden][name=buttonB]", this.form);
       equal(hidden.length, 1, "Click on button A should create a hidden input field with the same name as the button");
-      return equal(hidden.attr("value"), "valueB", "...and should set the value of the button");
+      return equal(hidden.attr("value"), "valueB", "...and even IE7 should set the value of the button");
     });
     test("scanDocument", function() {
       var form1, form2, form3;
-      form1 = $("<form action=\"javascript:undefined;\" data-fw=\"\"></form>");
-      form2 = $("<form action=\"javascript:undefined;\" data-fw='{ \"ajax\": true, \"submitUnchanged\": false }'></form>");
-      form3 = $("<form action=\"javascript:undefined;\"></form>");
+      form1 = $('<form id="f1" action="javascript:undefined;" data-fw=""></form>');
+      form2 = $('<form id="f2" action="javascript:undefined;" data-fw=\'{ "ajax": true, "submitUnchanged": false }\'></form>');
+      form3 = $('<form id="f3" action="javascript:undefined;"></form>');
       tmpDiv.append(form1);
       tmpDiv.append(form2);
       tmpDiv.append(form3);

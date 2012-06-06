@@ -75,8 +75,8 @@ Formwatcher.tests = ->
   # When a button is clicked, the value should be submitted. To ensure
   # that, formwatcher has to create a hidden element with the name.
   test "Multiple submit buttons", ->
-    @form = $.create("<form action=\"javascript:undefined;\"><button type=\"submit\" name=\"buttonA\" value=\"valueA\">buttonA</button><button type=\"submit\" name=\"buttonB\" value=\"valueB\">buttonB</button></form>")
-    @buttonA = $("button[name=buttonA]", @form)
+    @form = $.create('<form action="javascript:undefined;"><input type="submit" name="buttonA" value="valueA" /><button type="submit" name="buttonB" value="valueB">Button B</button></form>')
+    @buttonA = $("input[name=buttonA]", @form)
     @buttonB = $("button[name=buttonB]", @form)
     tmpDiv.append @form
     new Watcher @form, ajax: false
@@ -93,12 +93,12 @@ Formwatcher.tests = ->
     equal allHidden.length, 1, "There should only be one hidden field for the right button"
     hidden = $("input[type=hidden][name=buttonB]", @form)
     equal hidden.length, 1, "Click on button A should create a hidden input field with the same name as the button"
-    equal hidden.attr("value"), "valueB", "...and should set the value of the button"
+    equal hidden.attr("value"), "valueB", "...and even IE7 should set the value of the button"
 
   test "scanDocument", ->
-    form1 = $("<form action=\"javascript:undefined;\" data-fw=\"\"></form>")
-    form2 = $("<form action=\"javascript:undefined;\" data-fw='{ \"ajax\": true, \"submitUnchanged\": false }'></form>")
-    form3 = $("<form action=\"javascript:undefined;\"></form>")
+    form1 = $('<form id="f1" action="javascript:undefined;" data-fw=""></form>')
+    form2 = $('<form id="f2" action="javascript:undefined;" data-fw=\'{ "ajax": true, "submitUnchanged": false }\'></form>')
+    form3 = $('<form id="f3" action="javascript:undefined;"></form>')
     tmpDiv.append form1
     tmpDiv.append form2
     tmpDiv.append form3

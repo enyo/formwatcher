@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.2
+# Formwatcher Version 2.1.4
 #
 # More infos at http://www.formwatcher.org
 #
@@ -23,6 +23,8 @@
 # THE SOFTWARE.
 
 
+# Using ender
+$ = ender
 
 # Returns and stores attributes only for formwatcher.
 # Be careful when you get data because it does return the actual object, not
@@ -50,7 +52,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.1.2"
+  version: "2.1.4"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -220,8 +222,7 @@ Formwatcher =
 
       new Watcher(form, options)
 
-    # IE7 does not apply the selector form[data-fw] to elements where data-fw is empty so I added data-fw="".
-    $('form[data-fw], form[data-fw=""]').each (form) -> handleForm form
+    $("form[data-fw]").each (form) -> handleForm form
 
     handleForm $ "##{formId}" for formId of Formwatcher.options
 
@@ -459,8 +460,17 @@ class Watcher
     submitButtons.each (element) =>
       element = $ element
       element.click (e) =>
+        if element[0].tagName == "BUTTON"
+          # That's a IE7 bugfix: The `value` attribute of buttons in IE7 is always the content if a content is present.
+          tmpElementText = element.text()
+          element.text ""
+          elementValue = element.val() ? ""
+          element.text tmpElementText
+        else
+          elementValue = element.val() ? ""
+
         # The submit buttons click events are always triggered if a user presses ENTER inside an input field.
-        hiddenSubmitButtonElement.attr("name", element.attr("name") or "").attr "value", element.attr("value") or ""
+        hiddenSubmitButtonElement.attr("name", element.attr("name") or "").val elementValue
         @submitForm()
         e.stopPropagation()
 

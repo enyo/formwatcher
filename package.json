@@ -1,6 +1,6 @@
 {
   "name": "formwatcher",
-  "version": "2.1.2",
+  "version": "2.1.4",
   "description": "Unobtrusively improve forms with JavaScript. Written for ender.",
   "homepage": "http://www.formwatcher.org",
   "tags": [ "ender", "formwatcher" ],
@@ -40,7 +40,8 @@
      "bonzo": "1.x",
      "bean": "0.x",
      "reqwest": "0.x",
-     "morpheus": "0.x"
+     "morpheus": "0.x",
+     "ender-json": "1.x"
   },
   "main": [ "./lib/formwatcher.js", "./lib/validators.js" ],
   "ender": "noop"
