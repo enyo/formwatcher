@@ -5,7 +5,7 @@ title: Unobstrusive form extension
 
 # Formwatcher
 
-The formwatcher is a tool to easily improve forms with javascript based on the jquery library.
+The formwatcher is a tool to easily improve forms with javascript built with [ender](http://ender.no.de) modules.
 
 It is designed to be as unobtrusive as possible, so that every form remains intact if javascript is not enabled.
 
