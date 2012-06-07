@@ -1,6 +1,6 @@
 {
   "name": "formwatcher-hint",
-  "version": "2.1.5",
+  "version": "2.1.6-dev",
   "description": "Cross browser beautiful hints",
   "homepage": "http://www.formwatcher.org",
   "tags": [ "ender", "formwatcher" ],
