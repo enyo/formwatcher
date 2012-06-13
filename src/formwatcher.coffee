@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.5
+# Formwatcher Version 2.1.6
 #
 # More infos at http://www.formwatcher.org
 #
@@ -52,7 +52,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.1.5"
+  version: "2.1.6"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -89,14 +89,19 @@ Formwatcher =
 
   getLabel: (elements, automatchLabel) ->
     input = elements.input
-    label = undefined
+
     if input.attr("id")
       label = $ "label[for=" + input.attr("id") + "]"
       label = `undefined`  unless label.length
     if not label and automatchLabel
-      label = input.previous()
-      window.testinput = input
-      label = undefined if !label.length or label.get(0).nodeName isnt "LABEL" or label.attr("for")?
+      parent = input.parent()
+      if parent.get(0).nodeName == "LABEL"
+        # The input is embedded inside a label, so take the first span element.
+        label = $("span", parent).first()
+        label = undefined if label.length == 0
+      else
+        label = input.previous()
+        label = undefined if !label.length or label.get(0).nodeName isnt "LABEL" or label.attr("for")?
 
     label
 
