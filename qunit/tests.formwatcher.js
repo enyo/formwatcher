@@ -70,8 +70,13 @@
         input: $("<input></input>")
       };
       tmpDiv.append(elements.input);
-      equal(Formwatcher.getLabel(elements, true), undefined, "autoMatch: true; Should return undefined when there no element before the input.");
-      return equal(Formwatcher.getLabel(elements, false), undefined, "autoMatch: false;  Should return undefined when there no element before the input.");
+      equal(Formwatcher.getLabel(elements, true), void 0, "autoMatch: true; Should return undefined when there no element before the input.");
+      equal(Formwatcher.getLabel(elements, false), void 0, "autoMatch: false;  Should return undefined when there no element before the input.");
+      tmpDiv.append($.create('<label><span>Label text</span><input id="embedded-input" /></label>'));
+      elements = {
+        input: $("#embedded-input", tmpDiv)
+      };
+      return equal(Formwatcher.getLabel(elements, true).html(), "Label text", "spans should be interpreted as labels when inside label.");
     });
     test("Multiple submit buttons", function() {
       var allHidden, hidden;
