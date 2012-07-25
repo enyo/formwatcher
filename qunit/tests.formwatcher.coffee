@@ -138,6 +138,64 @@ Formwatcher.tests = ->
     equal watcher.options.ajaxMethod, "get", "Invalid methods should be converted to get."
 
 
+  module "Formwatcher AJAX",
+    setup: ->
+      tmpDiv.empty()
+
+    teardown: ->
+      tmpDiv.empty()
+
+  asyncTest "the right observers are called", ->
+    tmpDiv.append $("""<form id="f1" action="./index.html"><input type="text" name="test-field" /></form><form id="f2" action="./index.html"><input type="text" name="test-field" /></form>""")
+    form = tmpDiv.find("form#f1")
+    form2 = tmpDiv.find("form#f2")
+
+    submitCalled1 = false
+    successCalled1 = false
+    errorCalled1 = false
+    submitCalled2 = false
+    successCalled2 = false
+    errorCalled2 = false
+
+    completed1 = false
+    completed2 = false
+
+    watcher = new Watcher(form,
+      ajax: true,
+      validate: false
+      responseCheck: -> false
+      onSubmit: -> submitCalled1 = true
+      onSuccess: -> successCalled1 = true
+      onError: -> errorCalled1 = true
+      onComplete: ->
+        ok submitCalled1, "Should have called onSubmit before."
+        ok errorCalled1, "Should have called onError before."
+        ok not successCalled1, "Shouldn't have called onSuccess before."
+        completed1 = yes
+        if completed2 then start()
+    )
+
+    watcher2 = new Watcher(form2,
+      ajax: true,
+      validate: false
+      responseCheck: -> true
+      onSubmit: -> submitCalled2 = true
+      onSuccess: -> successCalled2 = true
+      onError: -> errorCalled2 = true
+      onComplete: ->
+        ok submitCalled2, "Should have called onSubmit before."
+        ok successCalled2, "Should have called onSuccess before."
+        ok not errorCalled2, "Shouldn't have called onError before."
+        completed2 = yes
+        if completed1 then start()
+    )
+ 
+    watcher.submitForm()
+    watcher2.submitForm()
+
+
+
+
   module "Formwatcher validators",
     setup: ->
       tmpDiv.empty()
