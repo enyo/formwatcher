@@ -505,6 +505,7 @@ class Watcher
 
 
       # Do submit
+      @form.addClass "submitting"
       if @options.ajax
         @disableForm()
         @submitAjax()
@@ -627,6 +628,7 @@ class Watcher
             @callObservers "success", request.response
             @ajaxSuccess()
         complete: (request) =>
+          @form.removeClass "submitting"
           @callObservers "complete", request.response
 
   ajaxSuccess: ->
