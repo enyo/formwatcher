@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.7
+# Formwatcher Version 2.1.8
 #
 # More infos at http://www.formwatcher.org
 #
@@ -52,7 +52,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.1.7"
+  version: "2.1.8"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -505,6 +505,7 @@ class Watcher
 
 
       # Do submit
+      @form.addClass "submitting"
       if @options.ajax
         @disableForm()
         @submitAjax()
@@ -627,6 +628,7 @@ class Watcher
             @callObservers "success", request.response
             @ajaxSuccess()
         complete: (request) =>
+          @form.removeClass "submitting"
           @callObservers "complete", request.response
 
   ajaxSuccess: ->

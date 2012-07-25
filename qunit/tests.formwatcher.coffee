@@ -145,7 +145,7 @@ Formwatcher.tests = ->
     teardown: ->
       tmpDiv.empty()
 
-  asyncTest "the right observers are called", ->
+  asyncTest "calls the right observers and sets appropriate classes", ->
     tmpDiv.append $("""<form id="f1" action="./index.html"><input type="text" name="test-field" /></form><form id="f2" action="./index.html"><input type="text" name="test-field" /></form>""")
     form = tmpDiv.find("form#f1")
     form2 = tmpDiv.find("form#f2")
@@ -168,6 +168,7 @@ Formwatcher.tests = ->
       onSuccess: -> successCalled1 = true
       onError: -> errorCalled1 = true
       onComplete: ->
+        ok not @form.hasClass("submitting"), "The .submitting class should have been removed."
         ok submitCalled1, "Should have called onSubmit before."
         ok errorCalled1, "Should have called onError before."
         ok not successCalled1, "Shouldn't have called onSuccess before."
@@ -191,6 +192,8 @@ Formwatcher.tests = ->
     )
  
     watcher.submitForm()
+    ok form.hasClass("submitting"), "Should have the class .submitting."
+
     watcher2.submitForm()
 
 

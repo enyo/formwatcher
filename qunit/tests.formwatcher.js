@@ -147,7 +147,7 @@
         return tmpDiv.empty();
       }
     });
-    asyncTest("the right observers are called", function() {
+    asyncTest("calls the right observers and sets appropriate classes", function() {
       var completed1, completed2, errorCalled1, errorCalled2, form, form2, submitCalled1, submitCalled2, successCalled1, successCalled2, watcher, watcher2;
       tmpDiv.append($("<form id=\"f1\" action=\"./index.html\"><input type=\"text\" name=\"test-field\" /></form><form id=\"f2\" action=\"./index.html\"><input type=\"text\" name=\"test-field\" /></form>"));
       form = tmpDiv.find("form#f1");
@@ -176,6 +176,7 @@
           return errorCalled1 = true;
         },
         onComplete: function() {
+          ok(!this.form.hasClass("submitting"), "The .submitting class should have been removed.");
           ok(submitCalled1, "Should have called onSubmit before.");
           ok(errorCalled1, "Should have called onError before.");
           ok(!successCalled1, "Shouldn't have called onSuccess before.");
@@ -211,6 +212,7 @@
         }
       });
       watcher.submitForm();
+      ok(form.hasClass("submitting"), "Should have the class .submitting.");
       return watcher2.submitForm();
     });
     module("Formwatcher validators", {
