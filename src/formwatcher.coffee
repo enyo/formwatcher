@@ -355,6 +355,8 @@ Formwatcher.defaultOptions =
   onSuccess: (data) ->
   # If the responseCheck function returns false, this function gets called.
   onError: (data) -> alert data
+  # In any case onComplete() is called when the request has been done.
+  onComplete: (data) ->
 
 
 
@@ -413,6 +415,8 @@ class Watcher
     @observe "submit", @options.onSubmit
     @observe "success", @options.onSuccess
     @observe "error", @options.onError
+    @observe "complete", @options.onComplete
+
     $(inputSelector, @form).each (input) =>
       input = $ input
       unless input.fwData("initialized")
@@ -617,6 +621,8 @@ class Watcher
           else
             @callObservers "success", request.response
             @ajaxSuccess()
+        complete: (request) =>
+          @callObservers "complete", request.response
 
   ajaxSuccess: ->
     for elements in @allElements
