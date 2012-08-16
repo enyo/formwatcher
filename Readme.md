@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.8
+# Formwatcher Version 2.1.9
 
 The formwatcher is a tool to easily improve forms with JavaScript with following goals in mind:
 

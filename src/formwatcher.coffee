@@ -1,4 +1,4 @@
-# Formwatcher Version 2.1.8
+# Formwatcher Version 2.1.9
 #
 # More infos at http://www.formwatcher.org
 #
@@ -52,7 +52,7 @@ inputSelector = "input, textarea, select, button"
 
 # ## Formwatcher, the global namespace
 Formwatcher =
-  version: "2.1.8"
+  version: "2.1.9"
   debugging: false
 
   # A wrapper for console.debug that only forwards if `Formwatcher.debugging == true`
@@ -67,12 +67,14 @@ Formwatcher =
     errors = $("##{input.attr('id')}-errors") unless errors?.length or !input.attr("id")
 
     if not errors or not errors.length
-      errors = $.create "<span />"
+      errors = $.create "<small />"
       errors.attr "id", input.attr("name") + "-errors" if input.attr("name")
       errors.insertAfter input
       # input.after errors
-    errors.hide().addClass("errors").addClass "fw-errors"
     errors
+      .hide()
+      .addClass("errors")
+      .addClass("fw-errors")
 
 
   # Helper function to deep extend objects
@@ -601,7 +603,7 @@ class Watcher
       # a JS selector on top of it, the actual input field will always be hidden, thus submitted.
       # So now the check if the field is hidden and should be submitted takes place
       # in the constructor, and sets `forceSubmission` on the input field.
-      if input.fwData("forceSubmission") || input.attr("type") == "checkbox" || input.fwData('changed') || @options.submitUnchanged
+      if input.fwData("forceSubmission") || (input.attr("type") && input.attr("type").toLowerCase() == "checkbox") || input.fwData('changed') || @options.submitUnchanged
         if input.attr("type") != "checkbox" || input.get(0).checked
           fieldCount++
           attributeName = input.attr("name") ? "unnamedInput_#{i}"

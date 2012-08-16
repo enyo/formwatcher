@@ -1,8 +1,6 @@
 #!/bin/bash
 
 
-echo "Going to checkout master and publish to npm..." &&
-read &&
 git checkout master &&
 npm publish &&
 
