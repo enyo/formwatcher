@@ -1,6 +1,6 @@
 {
   "name": "formwatcher-date-picker",
-  "version": "2.1.9",
+  "version": "2.1.10-dev",
   "description": "Date picker using CalEnder",
   "homepage": "http://www.formwatcher.org",
   "tags": [ "ender", "formwatcher" ],

@@ -1,6 +1,6 @@
 {
   "name": "formwatcher",
-  "version": "2.1.9",
+  "version": "2.1.10-dev",
   "description": "Unobtrusively improve forms with JavaScript. Written for ender.",
   "homepage": "http://www.formwatcher.org",
   "tags": [ "ender", "formwatcher" ],
